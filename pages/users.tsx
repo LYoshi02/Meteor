@@ -1,0 +1,44 @@
+import { GetStaticProps } from "next";
+import { Heading, Box } from "@chakra-ui/react";
+
+import UsersList from "../components/users/users-list";
+import { User } from "../types/index";
+
+type Props = {
+  users: {
+    name: string;
+    dni: string;
+  }[];
+};
+
+export default function UsersPage(props: Props) {
+  return (
+    <>
+      <Heading as="h2" size="md">
+        Usuarios
+      </Heading>
+      <Box bgColor="gray.700" mt="4">
+        <UsersList users={props.users} />
+      </Box>
+    </>
+  );
+}
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const response = await fetch("http://localhost:3000/api/user", {
+    method: "GET",
+  });
+  const fetchedUsers: { users: User[] } = await response.json();
+
+  const formattedUsers = fetchedUsers.users.map((user) => ({
+    name: `${user.apellido} ${user.nombre}`,
+    dni: user.dni,
+  }));
+
+  return {
+    props: {
+      users: formattedUsers,
+    },
+    // revalidate: 6000,
+  };
+};

@@ -1,9 +1,8 @@
-import { NextPage } from "next";
 import { Box, Heading, Center } from "@chakra-ui/react";
 
 import HireForm from "../components/hire/hire-form";
 
-const Hire: NextPage = () => {
+export default function HirePage() {
   return (
     <Center height="full">
       <Box width="full">
@@ -16,6 +15,4 @@ const Hire: NextPage = () => {
       </Box>
     </Center>
   );
-};
-
-export default Hire;
+}
