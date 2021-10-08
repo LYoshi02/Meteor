@@ -1,0 +1,10 @@
+POST http://localhost:8000/meals
+content-type: application/json
+
+{
+    "name": "Coca Cola 3l",
+    "price": 200
+}
+
+###
+GET http://localhost:3000/api/get_meals
