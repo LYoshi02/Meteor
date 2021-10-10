@@ -35,7 +35,7 @@ const HireForm = () => {
     }
   }, [isSubmitSuccessful, reset, toast]);
 
-  const submitHandler = async (data: any) => {
+  const submitHandler = async (data: FormValues) => {
     await fetch("/api/user", {
       method: "POST",
       headers: {
