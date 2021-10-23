@@ -1,13 +1,18 @@
 export type Services = {
-  internet: {
-    nroServicio: number;
-    nombre: string;
-    precio: number;
-  }[];
-  cable: {
-    nroServicio: number;
-    nombre: string;
-    precio: number;
-    opcional: boolean;
-  }[];
+  internet: InternetService[];
+  cable: CableService[];
+};
+
+export type InternetService = {
+  nroServicio: number;
+  nombre: string;
+  precio: number;
+};
+
+export type CableService = {
+  nroServicio: number;
+  nombre: string;
+  precio: number;
+  opcional: boolean;
+  cant_tvs: number;
 };

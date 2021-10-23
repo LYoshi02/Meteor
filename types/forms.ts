@@ -7,6 +7,12 @@ export type UserFormValues = {
   email: string;
 };
 
+export type ServicesFormValues = {
+  internet: string;
+  cable: string[];
+};
+
 export type HireFormValues = {
   user: UserFormValues;
+  services: ServicesFormValues;
 };

@@ -1,64 +1,37 @@
-import { useEffect, useState } from "react";
-import { Button, useToast } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { Box } from "@chakra-ui/react";
 
 import UserForm from "./user-form";
-import { Services, UserFormValues } from "../../types";
+import { HireFormValues, Services, UserFormValues } from "../../types";
 import ServicesForm from "./services-form";
-
-type FormValues = {
-  user: UserFormValues;
-  services: {
-    name: string;
-  };
-};
 
 type Props = {
   services: Services | undefined;
 };
 
 const HireForm = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitSuccessful, errors },
-    reset,
-    trigger,
-  } = useForm<FormValues>();
-  const toast = useToast();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [userFormValues, setUserFormValues] = useState<UserFormValues>();
+  const [currentStep, setCurrentStep] = useState(2);
 
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      toast({
-        title: "Servicio Contratado!",
-        description: "Sus datos se han registrado correctamente",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      reset();
-    }
-  }, [isSubmitSuccessful, reset, toast]);
+  const setUserFormValuesHandler = (values: UserFormValues) => {
+    setUserFormValues(values);
+  };
 
   const prevStepHandler = () => {
     setCurrentStep((prevValue) => prevValue - 1);
   };
 
   const nextStepHandler = async () => {
-    const isFormValid = await trigger();
-    if (isFormValid) {
-      setCurrentStep((prevValue) => prevValue + 1);
-    }
+    setCurrentStep((prevValue) => prevValue + 1);
   };
 
   let currentForm;
   if (currentStep === 1) {
     currentForm = (
       <UserForm
-        registerInput={register}
-        errors={errors}
         setNextStep={nextStepHandler}
+        onSetFormValues={setUserFormValuesHandler}
+        savedValues={userFormValues}
       />
     );
   } else if (currentStep === 2) {
@@ -67,18 +40,11 @@ const HireForm = (props: Props) => {
     );
   }
 
-  const submitHandler = async (data: FormValues) => {
+  const submitHandler = async (data: HireFormValues) => {
     console.log(data);
-    // await fetch("/api/user", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-    // });
   };
 
-  return <form onSubmit={handleSubmit(submitHandler)}>{currentForm}</form>;
+  return <Box>{currentForm}</Box>;
 };
 
 export default HireForm;

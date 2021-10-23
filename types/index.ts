@@ -1,3 +1,7 @@
 export type { User } from "./user";
-export type { UserFormValues, HireFormValues } from "./forms";
-export type { Services } from "./hire";
+export type {
+  UserFormValues,
+  HireFormValues,
+  ServicesFormValues,
+} from "./forms";
+export type { Services, InternetService, CableService } from "./hire";

@@ -32,9 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const internetServices = await query(
       `SELECT "nroServicio", nombre, precio FROM internet`
     );
-    const tvServices = await query(
-      `SELECT "nroServicio", nombre, precio, opcional FROM cable`
-    );
+    const tvServices = await query(`SELECT * FROM cable`);
     return res.status(200).json({
       services: {
         internet: internetServices.rows,
