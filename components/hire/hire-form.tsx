@@ -2,8 +2,14 @@ import { useState } from "react";
 import { Box } from "@chakra-ui/react";
 
 import UserForm from "./user-form";
-import { HireFormValues, Services, UserFormValues } from "../../types";
+import {
+  HireFormValues,
+  Services,
+  ServicesFormValues,
+  UserFormValues,
+} from "../../types";
 import ServicesForm from "./services-form";
+import HireSummary from "./hire-summary";
 
 type Props = {
   services: Services | undefined;
@@ -11,10 +17,16 @@ type Props = {
 
 const HireForm = (props: Props) => {
   const [userFormValues, setUserFormValues] = useState<UserFormValues>();
+  const [servicesFormValues, setServicesFormValues] =
+    useState<ServicesFormValues>();
   const [currentStep, setCurrentStep] = useState(2);
 
   const setUserFormValuesHandler = (values: UserFormValues) => {
     setUserFormValues(values);
+  };
+
+  const setServicesFormValuesHandler = (values: ServicesFormValues) => {
+    setServicesFormValues(values);
   };
 
   const prevStepHandler = () => {
@@ -29,20 +41,30 @@ const HireForm = (props: Props) => {
   if (currentStep === 1) {
     currentForm = (
       <UserForm
-        setNextStep={nextStepHandler}
+        onSetNextStep={nextStepHandler}
         onSetFormValues={setUserFormValuesHandler}
         savedValues={userFormValues}
       />
     );
   } else if (currentStep === 2) {
     currentForm = (
-      <ServicesForm setPrevStep={prevStepHandler} services={props.services} />
+      <ServicesForm
+        onSetPrevStep={prevStepHandler}
+        onSetNextStep={nextStepHandler}
+        services={props.services}
+        onSetFormValues={setServicesFormValuesHandler}
+        savedValues={servicesFormValues}
+      />
+    );
+  } else if (currentStep === 3) {
+    currentForm = (
+      <HireSummary
+        services={props.services}
+        selectedServices={servicesFormValues}
+        onSetPrevStep={prevStepHandler}
+      />
     );
   }
-
-  const submitHandler = async (data: HireFormValues) => {
-    console.log(data);
-  };
 
   return <Box>{currentForm}</Box>;
 };

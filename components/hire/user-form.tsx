@@ -5,7 +5,7 @@ import Input from "../ui/input";
 import { UserFormValues } from "../../types";
 
 type Props = {
-  setNextStep: () => void;
+  onSetNextStep: () => void;
   onSetFormValues: (values: UserFormValues) => void;
   savedValues: UserFormValues | undefined;
 };
@@ -19,9 +19,9 @@ const UserForm = (props: Props) => {
     defaultValues: props.savedValues,
   });
 
-  const submitHandler = (values: any) => {
+  const submitHandler = (values: UserFormValues) => {
     props.onSetFormValues(values);
-    props.setNextStep();
+    props.onSetNextStep();
   };
 
   return (

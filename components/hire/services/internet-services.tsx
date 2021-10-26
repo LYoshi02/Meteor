@@ -9,7 +9,7 @@ import { formatPrice } from "../../../util/helpers";
 type Props = {
   services: InternetService[] | undefined;
   register: UseFormRegister<ServicesFormValues>;
-  serviceSelected: string;
+  selectedService: string;
 };
 
 const InternetServices = (props: Props) => {
@@ -29,7 +29,7 @@ const InternetServices = (props: Props) => {
       <Heading variant="h3" size="lg" mb="2">
         Internet
       </Heading>
-      <RadioGroup value={props.serviceSelected}>
+      <RadioGroup value={props.selectedService}>
         <Stack spacing={1}>{internetServices}</Stack>
       </RadioGroup>
     </Box>

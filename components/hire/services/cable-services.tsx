@@ -44,6 +44,9 @@ const CableServices = (props: Props) => {
     <Radio
       key={service.nroServicio}
       value={service.nroServicio.toString()}
+      // defaultChecked={props.selectedServices?.includes(
+      //   service.nroServicio.toString()
+      // )}
       {...props.register("cable")}
     >
       {service.nombre} {`(${formatPrice(service.precio)})`}

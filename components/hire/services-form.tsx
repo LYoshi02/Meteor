@@ -7,8 +7,11 @@ import CableServices from "./services/cable-services";
 import Alert from "../ui/alert";
 
 type Props = {
-  setPrevStep: () => void;
+  onSetPrevStep: () => void;
+  onSetNextStep: () => void;
+  onSetFormValues: (values: ServicesFormValues) => void;
   services: Services | undefined;
+  savedValues: ServicesFormValues | undefined;
 };
 
 const ServicesForm = (props: Props) => {
@@ -19,10 +22,12 @@ const ServicesForm = (props: Props) => {
     watch,
     setError,
     clearErrors,
-  } = useForm<ServicesFormValues>();
+  } = useForm<ServicesFormValues>({ defaultValues: props.savedValues });
 
   const internetServiceSelected = watch("internet");
   const cableServicesSelected = watch("cable");
+
+  console.log(internetServiceSelected, cableServicesSelected);
 
   const validateForm = () => {
     let isValid = true;
@@ -37,11 +42,12 @@ const ServicesForm = (props: Props) => {
     return isValid;
   };
 
-  const submitHandler = (values: any) => {
+  const submitHandler = (values: ServicesFormValues) => {
     const isValid = validateForm();
     if (!isValid) return;
 
-    console.log(values);
+    props.onSetFormValues(values);
+    props.onSetNextStep();
   };
 
   const closeErrorMessage = () => {
@@ -70,7 +76,7 @@ const ServicesForm = (props: Props) => {
           <InternetServices
             services={props.services?.internet}
             register={register}
-            serviceSelected={internetServiceSelected}
+            selectedService={internetServiceSelected}
           />
           <Divider />
           <CableServices
@@ -85,7 +91,7 @@ const ServicesForm = (props: Props) => {
               colorScheme="teal"
               width={{ sm: "full", md: "auto" }}
               mr="2"
-              onClick={props.setPrevStep}
+              onClick={props.onSetPrevStep}
             >
               Anterior
             </Button>
