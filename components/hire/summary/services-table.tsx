@@ -7,10 +7,10 @@ type Props = {
 
 const ServicesTable = (props: Props) => {
   const servicesRows = props.selectedServices.map((service) => (
-    <Tr key={service.nroServicio}>
+    <Tr key={service.NroServicio}>
       <Td>1</Td>
-      <Td>{service.nombre}</Td>
-      <Td isNumeric>{service.precio}</Td>
+      <Td>{service.Nombre}</Td>
+      <Td isNumeric>{service.Precio}</Td>
     </Tr>
   ));
 

@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 
 import { ServicesFormValues, CableService } from "../../../types";
-import { formatPrice } from "../../../util/helpers";
 
 type Props = {
   services: CableService[] | undefined;
@@ -23,7 +22,7 @@ const CableServices = (props: Props) => {
     optionalServicesArray: CableService[] = [];
 
   props.services?.forEach((service) => {
-    if (service.opcional) {
+    if (service.Opcional) {
       optionalServicesArray.push(service);
     } else {
       requiredServicesArray.push(service);
@@ -33,7 +32,7 @@ const CableServices = (props: Props) => {
   let requiredServiceSelected = false;
   if (props.selectedServices && props.selectedServices.length > 0) {
     const foundIndex = requiredServicesArray.findIndex((service) =>
-      props.selectedServices.includes(service.nroServicio.toString())
+      props.selectedServices.includes(service.NroServicio.toString())
     );
     if (foundIndex != -1) {
       requiredServiceSelected = true;
@@ -42,24 +41,24 @@ const CableServices = (props: Props) => {
 
   const requiredServices = requiredServicesArray.map((service) => (
     <Radio
-      key={service.nroServicio}
-      value={service.nroServicio.toString()}
-      // defaultChecked={props.selectedServices?.includes(
-      //   service.nroServicio.toString()
-      // )}
+      key={service.NroServicio}
+      value={service.NroServicio.toString()}
+      defaultChecked={props.selectedServices?.includes(
+        service.NroServicio.toString()
+      )}
       {...props.register("cable")}
     >
-      {service.nombre} {`(${formatPrice(service.precio)})`}
+      {service.Nombre} {`($${service.Precio})`}
     </Radio>
   ));
 
   const optionalServices = optionalServicesArray.map((service) => (
     <Checkbox
-      key={service.nroServicio}
-      value={service.nroServicio.toString()}
+      key={service.NroServicio}
+      value={service.NroServicio.toString()}
       {...props.register("cable")}
     >
-      {service.nombre} {`(${formatPrice(service.precio)}/TV)`}
+      {service.Nombre} {`($${service.Precio})`}
     </Checkbox>
   ));
 

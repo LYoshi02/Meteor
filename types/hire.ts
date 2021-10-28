@@ -4,15 +4,15 @@ export type Services = {
 };
 
 export type InternetService = {
-  nroServicio: number;
-  nombre: string;
-  precio: number;
+  NroServicio: number;
+  Nombre: string;
+  Precio: string;
 };
 
 export type CableService = {
-  nroServicio: number;
-  nombre: string;
-  precio: number;
-  opcional: boolean;
-  cant_tvs: number;
+  NroServicio: number;
+  Nombre: string;
+  Precio: string;
+  Opcional: boolean;
+  CantTvs: number;
 };

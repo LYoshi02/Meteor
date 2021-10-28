@@ -4,7 +4,6 @@ import { Radio, RadioGroup } from "@chakra-ui/radio";
 import { Stack } from "@chakra-ui/react";
 
 import { ServicesFormValues, InternetService } from "../../../types";
-import { formatPrice } from "../../../util/helpers";
 
 type Props = {
   services: InternetService[] | undefined;
@@ -15,12 +14,12 @@ type Props = {
 const InternetServices = (props: Props) => {
   const internetServices = props.services?.map((service: InternetService) => (
     <Radio
-      key={service.nroServicio}
-      value={service.nroServicio.toString()}
+      key={service.NroServicio}
+      value={service.NroServicio.toString()}
       isFullWidth
       {...props.register("internet")}
     >
-      {service.nombre} {`(${formatPrice(service.precio)})`}
+      {service.Nombre} {`($${service.Precio})`}
     </Radio>
   ));
 

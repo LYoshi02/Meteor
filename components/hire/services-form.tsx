@@ -27,8 +27,6 @@ const ServicesForm = (props: Props) => {
   const internetServiceSelected = watch("internet");
   const cableServicesSelected = watch("cable");
 
-  console.log(internetServiceSelected, cableServicesSelected);
-
   const validateForm = () => {
     let isValid = true;
     if (!internetServiceSelected && !cableServicesSelected) {

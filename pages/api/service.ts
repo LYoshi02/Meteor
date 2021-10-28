@@ -30,9 +30,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     const internetServices = await query(
-      `SELECT "nroServicio", nombre, precio FROM internet`
+      `SELECT * FROM "Internet" AS Int
+       JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio";`
     );
-    const tvServices = await query(`SELECT * FROM cable`);
+    const tvServices = await query(
+      `SELECT * FROM "Cable" AS Cab
+       JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio";`
+    );
+
+    console.log(internetServices.rows, tvServices.rows);
     return res.status(200).json({
       services: {
         internet: internetServices.rows,

@@ -1,7 +1,6 @@
 import { Box, Heading, Text } from "@chakra-ui/layout";
 
 import ServicesTable from "./summary/services-table";
-import { formatPrice } from "../../util/helpers";
 import {
   CableService,
   InternetService,
@@ -22,7 +21,7 @@ const HireSummary = (props: Props) => {
   if (props.selectedServices?.cable) {
     props.selectedServices.cable.forEach((id) => {
       const service = props.services?.cable.find(
-        (s) => s.nroServicio.toString() === id
+        (s) => s.NroServicio.toString() === id
       );
       if (service) {
         selectedServicesDetails.push(service);
@@ -33,7 +32,7 @@ const HireSummary = (props: Props) => {
   if (props.selectedServices?.internet) {
     const service = props.services?.internet.find(
       (service) =>
-        service.nroServicio.toString() === props.selectedServices?.internet
+        service.NroServicio.toString() === props.selectedServices?.internet
     );
     if (service) {
       selectedServicesDetails.push(service);
@@ -41,10 +40,9 @@ const HireSummary = (props: Props) => {
   }
 
   const subtotal = selectedServicesDetails.reduce(
-    (prevValue, currentValue) => prevValue + currentValue.precio,
+    (prevValue, currentValue) => prevValue + +currentValue.Precio,
     0
   );
-  console.log(subtotal);
 
   return (
     <Box>
@@ -53,7 +51,7 @@ const HireSummary = (props: Props) => {
       </Heading>
       <ServicesTable selectedServices={selectedServicesDetails} />
       <Text fontSize="lg" mt="2">
-        Subtotal: {formatPrice(subtotal)}
+        Subtotal: {`$${subtotal.toFixed(2)}`}
       </Text>
       <Box mt="4">
         <Button
