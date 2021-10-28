@@ -14,7 +14,7 @@ import { ServicesFormValues, CableService } from "../../../types";
 type Props = {
   services: CableService[] | undefined;
   register: UseFormRegister<ServicesFormValues>;
-  selectedServices: string[];
+  selectedServices: { required: string; optional: string[] };
 };
 
 const CableServices = (props: Props) => {
@@ -29,24 +29,11 @@ const CableServices = (props: Props) => {
     }
   });
 
-  let requiredServiceSelected = false;
-  if (props.selectedServices && props.selectedServices.length > 0) {
-    const foundIndex = requiredServicesArray.findIndex((service) =>
-      props.selectedServices.includes(service.NroServicio.toString())
-    );
-    if (foundIndex != -1) {
-      requiredServiceSelected = true;
-    }
-  }
-
   const requiredServices = requiredServicesArray.map((service) => (
     <Radio
       key={service.NroServicio}
       value={service.NroServicio.toString()}
-      defaultChecked={props.selectedServices?.includes(
-        service.NroServicio.toString()
-      )}
-      {...props.register("cable")}
+      {...props.register("cable.required")}
     >
       {service.Nombre} {`($${service.Precio})`}
     </Radio>
@@ -56,7 +43,7 @@ const CableServices = (props: Props) => {
     <Checkbox
       key={service.NroServicio}
       value={service.NroServicio.toString()}
-      {...props.register("cable")}
+      {...props.register("cable.optional")}
     >
       {service.Nombre} {`($${service.Precio})`}
     </Checkbox>
@@ -67,13 +54,16 @@ const CableServices = (props: Props) => {
       <Heading variant="h3" size="lg" mb="2">
         Cable
       </Heading>
-      <RadioGroup>
+      <RadioGroup value={props.selectedServices.required}>
         <Stack spacing={1}>{requiredServices}</Stack>
       </RadioGroup>
       <Heading variant="h4" size="md" my="2" fontWeight="normal">
         Packs (opcionales)
       </Heading>
-      <CheckboxGroup isDisabled={!requiredServiceSelected}>
+      <CheckboxGroup
+        value={props.selectedServices.optional}
+        isDisabled={!props.selectedServices.required}
+      >
         <Stack spacing={1}>{optionalServices}</Stack>
       </CheckboxGroup>
     </Box>

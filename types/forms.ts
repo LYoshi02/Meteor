@@ -4,12 +4,16 @@ export type UserFormValues = {
   dni: number;
   birthDate: Date;
   address: string;
+  phone: string;
   email: string;
 };
 
 export type ServicesFormValues = {
   internet: string;
-  cable: string[];
+  cable: {
+    required: string;
+    optional: string[];
+  };
 };
 
 export type HireFormValues = {

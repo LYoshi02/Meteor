@@ -16,7 +16,6 @@ const InternetServices = (props: Props) => {
     <Radio
       key={service.NroServicio}
       value={service.NroServicio.toString()}
-      isFullWidth
       {...props.register("internet")}
     >
       {service.Nombre} {`($${service.Precio})`}

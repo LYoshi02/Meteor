@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { query } from "../../lib/db";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  // TODO: modify the name of the attributes
   if (req.method === "POST") {
     const { nombre, precio, tipoServicio } = req.body;
     let sqlQuery = "";
@@ -33,17 +34,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       `SELECT * FROM "Internet" AS Int
        JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio";`
     );
-    const tvServices = await query(
+    const cableServices = await query(
       `SELECT * FROM "Cable" AS Cab
        JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio";`
     );
+    const deals = await query(`
+      SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", array_agg(Ser."NroServicio") AS "Servicios"
+      FROM "Promociones" AS Pro
+      JOIN "ServiciosEnPromocion" AS Ser 
+        ON Pro."NroPromocion" = Ser."NroPromocion"
+      GROUP BY Pro."NroPromocion";
+    `);
 
-    console.log(internetServices.rows, tvServices.rows);
     return res.status(200).json({
       services: {
         internet: internetServices.rows,
-        cable: tvServices.rows,
+        cable: cableServices.rows,
       },
+      deals: deals.rows,
     });
   }
 };

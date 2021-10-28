@@ -16,3 +16,10 @@ export type CableService = {
   Opcional: boolean;
   CantTvs: number;
 };
+
+export type Deal = {
+  NroPromocion: number;
+  PorcentajeDto: number;
+  Duracion: number;
+  Servicios: number[];
+};

@@ -4,4 +4,4 @@ export type {
   HireFormValues,
   ServicesFormValues,
 } from "./forms";
-export type { Services, InternetService, CableService } from "./hire";
+export type { Services, InternetService, CableService, Deal } from "./hire";

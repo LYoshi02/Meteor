@@ -14,6 +14,14 @@ type Props = {
   savedValues: ServicesFormValues | undefined;
 };
 
+const defaultFormValues: ServicesFormValues = {
+  cable: {
+    optional: [],
+    required: "",
+  },
+  internet: "",
+};
+
 const ServicesForm = (props: Props) => {
   const {
     register,
@@ -22,14 +30,16 @@ const ServicesForm = (props: Props) => {
     watch,
     setError,
     clearErrors,
-  } = useForm<ServicesFormValues>({ defaultValues: props.savedValues });
+  } = useForm<ServicesFormValues>({
+    defaultValues: props.savedValues || defaultFormValues,
+  });
 
   const internetServiceSelected = watch("internet");
   const cableServicesSelected = watch("cable");
 
   const validateForm = () => {
     let isValid = true;
-    if (!internetServiceSelected && !cableServicesSelected) {
+    if (!internetServiceSelected && !cableServicesSelected.required) {
       isValid = false;
       setError("cable", {
         message: "Seleccione el servicio a contratar",
@@ -55,19 +65,18 @@ const ServicesForm = (props: Props) => {
   let errorMessage;
   if (errors.cable) {
     errorMessage = (
-      <Alert
-        status="error"
-        title={(errors.cable as any)?.message}
-        onClose={closeErrorMessage}
-      />
+      <Box mb="2">
+        <Alert
+          status="error"
+          title={(errors.cable as any)?.message}
+          onClose={closeErrorMessage}
+        />
+      </Box>
     );
   }
 
   return (
     <Box>
-      <Text fontSize="lg" fontWeight="bold" mb="2">
-        2) Seleccione sus servicios:
-      </Text>
       {errorMessage}
       <form onSubmit={handleSubmit(submitHandler)}>
         <Stack spacing={4}>

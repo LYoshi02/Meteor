@@ -27,9 +27,6 @@ const UserForm = (props: Props) => {
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
       <Stack spacing={4}>
-        <Text fontSize="lg" fontWeight="bold">
-          1) Complete sus datos:
-        </Text>
         <SimpleGrid columns={{ md: 2 }} spacingX="10" spacingY="4">
           <Input
             id="firstname"
@@ -84,6 +81,16 @@ const UserForm = (props: Props) => {
             required: "Este campo es obligatorio",
           })}
           errorMsg={errors.address?.message}
+        />
+
+        <Input
+          id="phone"
+          label="Teléfono"
+          type="tel"
+          hookForm={register("phone", {
+            required: "Este campo es obligatorio",
+          })}
+          errorMsg={errors.phone?.message}
         />
 
         <Input

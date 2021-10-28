@@ -3,23 +3,25 @@ import { Box } from "@chakra-ui/react";
 
 import UserForm from "./user-form";
 import {
-  HireFormValues,
+  Deal,
   Services,
   ServicesFormValues,
   UserFormValues,
 } from "../../types";
 import ServicesForm from "./services-form";
 import HireSummary from "./hire-summary";
+import StepsHeader from "./steps-header";
 
 type Props = {
   services: Services | undefined;
+  deals: Deal[] | undefined;
 };
 
 const HireForm = (props: Props) => {
   const [userFormValues, setUserFormValues] = useState<UserFormValues>();
   const [servicesFormValues, setServicesFormValues] =
     useState<ServicesFormValues>();
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const setUserFormValuesHandler = (values: UserFormValues) => {
     setUserFormValues(values);
@@ -60,13 +62,19 @@ const HireForm = (props: Props) => {
     currentForm = (
       <HireSummary
         services={props.services}
+        deals={props.deals}
         selectedServices={servicesFormValues}
         onSetPrevStep={prevStepHandler}
       />
     );
   }
 
-  return <Box>{currentForm}</Box>;
+  return (
+    <Box>
+      <StepsHeader currentStep={currentStep} />
+      {currentForm}
+    </Box>
+  );
 };
 
 export default HireForm;
