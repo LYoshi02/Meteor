@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
-import { Box, Button, Divider, Stack, Text } from "@chakra-ui/react";
+import { Box, Divider, Stack } from "@chakra-ui/react";
 
 import InternetServices from "./services/internet-services";
 import { ServicesFormValues, Services } from "../../types";
 import CableServices from "./services/cable-services";
 import Alert from "../ui/alert";
+import ActionButtons from "../ui/action-buttons";
 
 type Props = {
   onSetPrevStep: () => void;
@@ -54,6 +55,7 @@ const ServicesForm = (props: Props) => {
     const isValid = validateForm();
     if (!isValid) return;
 
+    console.log(values);
     props.onSetFormValues(values);
     props.onSetNextStep();
   };
@@ -91,25 +93,10 @@ const ServicesForm = (props: Props) => {
             register={register}
             selectedServices={cableServicesSelected}
           />
-          <Box mt="4">
-            <Button
-              type="button"
-              variant="outline"
-              colorScheme="teal"
-              width={{ sm: "full", md: "auto" }}
-              mr="2"
-              onClick={props.onSetPrevStep}
-            >
-              Anterior
-            </Button>
-            <Button
-              type="submit"
-              colorScheme="teal"
-              width={{ sm: "full", md: "auto" }}
-            >
-              Siguiente
-            </Button>
-          </Box>
+          <ActionButtons
+            primaryBtn={{ text: "Siguiente", type: "submit" }}
+            secondaryBtn={{ text: "Anterior", action: props.onSetPrevStep }}
+          />
         </Stack>
       </form>
     </Box>

@@ -16,7 +16,7 @@ const fetcher = async (url: string) => {
 };
 
 export default function HirePage() {
-  const { data, error } = useSWR<FetchedData>("/api/service", fetcher);
+  const { data, error } = useSWR<FetchedData>("/api/hire", fetcher);
 
   return (
     <Center height="full">

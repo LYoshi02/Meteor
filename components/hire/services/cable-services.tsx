@@ -39,11 +39,11 @@ const CableServices = (props: Props) => {
     </Radio>
   ));
 
-  const optionalServices = optionalServicesArray.map((service) => (
+  const optionalServices = optionalServicesArray.map((service, index) => (
     <Checkbox
       key={service.NroServicio}
       value={service.NroServicio.toString()}
-      {...props.register("cable.optional")}
+      {...props.register(`cable.optional.${index}`)}
     >
       {service.Nombre} {`($${service.Precio})`}
     </Checkbox>

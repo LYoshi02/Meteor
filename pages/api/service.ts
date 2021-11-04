@@ -29,31 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  if (req.method === "GET") {
-    const internetServices = await query(
-      `SELECT * FROM "Internet" AS Int
-       JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio";`
-    );
-    const cableServices = await query(
-      `SELECT * FROM "Cable" AS Cab
-       JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio";`
-    );
-    const deals = await query(`
-      SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", array_agg(Ser."NroServicio") AS "Servicios"
-      FROM "Promociones" AS Pro
-      JOIN "ServiciosEnPromocion" AS Ser 
-        ON Pro."NroPromocion" = Ser."NroPromocion"
-      GROUP BY Pro."NroPromocion";
-    `);
-
-    return res.status(200).json({
-      services: {
-        internet: internetServices.rows,
-        cable: cableServices.rows,
-      },
-      deals: deals.rows,
-    });
-  }
+  // if (req.method === "GET") {}
 };
 
 export default handler;

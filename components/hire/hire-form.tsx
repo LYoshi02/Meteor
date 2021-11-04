@@ -39,6 +39,41 @@ const HireForm = (props: Props) => {
     setCurrentStep((prevValue) => prevValue + 1);
   };
 
+  const hireServiceHandler = async () => {
+    let selectedServices: number[] = [];
+
+    if (servicesFormValues?.cable.required) {
+      const selectedOptionalServices = servicesFormValues.cable.optional.filter(
+        (s) => s
+      );
+      const optionalServicesNums = selectedOptionalServices.map((s) => +s);
+      selectedServices.push(+servicesFormValues.cable.required);
+      selectedServices.push(...optionalServicesNums);
+    }
+
+    if (servicesFormValues?.internet) {
+      selectedServices.push(+servicesFormValues?.internet);
+    }
+
+    const hiringData = {
+      user: userFormValues,
+      services: selectedServices,
+    };
+
+    try {
+      const result = await fetch("/api/hire", {
+        method: "POST",
+        body: JSON.stringify(hiringData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(await result.json());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   let currentForm;
   if (currentStep === 1) {
     currentForm = (
@@ -65,6 +100,7 @@ const HireForm = (props: Props) => {
         deals={props.deals}
         selectedServices={servicesFormValues}
         onSetPrevStep={prevStepHandler}
+        onHireService={hireServiceHandler}
       />
     );
   }

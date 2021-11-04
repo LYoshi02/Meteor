@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from "@chakra-ui/layout";
+import { Box, Text } from "@chakra-ui/layout";
 
 import ServicesTable from "./summary/services-table";
 import {
@@ -8,13 +8,14 @@ import {
   Services,
   ServicesFormValues,
 } from "../../types";
-import { Button } from "@chakra-ui/button";
+import ActionButtons from "../ui/action-buttons";
 
 type Props = {
   services: Services | undefined;
   selectedServices: ServicesFormValues | undefined;
   onSetPrevStep: () => void;
   deals: Deal[] | undefined;
+  onHireService: () => void;
 };
 
 type ServicesArr = (CableService | InternetService)[];
@@ -42,7 +43,6 @@ const getDeal = (deals: Deal[], selectedServices: string[]) => {
       (service, index) => service.toString() === sortedServices[index]
     );
   });
-  console.log(result);
 
   return result;
 };
@@ -91,25 +91,10 @@ const HireSummary = (props: Props) => {
       <Text fontSize="lg" mt="2" fontWeight="bold">
         Total: {`$${total.toFixed(2)}`}
       </Text>
-      <Box mt="4">
-        <Button
-          type="button"
-          variant="outline"
-          colorScheme="teal"
-          width={{ sm: "full", md: "auto" }}
-          mr="2"
-          onClick={props.onSetPrevStep}
-        >
-          Anterior
-        </Button>
-        <Button
-          type="button"
-          colorScheme="teal"
-          width={{ sm: "full", md: "auto" }}
-        >
-          Finalizar
-        </Button>
-      </Box>
+      <ActionButtons
+        primaryBtn={{ text: "Finalizar", action: props.onHireService }}
+        secondaryBtn={{ text: "Anterior", action: props.onSetPrevStep }}
+      />
     </Box>
   );
 };

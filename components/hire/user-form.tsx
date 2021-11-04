@@ -1,8 +1,9 @@
-import { Button, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Button, SimpleGrid, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import Input from "../ui/input";
 import { UserFormValues } from "../../types";
+import ActionButtons from "../ui/action-buttons";
 
 type Props = {
   onSetNextStep: () => void;
@@ -108,14 +109,7 @@ const UserForm = (props: Props) => {
           errorMsg={errors.email?.message}
         />
       </Stack>
-      <Button
-        type="submit"
-        colorScheme="teal"
-        width={{ sm: "full", md: "auto" }}
-        mt="4"
-      >
-        Siguiente
-      </Button>
+      <ActionButtons primaryBtn={{ text: "Siguiente", type: "submit" }} />
     </form>
   );
 };
