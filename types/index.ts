@@ -1,4 +1,3 @@
-export type { User } from "./user";
 export type {
   UserFormValues,
   HireFormValues,

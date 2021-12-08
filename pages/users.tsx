@@ -1,7 +1,6 @@
 import { Heading, Box } from "@chakra-ui/react";
 
 import UsersList from "../components/users/users-list";
-import { User } from "../types/index";
 
 export default function UsersPage() {
   // TODO: Implement user fetching later

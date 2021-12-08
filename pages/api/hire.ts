@@ -1,115 +1,66 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { query } from "../../lib/db";
+import {
+  getAllInternetServices,
+  getAllPromotions,
+  getOptionalOrRequiredCableServices,
+  getPromotionBySelectedServices,
+  insertHiredServices,
+  insertNewContract,
+  insertNewUser,
+  insertUserEmail,
+  insertUserPhone,
+} from "../../db/index";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const internetServices = await query(
-      `SELECT * FROM "Internet" AS Int
-        JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio"`
+    const internetServices = await getAllInternetServices();
+    const requiredCableServices = await getOptionalOrRequiredCableServices(
+      false
     );
-    const requiredCableServices = await query(
-      `SELECT Cab."NroServicio", Cab."CantTvs", Ser."Nombre", Ser."Precio" FROM "Cable" AS Cab
-      JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
-      WHERE Cab."Opcional" = FALSE`
+    const optionalCableServices = await getOptionalOrRequiredCableServices(
+      true
     );
-    const optionalCableServices = await query(
-      `SELECT Cab."NroServicio", Cab."CantTvs", Ser."Nombre", Ser."Precio" FROM "Cable" AS Cab
-      JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
-      WHERE Cab."Opcional" = TRUE`
-    );
-    const promotions = await query(`
-        SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", 
-            array_agg(Ser."NroServicio") AS "Servicios"
-        FROM "Promociones" AS Pro
-        JOIN "ServiciosEnPromocion" AS Ser 
-            ON Pro."NroPromocion" = Ser."NroPromocion"
-        GROUP BY Pro."NroPromocion"
-    `);
+    const promotions = await getAllPromotions();
 
     return res.status(200).json({
       services: {
-        internet: internetServices.rows,
+        internet: internetServices,
         cable: {
-          required: requiredCableServices.rows,
-          optional: optionalCableServices.rows,
+          required: requiredCableServices,
+          optional: optionalCableServices,
         },
       },
-      promotions: promotions.rows,
+      promotions: promotions,
     });
   }
 
   if (req.method === "POST") {
     const { user, services } = req.body;
+    const { dni, firstName, lastName, address, birthDate, email, phone } = user;
 
     // 1) Agregar al cliente a la BD
-    await query(
-      `
-        INSERT INTO "Clientes" ("Dni", "Nombre", "Apellido", "FechaNacimiento", "Direccion")
-        VALUES ($1, $2, $3, $4, $5)
-    `,
-      [user.dni, user.firstName, user.lastName, user.birthDate, user.address]
-    );
+    await insertNewUser({ dni, firstName, lastName, address, birthDate });
 
     // 2) Agregar telefono y correo del cliente
-    await query(
-      `
-        INSERT INTO "CorreosCliente" ("DniCliente", "CorreoElectronico")
-        VALUES ($1, $2)
-    `,
-      [user.dni, user.email]
-    );
-
-    await query(
-      `
-          INSERT INTO "TelefonosCliente" ("DniCliente", "Telefono")
-          VALUES ($1, $2)
-      `,
-      [user.dni, user.phone]
-    );
+    await insertUserEmail(dni, email);
+    await insertUserPhone(dni, phone);
 
     // 3) Buscar promocion y crear contrato
-    const promotion = await query(
-      `
-        SELECT "NroPromocion" FROM (
-            SELECT Pro."NroPromocion", array_agg(Ser."NroServicio") AS "Servicios"
-                FROM "Promociones" Pro
-            JOIN "ServiciosEnPromocion" Ser 
-                ON Ser."NroPromocion" = Pro."NroPromocion"
-            GROUP BY Pro."NroPromocion"
-        ) AS Res
-        WHERE array_length(Res."Servicios", 1) = array_length($1::Integer[], 1) AND
-          Res."Servicios" @> $1::Integer[]
-    `,
-      [services]
-    );
+    const promotion = await getPromotionBySelectedServices(services);
 
     let promotionNumber = null;
-    if (promotion.rows.length > 0) {
-      promotionNumber = promotion.rows[0].NroPromocion;
+    if (promotion.length > 0) {
+      promotionNumber = promotion[0].NroPromocion;
     }
 
-    const result = await query(
-      `
-      INSERT INTO "Contratos" ("DniCliente", "NroPromocion")
-      VALUES ($1, $2)
-      RETURNING *
-    `,
-      [user.dni, promotionNumber]
-    );
+    const result = await insertNewContract(dni, promotionNumber);
 
     // TODO: if result.rows.length === 0 -> Throw error
 
     // 4) Agregar servicios contratados
     const contractNumber = result.rows[0].NroContrato;
-    await query(
-      `
-      INSERT INTO "ServiciosContratados" ("NroServicio", "NroContrato", "Cantidad")
-      SELECT u.val, $1, 1
-      FROM unnest(cast($2 as integer[])) AS u(val)
-    `,
-      [contractNumber, services]
-    );
+    await insertHiredServices(contractNumber, services);
 
     return res.status(201).json({ message: "Servicio contratado!" });
   }

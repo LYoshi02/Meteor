@@ -17,6 +17,7 @@ export type CableService = {
   Nombre: string;
   Precio: string;
   CantTvs: number;
+  Opcional: boolean;
 };
 
 export type Promotion = {
