@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { Box, Divider, Stack } from "@chakra-ui/react";
 
+import ActionButtons from "../ui/action-buttons";
+import Alert from "../ui/alert";
+import CableServices from "./services/cable-services";
 import InternetServices from "./services/internet-services";
 import { ServicesFormValues, Services } from "../../types";
-import CableServices from "./services/cable-services";
-import Alert from "../ui/alert";
-import ActionButtons from "../ui/action-buttons";
 
 type Props = {
   onSetPrevStep: () => void;

@@ -1,6 +1,9 @@
 export type Services = {
   internet: InternetService[];
-  cable: CableService[];
+  cable: {
+    required: CableService[];
+    optional: CableService[];
+  };
 };
 
 export type InternetService = {
@@ -13,11 +16,10 @@ export type CableService = {
   NroServicio: number;
   Nombre: string;
   Precio: string;
-  Opcional: boolean;
   CantTvs: number;
 };
 
-export type Deal = {
+export type Promotion = {
   NroPromocion: number;
   PorcentajeDto: number;
   Duracion: number;

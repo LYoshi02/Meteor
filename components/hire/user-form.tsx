@@ -1,4 +1,4 @@
-import { Button, SimpleGrid, Stack } from "@chakra-ui/react";
+import { SimpleGrid, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import Input from "../ui/input";
@@ -10,6 +10,9 @@ type Props = {
   onSetFormValues: (values: UserFormValues) => void;
   savedValues: UserFormValues | undefined;
 };
+
+const emailRegex =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const UserForm = (props: Props) => {
   const {
@@ -55,11 +58,11 @@ const UserForm = (props: Props) => {
           type="number"
           hookForm={register("dni", {
             required: "Este campo es obligatorio",
-            valueAsNumber: true,
             validate: {
               isPositiveNumber: (dni) =>
-                dni > 0 || "El DNI ingresado no es válido",
+                +dni > 0 || "El DNI ingresado no es válido",
             },
+            maxLength: { value: 8, message: "El DNI ingresado no es válido" },
           })}
           errorMsg={errors.dni?.message}
         />
@@ -101,8 +104,7 @@ const UserForm = (props: Props) => {
           hookForm={register("email", {
             required: "Este campo es obligatorio",
             pattern: {
-              value:
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              value: emailRegex,
               message: "Ingrese un correo electrónico válido",
             },
           })}

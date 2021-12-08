@@ -3,7 +3,7 @@ import { Box } from "@chakra-ui/react";
 
 import UserForm from "./user-form";
 import {
-  Deal,
+  Promotion,
   Services,
   ServicesFormValues,
   UserFormValues,
@@ -14,7 +14,7 @@ import StepsHeader from "./steps-header";
 
 type Props = {
   services: Services | undefined;
-  deals: Deal[] | undefined;
+  promotions: Promotion[] | undefined;
 };
 
 const HireForm = (props: Props) => {
@@ -97,7 +97,7 @@ const HireForm = (props: Props) => {
     currentForm = (
       <HireSummary
         services={props.services}
-        deals={props.deals}
+        promotions={props.promotions}
         selectedServices={servicesFormValues}
         onSetPrevStep={prevStepHandler}
         onHireService={hireServiceHandler}

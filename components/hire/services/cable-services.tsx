@@ -12,24 +12,13 @@ import {
 import { ServicesFormValues, CableService } from "../../../types";
 
 type Props = {
-  services: CableService[] | undefined;
+  services: { required: CableService[]; optional: CableService[] } | undefined;
   register: UseFormRegister<ServicesFormValues>;
   selectedServices: { required: string; optional: string[] };
 };
 
 const CableServices = (props: Props) => {
-  const requiredServicesArray: CableService[] = [],
-    optionalServicesArray: CableService[] = [];
-
-  props.services?.forEach((service) => {
-    if (service.Opcional) {
-      optionalServicesArray.push(service);
-    } else {
-      requiredServicesArray.push(service);
-    }
-  });
-
-  const requiredServices = requiredServicesArray.map((service) => (
+  const requiredServices = props.services?.required.map((service) => (
     <Radio
       key={service.NroServicio}
       value={service.NroServicio.toString()}
@@ -39,7 +28,7 @@ const CableServices = (props: Props) => {
     </Radio>
   ));
 
-  const optionalServices = optionalServicesArray.map((service, index) => (
+  const optionalServices = props.services?.optional.map((service, index) => (
     <Checkbox
       key={service.NroServicio}
       value={service.NroServicio.toString()}
@@ -57,7 +46,7 @@ const CableServices = (props: Props) => {
       <RadioGroup value={props.selectedServices.required}>
         <Stack spacing={1}>{requiredServices}</Stack>
       </RadioGroup>
-      <Heading variant="h4" size="md" my="2" fontWeight="normal">
+      <Heading variant="p" size="md" my="2" fontWeight="normal">
         Packs (opcionales)
       </Heading>
       <CheckboxGroup

@@ -8,11 +8,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       `SELECT * FROM "Internet" AS Int
         JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio"`
     );
-    const cableServices = await query(
-      `SELECT * FROM "Cable" AS Cab
-        JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"`
+    const requiredCableServices = await query(
+      `SELECT Cab."NroServicio", Cab."CantTvs", Ser."Nombre", Ser."Precio" FROM "Cable" AS Cab
+      JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
+      WHERE Cab."Opcional" = FALSE`
     );
-    const deals = await query(`
+    const optionalCableServices = await query(
+      `SELECT Cab."NroServicio", Cab."CantTvs", Ser."Nombre", Ser."Precio" FROM "Cable" AS Cab
+      JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
+      WHERE Cab."Opcional" = TRUE`
+    );
+    const promotions = await query(`
         SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", 
             array_agg(Ser."NroServicio") AS "Servicios"
         FROM "Promociones" AS Pro
@@ -24,9 +30,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json({
       services: {
         internet: internetServices.rows,
-        cable: cableServices.rows,
+        cable: {
+          required: requiredCableServices.rows,
+          optional: optionalCableServices.rows,
+        },
       },
-      deals: deals.rows,
+      promotions: promotions.rows,
     });
   }
 

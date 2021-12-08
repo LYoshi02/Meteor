@@ -3,7 +3,7 @@ import { Box, Text } from "@chakra-ui/layout";
 import ServicesTable from "./summary/services-table";
 import {
   CableService,
-  Deal,
+  Promotion,
   InternetService,
   Services,
   ServicesFormValues,
@@ -13,12 +13,31 @@ import ActionButtons from "../ui/action-buttons";
 type Props = {
   services: Services | undefined;
   selectedServices: ServicesFormValues | undefined;
+  promotions: Promotion[] | undefined;
   onSetPrevStep: () => void;
-  deals: Deal[] | undefined;
   onHireService: () => void;
 };
 
 type ServicesArr = (CableService | InternetService)[];
+
+const getSelectedServicesDetails = (
+  selectedServices: string[],
+  allServices: Services
+) => {
+  const allServicesArr = joinServices(allServices);
+
+  return allServicesArr.filter((service) =>
+    selectedServices.includes(service.NroServicio.toString())
+  );
+};
+
+const joinServices: (s: Services) => ServicesArr = (services) => {
+  return [
+    ...services.internet,
+    ...services.cable.required,
+    ...services.cable.optional,
+  ];
+};
 
 const joinSelectedServices = (selectedServices: ServicesFormValues) => {
   const filteredOptionalCableServices = selectedServices.cable.optional.filter(
@@ -33,17 +52,18 @@ const joinSelectedServices = (selectedServices: ServicesFormValues) => {
   return services;
 };
 
-const joinServices: (s: Services) => ServicesArr = (services) => {
-  return [...services.internet, ...services.cable];
-};
+const getPromotion = (
+  promotions: Promotion[] | undefined,
+  selectedServices: string[]
+) => {
+  if (!promotions) return;
 
-const getDeal = (deals: Deal[], selectedServices: string[]) => {
   const sortedServices = selectedServices.sort();
-  const result = deals.find((deal) => {
-    const sortedDealServices = deal.Servicios.sort();
+  const result = promotions.find((promotion) => {
+    const sortedPromotionServices = promotion.Servicios.sort();
 
-    if (sortedDealServices.length !== sortedServices.length) return false;
-    return sortedDealServices.every(
+    if (sortedPromotionServices.length !== sortedServices.length) return false;
+    return sortedPromotionServices.every(
       (service, index) => service.toString() === sortedServices[index]
     );
   });
@@ -51,37 +71,34 @@ const getDeal = (deals: Deal[], selectedServices: string[]) => {
   return result;
 };
 
-const HireSummary = (props: Props) => {
-  let allServices: ServicesArr = [];
-  let selectedServicesDetails: ServicesArr = [];
-  let selectedServices: string[] = [];
-
-  if (props.selectedServices) {
-    selectedServices = joinSelectedServices(props.selectedServices);
-  }
-
-  if (props.services) {
-    allServices = joinServices(props.services);
-  }
-
-  selectedServicesDetails = allServices.filter((service) =>
-    selectedServices.includes(service.NroServicio.toString())
-  );
-
-  const subtotal = selectedServicesDetails.reduce(
+const getSubtotal = (selectedServicesDetails: ServicesArr) => {
+  return selectedServicesDetails.reduce(
     (prevValue, currentValue) => prevValue + +currentValue.Precio,
     0
   );
+};
 
-  let discount = 0;
-  if (props.deals) {
-    const deal = getDeal(props.deals, selectedServices);
-    if (deal) {
-      discount = subtotal * (deal.PorcentajeDto / 100);
-    }
+const HireSummary = (props: Props) => {
+  let selectedServicesArr: string[] = [];
+  let selectedServicesDetails: ServicesArr = [];
+
+  if (props.selectedServices && props.services) {
+    selectedServicesArr = joinSelectedServices(props.selectedServices);
+    selectedServicesDetails = getSelectedServicesDetails(
+      selectedServicesArr,
+      props.services
+    );
   }
 
-  const total = subtotal - discount;
+  const subtotal = getSubtotal(selectedServicesDetails);
+
+  let promotionDiscount = 0;
+  const promotion = getPromotion(props.promotions, selectedServicesArr);
+  if (promotion) {
+    promotionDiscount = subtotal * (promotion.PorcentajeDto / 100);
+  }
+
+  const total = subtotal - promotionDiscount;
 
   return (
     <Box>
@@ -90,7 +107,7 @@ const HireSummary = (props: Props) => {
         Subtotal: {`$${subtotal.toFixed(2)}`}
       </Text>
       <Text fontSize="lg" mt="2">
-        Descuento: {`$${discount.toFixed(2)}`}
+        Descuento: {`$${promotionDiscount.toFixed(2)}`}
       </Text>
       <Text fontSize="lg" mt="2" fontWeight="bold">
         Total: {`$${total.toFixed(2)}`}

@@ -2,11 +2,11 @@ import { Box, Center, Container } from "@chakra-ui/react";
 import useSWR from "swr";
 
 import HireForm from "../components/hire/hire-form";
-import { Services, Deal } from "../types";
+import { Services, Promotion } from "../types";
 
 type FetchedData = {
   services: Services;
-  deals: Deal[];
+  promotions: Promotion[];
 };
 
 const fetcher = async (url: string) => {
@@ -22,7 +22,7 @@ export default function HirePage() {
     <Container py="4" flex="1">
       <Center height="full">
         <Box width="full">
-          <HireForm services={data?.services} deals={data?.deals} />
+          <HireForm services={data?.services} promotions={data?.promotions} />
         </Box>
       </Center>
     </Container>

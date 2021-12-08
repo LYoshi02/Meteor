@@ -1,8 +1,8 @@
 export type UserFormValues = {
   firstName: string;
   lastName: string;
-  dni: number;
-  birthDate: Date;
+  dni: string;
+  birthDate: string;
   address: string;
   phone: string;
   email: string;
