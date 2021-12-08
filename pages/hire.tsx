@@ -1,4 +1,4 @@
-import { Box, Center } from "@chakra-ui/react";
+import { Box, Center, Container } from "@chakra-ui/react";
 import useSWR from "swr";
 
 import HireForm from "../components/hire/hire-form";
@@ -19,10 +19,12 @@ export default function HirePage() {
   const { data, error } = useSWR<FetchedData>("/api/hire", fetcher);
 
   return (
-    <Center height="full">
-      <Box width="full">
-        <HireForm services={data?.services} deals={data?.deals} />
-      </Box>
-    </Center>
+    <Container py="4" flex="1">
+      <Center height="full">
+        <Box width="full">
+          <HireForm services={data?.services} deals={data?.deals} />
+        </Box>
+      </Center>
+    </Container>
   );
 }

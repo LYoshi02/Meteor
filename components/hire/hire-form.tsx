@@ -44,7 +44,7 @@ const HireForm = (props: Props) => {
 
     if (servicesFormValues?.cable.required) {
       const selectedOptionalServices = servicesFormValues.cable.optional.filter(
-        (s) => s
+        (s) => s && s
       );
       const optionalServicesNums = selectedOptionalServices.map((s) => +s);
       selectedServices.push(+servicesFormValues.cable.required);

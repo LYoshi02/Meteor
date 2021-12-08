@@ -11,9 +11,7 @@ const Layout = (props: Props) => {
   return (
     <Flex direction="column" height="full">
       <Navigation />
-      <Container p="4" flex="1">
-        {props.children}
-      </Container>
+      <main>{props.children}</main>
     </Flex>
   );
 };

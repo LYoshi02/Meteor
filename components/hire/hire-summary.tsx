@@ -21,11 +21,15 @@ type Props = {
 type ServicesArr = (CableService | InternetService)[];
 
 const joinSelectedServices = (selectedServices: ServicesFormValues) => {
+  const filteredOptionalCableServices = selectedServices.cable.optional.filter(
+    (s) => s
+  );
   const services = [
     selectedServices.internet,
     selectedServices.cable.required,
-    ...selectedServices.cable.optional,
+    ...filteredOptionalCableServices,
   ];
+
   return services;
 };
 

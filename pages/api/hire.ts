@@ -63,13 +63,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const promotion = await query(
       `
         SELECT "NroPromocion" FROM (
-            SELECT Pro."NroPromocion", array_agg(SER."NroServicio") AS "Servicios"
+            SELECT Pro."NroPromocion", array_agg(Ser."NroServicio") AS "Servicios"
                 FROM "Promociones" Pro
             JOIN "ServiciosEnPromocion" Ser 
                 ON Ser."NroPromocion" = Pro."NroPromocion"
             GROUP BY Pro."NroPromocion"
         ) AS Res
-        WHERE Res."Servicios" = $1
+        WHERE array_length(Res."Servicios", 1) = array_length($1::Integer[], 1) AND
+          Res."Servicios" @> $1::Integer[]
     `,
       [services]
     );
