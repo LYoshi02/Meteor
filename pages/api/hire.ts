@@ -11,6 +11,7 @@ import {
   insertUserEmail,
   insertUserPhone,
 } from "../../db/index";
+import sgMail from "../../utils/sendEmail";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
@@ -61,6 +62,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // 4) Agregar servicios contratados
     const contractNumber = result.rows[0].NroContrato;
     await insertHiredServices(contractNumber, services);
+
+    const msg = {
+      to: email,
+      from: process.env.SENDGRID_SENDER_EMAIL!,
+      subject: "Sending with SendGrid is Fun",
+      text: "and easy to do anywhere, even with Node.js",
+      html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+    };
+    await sgMail.send(msg);
 
     return res.status(201).json({ message: "Servicio contratado!" });
   }
