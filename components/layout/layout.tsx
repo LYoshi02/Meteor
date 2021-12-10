@@ -11,7 +11,7 @@ const Layout = (props: Props) => {
   return (
     <Flex direction="column" height="full">
       <Navigation />
-      <main>{props.children}</main>
+      {props.children}
     </Flex>
   );
 };

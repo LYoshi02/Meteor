@@ -4,6 +4,7 @@ import { Box, Flex, Heading, Link } from "@chakra-ui/react";
 const navigationItems = [
   { path: "/", name: "Inicio" },
   { path: "/hire", name: "Contratar Servicios" },
+  { path: "/user", name: "Iniciar Sesión" },
 ];
 
 const Navigation = () => {
