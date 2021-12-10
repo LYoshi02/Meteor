@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import generator from "generate-password";
 
 import {
   getAllInternetServices,
@@ -8,8 +9,6 @@ import {
   insertHiredServices,
   insertNewContract,
   insertNewUser,
-  insertUserEmail,
-  insertUserPhone,
 } from "../../db/index";
 import sgMail from "../../utils/sendEmail";
 
@@ -38,16 +37,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     const { user, services } = req.body;
-    const { dni, firstName, lastName, address, birthDate, email, phone } = user;
 
     // 1) Agregar al cliente a la BD
-    await insertNewUser({ dni, firstName, lastName, address, birthDate });
+    const userPassword = generator.generate({ length: 10, numbers: true });
+    await insertNewUser(user, userPassword);
 
-    // 2) Agregar telefono y correo del cliente
-    await insertUserEmail(dni, email);
-    await insertUserPhone(dni, phone);
-
-    // 3) Buscar promocion y crear contrato
+    // 2) Buscar promocion y crear contrato
     const promotion = await getPromotionBySelectedServices(services);
 
     let promotionNumber = null;
@@ -55,20 +50,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       promotionNumber = promotion[0].NroPromocion;
     }
 
-    const result = await insertNewContract(dni, promotionNumber);
+    const result = await insertNewContract(user.dni, promotionNumber);
 
     // TODO: if result.rows.length === 0 -> Throw error
 
-    // 4) Agregar servicios contratados
+    // 3) Agregar servicios contratados
     const contractNumber = result.rows[0].NroContrato;
     await insertHiredServices(contractNumber, services);
 
     const msg = {
-      to: email,
+      to: user.email,
       from: process.env.SENDGRID_SENDER_EMAIL!,
-      subject: "Sending with SendGrid is Fun",
-      text: "and easy to do anywhere, even with Node.js",
-      html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+      subject: "Servicios Contratados!",
+      html: `<b>Tu contraseña es: </b>${userPassword}`,
     };
     await sgMail.send(msg);
 

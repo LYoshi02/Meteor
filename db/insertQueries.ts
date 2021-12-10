@@ -6,37 +6,27 @@ interface User {
   lastName: string;
   birthDate: string;
   address: string;
+  email: string;
+  phone: string;
 }
 
-export const insertNewUser = async (user: User) => {
+export const insertNewUser = async (user: User, password: string) => {
   const result = await query(
     `
-          INSERT INTO "Clientes" ("Dni", "Nombre", "Apellido", "FechaNacimiento", "Direccion")
-          VALUES ($1, $2, $3, $4, $5)
+          INSERT INTO "Clientes" ("Dni", "Nombre", "Apellido", "FechaNacimiento", "Direccion", 
+            "Telefono", "CorreoElectronico", "Contrasena")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, crypt($8, gen_salt('bf')))
       `,
-    [user.dni, user.firstName, user.lastName, user.birthDate, user.address]
-  );
-  return result;
-};
-
-export const insertUserEmail = async (dni: string, email: string) => {
-  const result = await query(
-    `
-          INSERT INTO "CorreosCliente" ("DniCliente", "CorreoElectronico")
-          VALUES ($1, $2)
-      `,
-    [dni, email]
-  );
-  return result;
-};
-
-export const insertUserPhone = async (dni: string, phone: string) => {
-  const result = await query(
-    `
-            INSERT INTO "TelefonosCliente" ("DniCliente", "Telefono")
-            VALUES ($1, $2)
-        `,
-    [dni, phone]
+    [
+      user.dni,
+      user.firstName,
+      user.lastName,
+      user.birthDate,
+      user.address,
+      user.phone,
+      user.email,
+      password,
+    ]
   );
   return result;
 };
