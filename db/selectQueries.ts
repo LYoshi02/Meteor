@@ -54,3 +54,19 @@ export const getPromotionBySelectedServices = async (
 
   return result.rows;
 };
+
+export const getUserByEmailAndPassword = async (
+  email: string,
+  submittedPassword: string
+) => {
+  const result = await query(
+    `
+      SELECT "Nombre", "Apellido" FROM "Clientes"
+      WHERE "CorreoElectronico" = $1 AND
+        "Contrasena" = crypt($2, "Contrasena")
+  `,
+    [email, submittedPassword]
+  );
+
+  return result.rows;
+};

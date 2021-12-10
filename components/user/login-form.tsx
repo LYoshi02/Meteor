@@ -2,6 +2,9 @@ import { Button, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import Input from "../ui/input";
+import fetchJson from "../../utils/fetchJson";
+import useUser from "../../hooks/useUser";
+import { User } from "../../types";
 
 type FormValues = {
   email: string;
@@ -14,12 +17,25 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
+  const { user, mutateUser } = useUser({
+    redirectTo: "/",
+    redirectIfFound: true,
+  });
 
-  const submitHandler = (values: FormValues) => {
-    console.log(values);
+  const submitHandler = async (values: FormValues) => {
+    try {
+      const userData = await fetchJson<User>("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: values }),
+      });
+      console.log("UserData", userData);
+      mutateUser(userData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  console.log(errors);
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
       <Stack spacing={4}>

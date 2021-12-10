@@ -4,11 +4,10 @@ export {
   getAllPromotions,
   getOptionalOrRequiredCableServices,
   getPromotionBySelectedServices,
+  getUserByEmailAndPassword,
 } from "./selectQueries";
 export {
   insertHiredServices,
   insertNewContract,
   insertNewUser,
-  insertUserEmail,
-  insertUserPhone,
 } from "./insertQueries";
