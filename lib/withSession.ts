@@ -1,4 +1,5 @@
 import type { IronSessionOptions } from "iron-session";
+import { UserData } from "../types";
 
 export const sessionOptions: IronSessionOptions = {
   password: process.env.SECRET_COOKIE_PASSWORD as string,
@@ -10,6 +11,6 @@ export const sessionOptions: IronSessionOptions = {
 
 declare module "iron-session" {
   interface IronSessionData {
-    user?: any; // TODO: define attributes
+    user?: UserData;
   }
 }

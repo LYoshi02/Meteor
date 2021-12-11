@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import Input from "../ui/input";
 import fetchJson from "../../utils/fetchJson";
 import useUser from "../../hooks/useUser";
-import { User } from "../../types";
+import { AuthUser } from "../../types";
 
 type FormValues = {
   email: string;
@@ -17,19 +17,18 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-  const { user, mutateUser } = useUser({
+  const { mutateUser } = useUser({
     redirectTo: "/",
     redirectIfFound: true,
   });
 
   const submitHandler = async (values: FormValues) => {
     try {
-      const userData = await fetchJson<User>("/api/auth/login", {
+      const userData = await fetchJson<AuthUser>("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user: values }),
       });
-      console.log("UserData", userData);
       mutateUser(userData);
     } catch (error) {
       console.log(error);

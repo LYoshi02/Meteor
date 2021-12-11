@@ -2,6 +2,7 @@ import useSWR from "swr";
 
 import HireForm from "../components/hire/hire-form";
 import FullScreenContainer from "../components/ui/full-screen-container";
+import useUser from "../hooks/useUser";
 import { Services, Promotion } from "../types";
 
 type FetchedData = {
@@ -9,14 +10,9 @@ type FetchedData = {
   promotions: Promotion[];
 };
 
-const fetcher = async (url: string) => {
-  const result = await fetch(url);
-  const services = await result.json();
-  return services;
-};
-
 export default function HirePage() {
-  const { data, error } = useSWR<FetchedData>("/api/hire", fetcher);
+  const { data, error } = useSWR<FetchedData>("/api/hire");
+  const {} = useUser({ redirectTo: "/", redirectIfFound: true });
 
   return (
     <FullScreenContainer>

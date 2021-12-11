@@ -9,4 +9,4 @@ export type {
   CableService,
   Promotion,
 } from "./hire";
-export type { User } from "./auth";
+export type { AuthUser, UserData } from "./auth";

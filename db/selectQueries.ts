@@ -61,7 +61,7 @@ export const getUserByEmailAndPassword = async (
 ) => {
   const result = await query(
     `
-      SELECT "Nombre", "Apellido" FROM "Clientes"
+      SELECT "Dni", "Nombre", "Apellido" FROM "Clientes"
       WHERE "CorreoElectronico" = $1 AND
         "Contrasena" = crypt($2, "Contrasena")
   `,

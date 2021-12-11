@@ -1,16 +1,17 @@
 import { useEffect } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import useSWR from "swr";
 
-import { User } from "../types";
+import { AuthUser } from "../types";
 
 type Props = {
-  redirectTo: string;
-  redirectIfFound: boolean;
+  redirectTo?: string;
+  redirectIfFound?: boolean;
 };
 
-const useUser = ({ redirectTo, redirectIfFound }: Props) => {
-  const { data: user, mutate: mutateUser } = useSWR<User>("api/auth/user");
+const useUser = ({ redirectTo = "", redirectIfFound = false }: Props) => {
+  const { data: user, mutate: mutateUser } = useSWR<AuthUser>("/api/auth/user");
+  const router = useRouter();
 
   useEffect(() => {
     if (!redirectTo || !user) return;
@@ -19,9 +20,9 @@ const useUser = ({ redirectTo, redirectIfFound }: Props) => {
       (redirectTo && !redirectIfFound && !user?.isLoggedIn) ||
       (redirectIfFound && user?.isLoggedIn)
     ) {
-      Router.push(redirectTo);
+      router.push(redirectTo);
     }
-  }, [redirectIfFound, redirectTo, user]);
+  }, [redirectIfFound, redirectTo, user, router]);
 
   return { user, mutateUser };
 };

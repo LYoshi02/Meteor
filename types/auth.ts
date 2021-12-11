@@ -1,4 +1,10 @@
-export type User = {
+export type AuthUser = {
   isLoggedIn: boolean;
-  user: any; // TODO: define attributes
+  data: UserData | null;
+};
+
+export type UserData = {
+  dni: string;
+  nombre: string;
+  apellido: string;
 };
