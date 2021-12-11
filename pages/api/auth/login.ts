@@ -3,6 +3,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 
 import { sessionOptions } from "../../../lib/withSession";
 import { getUserByEmailAndPassword } from "../../../db";
+import { UserData } from "../../../types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { user } = req.body;
@@ -17,10 +18,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(422).json({ message: "Email or password are wrong" });
     }
 
-    req.session.user = foundUser[0];
+    const authenticatedUser: UserData = {
+      dni: foundUser[0].Dni,
+      firstName: foundUser[0].Nombre,
+      lastName: foundUser[0].Apellido,
+    };
+    req.session.user = authenticatedUser;
     await req.session.save();
 
-    res.status(200).json({ isLoggedIn: true, user: foundUser[0] });
+    res.status(200).json({
+      isLoggedIn: true,
+      data: authenticatedUser,
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }

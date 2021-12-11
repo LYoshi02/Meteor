@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Container, Flex, Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 import Navigation from "../navigation/navigation";
 
@@ -7,7 +7,7 @@ type Props = {
   children?: ReactNode;
 };
 
-const Layout = (props: Props) => {
+const MainLayout = (props: Props) => {
   return (
     <Flex direction="column" height="full">
       <Navigation />
@@ -16,4 +16,4 @@ const Layout = (props: Props) => {
   );
 };
 
-export default Layout;
+export default MainLayout;

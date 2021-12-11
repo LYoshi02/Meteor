@@ -18,7 +18,7 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const { mutateUser } = useUser({
-    redirectTo: "/",
+    redirectTo: "/user",
     redirectIfFound: true,
   });
 

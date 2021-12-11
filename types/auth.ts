@@ -5,6 +5,6 @@ export type AuthUser = {
 
 export type UserData = {
   dni: string;
-  nombre: string;
-  apellido: string;
+  firstName: string;
+  lastName: string;
 };

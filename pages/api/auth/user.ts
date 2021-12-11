@@ -7,12 +7,12 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
   if (req.session.user) {
     res.status(200).json({
       isLoggedIn: true,
-      user: { ...req.session.user },
+      data: { ...req.session.user },
     });
   } else {
     res.status(200).json({
       isLoggedIn: false,
-      user: null,
+      data: null,
     });
   }
 };

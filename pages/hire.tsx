@@ -1,6 +1,7 @@
 import useSWR from "swr";
 
 import HireForm from "../components/hire/hire-form";
+import MainLayout from "../components/layout/main-layout";
 import FullScreenContainer from "../components/ui/full-screen-container";
 import useUser from "../hooks/useUser";
 import { Services, Promotion } from "../types";
@@ -15,8 +16,10 @@ export default function HirePage() {
   const {} = useUser({ redirectTo: "/", redirectIfFound: true });
 
   return (
-    <FullScreenContainer>
-      <HireForm services={data?.services} promotions={data?.promotions} />
-    </FullScreenContainer>
+    <MainLayout>
+      <FullScreenContainer>
+        <HireForm services={data?.services} promotions={data?.promotions} />
+      </FullScreenContainer>
+    </MainLayout>
   );
 }
