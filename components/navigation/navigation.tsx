@@ -1,6 +1,6 @@
-import NextLink from "next/link";
-import { Box, Flex, Heading, Link } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 
+import Link from "../ui/link";
 import useUser from "../../hooks/useUser";
 
 const navigationItemsWithAuth = [
@@ -31,9 +31,9 @@ const Navigation = () => {
         <Box as="ul" d="flex">
           {navigationItems.map(({ path, name }) => (
             <Box key={path} as="li" listStyleType="none" mr="4">
-              <NextLink href={path} passHref>
-                <Link fontSize="lg">{name}</Link>
-              </NextLink>
+              <Link href={path} styles={{ fontSize: "lg" }}>
+                {name}
+              </Link>
             </Box>
           ))}
         </Box>
