@@ -21,7 +21,9 @@ const Invoices = () => {
           <Td textAlign="center">44278506</Td>
           <Td textAlign="center">Adeuda</Td>
           <Td textAlign="center" h="16" cursor="pointer">
-            <DocumentDownload />
+            <a href={`/api/invoice`} target="_blank" rel="noopener noreferrer">
+              <DocumentDownload />
+            </a>
           </Td>
         </Tr>
       </Tbody>
