@@ -58,3 +58,55 @@ export const insertHiredServices = async (
   );
   return result;
 };
+
+export const insertInvoice = async (dni: string, contractNumber: number) => {
+  const result = await query(
+    `
+    INSERT INTO "Facturas" ("Vencimiento", "PeriodoInicio", "PeriodoFin", "DniCliente", "NroContrato")
+    SELECT 
+        CASE
+        WHEN EXTRACT(day from CURRENT_DATE) >= 28 THEN
+          -- Obtiene el 10mo dia del mes siguiente
+          (SELECT (
+          date_trunc('month', CURRENT_DATE)
+          + INTERVAL '1 month + 9 days'
+          )::DATE)
+        WHEN EXTRACT(day from CURRENT_DATE) = 1 THEN
+          -- Obtiene el 10mo dia del mes actual
+          (SELECT (CURRENT_DATE + INTERVAL '9 days')::DATE)
+        ELSE
+          -- Obtiene el ultimo dia del mes actual
+        (SELECT (
+          date_trunc('month', CURRENT_DATE)
+          + INTERVAL '1 month - 1 day'
+          )::DATE)
+      END AS "Vencimiento",
+      CURRENT_DATE AS "PeriodoInicio",
+      CASE
+        WHEN EXTRACT(day from CURRENT_DATE) >= 28 THEN
+          -- Obtiene el ultimo dia del mes siguiente
+          (SELECT (
+          date_trunc('month', CURRENT_DATE)
+          + INTERVAL '2 month - 1 day'
+          )::DATE)
+        ELSE
+          -- Obtiene el ultimo dia del mes actual
+          (SELECT (
+          date_trunc('month', CURRENT_DATE)
+          + INTERVAL '1 month -1 day'
+          )::DATE)
+      END AS "PeriodoFin",
+      $1 AS "DniCliente",
+      $2 AS "NroContrato"
+      RETURNING *
+      `,
+    [dni, contractNumber]
+  );
+
+  return result;
+};
+
+export const insertInvoiceDetails = async (
+  services: number[],
+  invoiceNumber: number
+) => {};

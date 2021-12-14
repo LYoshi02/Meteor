@@ -7,6 +7,8 @@ import {
   getOptionalOrRequiredCableServices,
   getPromotionBySelectedServices,
   insertHiredServices,
+  insertInvoice,
+  insertInvoiceDetails,
   insertNewContract,
   insertNewUser,
 } from "../../db/index";
@@ -58,13 +60,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const contractNumber = result.rows[0].NroContrato;
     await insertHiredServices(contractNumber, services);
 
-    const msg = {
-      to: user.email,
-      from: process.env.SENDGRID_SENDER_EMAIL!,
-      subject: "Servicios Contratados!",
-      html: `<b>Tu contraseña es: </b>${userPassword}`,
-    };
-    await sgMail.send(msg);
+    // 4) Generar 1er Factura con sus detalles
+    const invoiceResult = await insertInvoice(user.dni, contractNumber);
+
+    let invoiceNumber: number;
+    // TODO: add validation to the invoiceResult
+    invoiceNumber = invoiceResult.rows[0].NroFactura;
+
+    await insertInvoiceDetails(services, invoiceNumber);
+
+    // TODO: mejorar este mensaje
+    // const msg = {
+    //   to: user.email,
+    //   from: process.env.SENDGRID_SENDER_EMAIL!,
+    //   subject: "Servicios Contratados!",
+    //   html: `<b>Tu contraseña es: </b>${userPassword}`,
+    // };
+
+    // await sgMail.send(msg);
 
     return res.status(201).json({ message: "Servicio contratado!" });
   }

@@ -8,6 +8,8 @@ export {
 } from "./selectQueries";
 export {
   insertHiredServices,
+  insertInvoice,
+  insertInvoiceDetails,
   insertNewContract,
   insertNewUser,
 } from "./insertQueries";
