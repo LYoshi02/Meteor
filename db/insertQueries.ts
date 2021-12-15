@@ -1,4 +1,8 @@
 import { query } from "./index";
+import {
+  getContractByInvoiceNumber,
+  getValidPromotionFromContract,
+} from "./selectQueries";
 
 interface User {
   dni: string;
@@ -31,7 +35,10 @@ export const insertNewUser = async (user: User, password: string) => {
   return result;
 };
 
-export const insertNewContract = async (dni: string, promotionNumber: any) => {
+export const insertNewContract = async (
+  dni: string,
+  promotionNumber?: number
+) => {
   const result = await query(
     `
         INSERT INTO "Contratos" ("DniCliente", "NroPromocion")
@@ -107,6 +114,65 @@ export const insertInvoice = async (dni: string, contractNumber: number) => {
 };
 
 export const insertInvoiceDetails = async (
-  services: number[],
-  invoiceNumber: number
-) => {};
+  invoiceNumber: number,
+  servicesIds: number[],
+  promotionNumber?: number
+) => {
+  await query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
+  const resultServices = await query(
+    `
+      INSERT INTO "Detalles" ("NroRenglon", "Descripcion", "Cantidad", "TotalParcial", "NroFactura", "NroServicio", "EsDescuento")
+      SELECT nextval('"Detalles_NroRenglon_seq"') AS "NroRenglon", 
+        ser."Nombre" AS "Descripcion",
+        1 AS "Cantidad",
+        ser."Precio" AS "TotalParcial",
+        $1 AS "NroFactura",
+        ser."NroServicio" AS "NroServicio",
+        false AS "EsDescuento"
+      FROM (
+        SELECT * FROM "Servicios"
+        WHERE "NroServicio" IN(
+          SELECT unnest($2::int[])
+        )
+      ) AS ser
+      RETURNING "Cantidad", "TotalParcial";
+    `,
+    [invoiceNumber, servicesIds]
+  );
+
+  if (promotionNumber) {
+    const contractData = await getContractByInvoiceNumber(invoiceNumber);
+    const contractNumber = contractData[0].NroContrato;
+
+    const promotionDetails = await getValidPromotionFromContract(
+      contractNumber
+    );
+
+    if (!promotionDetails || promotionDetails.length === 0) return;
+
+    const totalPrice = resultServices.rows.reduce(
+      (prevValue, currValue) =>
+        prevValue + currValue.TotalParcial * currValue.Cantidad,
+      0
+    );
+
+    await query(
+      `
+        INSERT INTO "Detalles" ("NroRenglon", "Descripcion", "Cantidad", "TotalParcial", "NroFactura", "NroServicio", "EsDescuento")
+        SELECT nextval('"Detalles_NroRenglon_seq"') AS "NroRenglon",
+          'Descuento por Promoción' AS "Descripcion",
+          1 AS "Cantidad",
+          round((($3 * prom."PorcentajeDto"::FLOAT) / 100)::NUMERIC, 2) AS "TotalParcial",
+          $1 AS "NroFactura",
+          null AS "NroServicio",
+          true AS "EsDescuento"
+        FROM (
+          SELECT * FROM "Promociones"
+          WHERE "NroPromocion" = $2
+        ) AS prom
+        RETURNING "Cantidad", "TotalParcial";
+      `,
+      [invoiceNumber, promotionNumber, totalPrice]
+    );
+  }
+};

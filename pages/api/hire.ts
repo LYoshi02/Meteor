@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // 2) Buscar promocion y crear contrato
     const promotion = await getPromotionBySelectedServices(services);
 
-    let promotionNumber = null;
+    let promotionNumber: number | undefined;
     if (promotion.length > 0) {
       promotionNumber = promotion[0].NroPromocion;
     }
@@ -62,22 +62,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // 4) Generar 1er Factura con sus detalles
     const invoiceResult = await insertInvoice(user.dni, contractNumber);
-
-    let invoiceNumber: number;
     // TODO: add validation to the invoiceResult
-    invoiceNumber = invoiceResult.rows[0].NroFactura;
+    const invoiceNumber: number = invoiceResult.rows[0].NroFactura;
 
-    await insertInvoiceDetails(services, invoiceNumber);
+    await insertInvoiceDetails(invoiceNumber, services, promotionNumber);
 
+    // 5) Enviar contraseña al correo
     // TODO: mejorar este mensaje
-    // const msg = {
-    //   to: user.email,
-    //   from: process.env.SENDGRID_SENDER_EMAIL!,
-    //   subject: "Servicios Contratados!",
-    //   html: `<b>Tu contraseña es: </b>${userPassword}`,
-    // };
+    const msg = {
+      to: user.email,
+      from: process.env.SENDGRID_SENDER_EMAIL!,
+      subject: "Servicios Contratados!",
+      html: `<b>Tu contraseña es: </b>${userPassword}`,
+    };
 
-    // await sgMail.send(msg);
+    await sgMail.send(msg);
 
     return res.status(201).json({ message: "Servicio contratado!" });
   }

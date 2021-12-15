@@ -34,20 +34,35 @@ export const getAllPromotions = async () => {
   return result.rows;
 };
 
+export const getValidPromotionFromContract = async (contractNumber: number) => {
+  const result = await query(
+    `
+    SELECT * FROM "Contratos" cont
+    JOIN "Promociones" prom
+      ON prom."NroPromocion" = cont."NroPromocion"
+    WHERE "NroContrato" = $1 AND 
+      extract(month from age(CURRENT_DATE, cont."FechaInicio")) <= prom."Duracion"
+  `,
+    [contractNumber]
+  );
+
+  return result.rows;
+};
+
 export const getPromotionBySelectedServices = async (
   selectedServices: string[]
 ) => {
   const result = await query(
     `
       SELECT "NroPromocion" FROM (
-          SELECT Pro."NroPromocion", array_agg(Ser."NroServicio") AS "Servicios"
-              FROM "Promociones" Pro
-          JOIN "ServiciosEnPromocion" Ser 
-              ON Ser."NroPromocion" = Pro."NroPromocion"
-          GROUP BY Pro."NroPromocion"
-      ) AS Res
-      WHERE array_length(Res."Servicios", 1) = array_length($1::Integer[], 1) AND
-        Res."Servicios" @> $1::Integer[]
+          SELECT pro."NroPromocion", array_agg(ser."NroServicio") AS "Servicios"
+              FROM "Promociones" pro
+          JOIN "ServiciosEnPromocion" ser 
+              ON ser."NroPromocion" = pro."NroPromocion"
+          GROUP BY pro."NroPromocion"
+      ) AS res
+      WHERE array_length(res."Servicios", 1) = array_length($1::Integer[], 1) AND
+        res."Servicios" @> $1::Integer[]
   `,
     [selectedServices]
   );
@@ -66,6 +81,18 @@ export const getUserByEmailAndPassword = async (
         "Contrasena" = crypt($2, "Contrasena")
   `,
     [email, submittedPassword]
+  );
+
+  return result.rows;
+};
+
+export const getContractByInvoiceNumber = async (invoiceNumber: number) => {
+  const result = await query(
+    `
+    SELECT * FROM "Facturas"
+    WHERE "NroFactura" = $1
+  `,
+    [invoiceNumber]
   );
 
   return result.rows;
