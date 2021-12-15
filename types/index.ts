@@ -3,10 +3,14 @@ export type {
   HireFormValues,
   ServicesFormValues,
 } from "./forms";
+
 export type {
   Services,
   InternetService,
   CableService,
   Promotion,
 } from "./hire";
+
 export type { AuthUser, UserData } from "./auth";
+
+export type { Invoice } from "./invoice";

@@ -1,68 +1,66 @@
 import PDFDocument from "pdfkit";
 import fs from "fs";
+import { format } from "date-fns";
 
 const page = { height: 841, width: 595 };
 const margin = 20;
 const pageWidthWithoutMargins = page.width - margin * 2;
 
-const invoicedServices = [
-  { name: "Nombre del Servicio", precio: 100 },
-  { name: "Nombre del Servicio", precio: 100 },
-  { name: "Nombre del Servicio", precio: 100 },
-  { name: "Nombre del Servicio", precio: 100 },
-  { name: "Nombre del Servicio", precio: 100 },
-];
+const dateFormat = "dd/MM/yyyy";
 
-export const generateInvoice = (pdfTitle: string) => {
-  const invoice = new PDFDocument({
+export const generateInvoice = (invoice: any, details: any, user: any) => {
+  const invoiceDoc = new PDFDocument({
     size: "A4",
     margin: margin,
     info: {
-      Title: pdfTitle,
+      Title: `Factura ${invoice.NroFactura}`,
     },
   });
 
-  invoice.pipe(fs.createWriteStream("invoice.pdf"));
+  invoiceDoc.pipe(fs.createWriteStream("invoice.pdf"));
 
-  invoice.fontSize(20).font("Helvetica-Bold").text("Factura N°10000");
-  invoice.moveDown();
-  invoice.fontSize(14).font("Helvetica-Bold").text("Cliente");
+  invoiceDoc
+    .fontSize(20)
+    .font("Helvetica-Bold")
+    .text(`Factura N°${invoice.NroFactura}`);
+  invoiceDoc.moveDown();
+  invoiceDoc.fontSize(14).font("Helvetica-Bold").text("Cliente");
 
-  const clientStartPosY = invoice.y;
+  const clientStartPosY = invoiceDoc.y;
   const clientWidth = pageWidthWithoutMargins * 0.5;
-  invoice
+  invoiceDoc
     .fontSize(12)
     .font("Helvetica")
     .lineGap(3)
-    .text("Nombre: Yoshi Debat", { width: clientWidth });
-  invoice.text("Dni: 44278506", { width: clientWidth });
-  invoice.text("Dirección: la direccion del cliente", {
+    .text(`Nombre: ${user.Apellido} ${user.Nombre}`, { width: clientWidth });
+  invoiceDoc.text(`Dni: ${user.Dni}`, { width: clientWidth });
+  invoiceDoc.text(`Dirección: ${user.Direccion}`, {
     width: clientWidth,
   });
-  invoice.text("Teléfono: 3756411252", {
+  invoiceDoc.text(`Teléfono: ${user.Telefono}`, {
     width: clientWidth,
   });
 
   const datesGutter = 18;
   const datesWidth = pageWidthWithoutMargins * 0.4;
-  invoice.text(
-    "Período de Inicio: 01/12/2022",
+  invoiceDoc.text(
+    `Período de Inicio: ${format(invoice.PeriodoInicio, dateFormat)}`,
     pageWidthWithoutMargins - datesWidth,
     clientStartPosY,
     {
       width: datesWidth,
     }
   );
-  invoice.text(
-    "Vencimiento: 10/01/2022",
+  invoiceDoc.text(
+    `Vencimiento: ${format(invoice.Vencimiento, dateFormat)}`,
     pageWidthWithoutMargins - datesWidth,
     clientStartPosY + datesGutter,
     {
       width: datesWidth,
     }
   );
-  invoice.text(
-    "Período de Fin: 30/01/2022",
+  invoiceDoc.text(
+    `Período de Fin: ${format(invoice.PeriodoFin, dateFormat)}`,
     pageWidthWithoutMargins - datesWidth,
     clientStartPosY + datesGutter * 2,
     {
@@ -70,9 +68,9 @@ export const generateInvoice = (pdfTitle: string) => {
     }
   );
 
-  invoice.moveDown(5);
+  invoiceDoc.moveDown(5);
 
-  const tableStartPosY = invoice.y;
+  const tableStartPosY = invoiceDoc.y;
   const tableColumnsWidth = {
     quantity: pageWidthWithoutMargins * 0.15,
     description: pageWidthWithoutMargins * 0.45,
@@ -89,91 +87,114 @@ export const generateInvoice = (pdfTitle: string) => {
       tableColumnsWidth.description +
       tableColumnsWidth.price,
   };
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text("Cantidad", tableColumnsPosX.quantity, tableStartPosY, {
       width: tableColumnsWidth.quantity,
       align: "center",
     });
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text("Descripción", tableColumnsPosX.description, tableStartPosY, {
       width: tableColumnsWidth.description,
       align: "center",
     });
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text("Precio Unitario", tableColumnsPosX.unitPrice, tableStartPosY, {
       width: tableColumnsWidth.price,
       align: "center",
     });
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text("Precio Total", tableColumnsPosX.totalPrice, tableStartPosY, {
       width: tableColumnsWidth.price,
       align: "center",
     });
 
-  invoice.moveDown(2);
+  invoiceDoc.moveDown(2);
 
   const invoicedServiceHeight = 25;
-  invoicedServices.map((service, index) => {
+  const serviceDetails: any[] = [],
+    discountDetails: any[] = [];
+  let subtotal = 0,
+    discount = 0;
+
+  details.forEach((d: any) => {
+    if (d.EsDescuento) {
+      discountDetails.push(d);
+      discount += +d.TotalParcial * d.Cantidad;
+    } else {
+      serviceDetails.push(d);
+      subtotal += +d.TotalParcial * d.Cantidad;
+    }
+  });
+
+  serviceDetails.map((detail: any, index: number) => {
     const posY = tableStartPosY + (index + 1) * invoicedServiceHeight;
-    const unitPrice = service.precio.toFixed(2).toString();
+    const unitPrice = +detail.TotalParcial;
+    const totalPrice = unitPrice * detail.Cantidad;
 
     if (index % 2 === 0) {
-      invoice
+      invoiceDoc
         .rect(margin, posY - 8, pageWidthWithoutMargins, invoicedServiceHeight)
         .fillAndStroke("#ddd");
-      invoice.fill("black").stroke();
+      invoiceDoc.fill("black").stroke();
     }
 
-    invoice.font("Helvetica").text("1", tableColumnsPosX.quantity, posY, {
-      width: tableColumnsWidth.quantity,
-      align: "center",
-      lineBreak: false,
-    });
-    invoice
+    invoiceDoc
       .font("Helvetica")
-      .text(service.name, tableColumnsPosX.description, posY, {
+      .text(detail.Cantidad, tableColumnsPosX.quantity, posY, {
+        width: tableColumnsWidth.quantity,
+        align: "center",
+        lineBreak: false,
+      });
+    invoiceDoc
+      .font("Helvetica")
+      .text(detail.Descripcion, tableColumnsPosX.description, posY, {
         width: tableColumnsWidth.description,
         align: "center",
         lineBreak: false,
       });
-    invoice
+    invoiceDoc
       .font("Helvetica")
-      .text(unitPrice, tableColumnsPosX.unitPrice, posY, {
+      .text(unitPrice.toString(), tableColumnsPosX.unitPrice, posY, {
         width: tableColumnsWidth.price,
         align: "center",
         lineBreak: false,
       });
-    invoice
+    invoiceDoc
       .font("Helvetica")
-      .text(unitPrice, tableColumnsPosX.totalPrice, posY, {
+      .text(totalPrice.toString(), tableColumnsPosX.totalPrice, posY, {
         width: tableColumnsWidth.price,
         align: "center",
         lineBreak: false,
       });
   });
 
-  invoice.moveDown(1);
+  invoiceDoc.moveDown(1);
 
-  const pricesStartPosY = invoice.y;
+  const pricesStartPosY = invoiceDoc.y;
   const pricesGutter = 25;
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text("Subtotal", tableColumnsPosX.unitPrice, pricesStartPosY, {
       width: tableColumnsWidth.price,
       align: "center",
     });
-  invoice
+  invoiceDoc
     .font("Helvetica")
-    .text("500.00", tableColumnsPosX.totalPrice, pricesStartPosY, {
-      width: tableColumnsWidth.price,
-      align: "center",
-    });
+    .text(
+      subtotal.toFixed(2).toString(),
+      tableColumnsPosX.totalPrice,
+      pricesStartPosY,
+      {
+        width: tableColumnsWidth.price,
+        align: "center",
+      }
+    );
 
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text(
       "Descuento",
@@ -184,10 +205,10 @@ export const generateInvoice = (pdfTitle: string) => {
         align: "center",
       }
     );
-  invoice
+  invoiceDoc
     .font("Helvetica")
     .text(
-      "100.00",
+      discount.toFixed(2).toString(),
       tableColumnsPosX.totalPrice,
       pricesStartPosY + pricesGutter,
       {
@@ -196,7 +217,7 @@ export const generateInvoice = (pdfTitle: string) => {
       }
     );
 
-  invoice
+  invoiceDoc
     .font("Helvetica-Bold")
     .text(
       "Total",
@@ -207,10 +228,10 @@ export const generateInvoice = (pdfTitle: string) => {
         align: "center",
       }
     );
-  invoice
+  invoiceDoc
     .font("Helvetica")
     .text(
-      "400.00",
+      (subtotal - discount).toFixed(2).toString(),
       tableColumnsPosX.totalPrice,
       pricesStartPosY + pricesGutter * 2,
       {
@@ -219,5 +240,5 @@ export const generateInvoice = (pdfTitle: string) => {
       }
     );
 
-  return invoice;
+  return invoiceDoc;
 };

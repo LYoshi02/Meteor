@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.3.0",
     "@sendgrid/mail": "^6.5.5",
     "@types/pdfkit": "^0.12.3",
+    "date-fns": "^2.27.0",
     "framer-motion": "^4.1.17",
     "generate-password": "^1.7.0",
     "iron-session": "^6.0.4",

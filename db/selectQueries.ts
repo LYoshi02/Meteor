@@ -97,3 +97,51 @@ export const getContractByInvoiceNumber = async (invoiceNumber: number) => {
 
   return result.rows;
 };
+
+export const getUserInvoices = async (userDni: string) => {
+  const result = await query(
+    `
+    SELECT * FROM "Facturas"
+    WHERE "DniCliente" = $1
+  `,
+    [userDni]
+  );
+
+  return result.rows;
+};
+
+export const getInvoiceById = async (invoiceNumber: number) => {
+  const result = await query(
+    `
+    SELECT * FROM "Facturas"
+    WHERE "NroFactura" = $1
+  `,
+    [invoiceNumber]
+  );
+
+  return result.rows;
+};
+
+export const getUserByDni = async (userDni: string) => {
+  const result = await query(
+    `
+    SELECT * FROM "Clientes"
+    WHERE "Dni" = $1
+  `,
+    [userDni]
+  );
+
+  return result.rows;
+};
+
+export const getDetailsByInvoiceNumber = async (invoiceNumber: number) => {
+  const result = await query(
+    `
+    SELECT * FROM "Detalles"
+    WHERE "NroFactura" = $1
+  `,
+    [invoiceNumber]
+  );
+
+  return result.rows;
+};

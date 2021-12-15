@@ -3,9 +3,13 @@ export {
   getAllInternetServices,
   getAllPromotions,
   getContractByInvoiceNumber,
+  getDetailsByInvoiceNumber,
+  getInvoiceById,
   getOptionalOrRequiredCableServices,
   getPromotionBySelectedServices,
+  getUserByDni,
   getUserByEmailAndPassword,
+  getUserInvoices,
   getValidPromotionFromContract,
 } from "./selectQueries";
 export {
