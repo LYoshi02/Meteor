@@ -13,8 +13,16 @@ import {
   insertNewUser,
 } from "../../db/index";
 import sgMail from "../../utils/sendEmail";
+import { UserFormValues } from "../../types";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+interface ExtendedNextApiRequest extends NextApiRequest {
+  body: {
+    user: UserFormValues;
+    services: number[];
+  };
+}
+
+const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     const internetServices = await getAllInternetServices();
     const requiredCableServices = await getOptionalOrRequiredCableServices(
@@ -52,18 +60,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       promotionNumber = promotion[0].NroPromocion;
     }
 
-    const result = await insertNewContract(user.dni, promotionNumber);
+    const insertedContract = await insertNewContract(user.dni, promotionNumber);
 
     // TODO: if result.rows.length === 0 -> Throw error
 
     // 3) Agregar servicios contratados
-    const contractNumber = result.rows[0].NroContrato;
+    const contractNumber = insertedContract.rows[0].NroContrato;
     await insertHiredServices(contractNumber, services);
 
     // 4) Generar 1er Factura con sus detalles
-    const invoiceResult = await insertInvoice(user.dni, contractNumber);
-    // TODO: add validation to the invoiceResult
-    const invoiceNumber: number = invoiceResult.rows[0].NroFactura;
+    const insertedInvoice = await insertInvoice(user.dni, contractNumber);
+    // TODO: add validation to the insertedInvoice
+    const invoiceNumber: number = insertedInvoice.rows[0].NroFactura;
 
     await insertInvoiceDetails(invoiceNumber, services, promotionNumber);
 

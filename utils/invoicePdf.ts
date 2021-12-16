@@ -2,13 +2,19 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import { format } from "date-fns";
 
+import { ClientSchema, InvoiceDetailSchema, InvoiceSchema } from "../types";
+
 const page = { height: 841, width: 595 };
 const margin = 20;
 const pageWidthWithoutMargins = page.width - margin * 2;
 
 const dateFormat = "dd/MM/yyyy";
 
-export const generateInvoice = (invoice: any, details: any, user: any) => {
+export const generateInvoice = (
+  invoice: InvoiceSchema,
+  details: InvoiceDetailSchema[],
+  user: ClientSchema
+) => {
   const invoiceDoc = new PDFDocument({
     size: "A4",
     margin: margin,
@@ -44,7 +50,7 @@ export const generateInvoice = (invoice: any, details: any, user: any) => {
   const datesGutter = 18;
   const datesWidth = pageWidthWithoutMargins * 0.4;
   invoiceDoc.text(
-    `Período de Inicio: ${format(invoice.PeriodoInicio, dateFormat)}`,
+    `Período de Inicio: ${format(new Date(invoice.PeriodoInicio), dateFormat)}`,
     pageWidthWithoutMargins - datesWidth,
     clientStartPosY,
     {
@@ -52,7 +58,7 @@ export const generateInvoice = (invoice: any, details: any, user: any) => {
     }
   );
   invoiceDoc.text(
-    `Vencimiento: ${format(invoice.Vencimiento, dateFormat)}`,
+    `Vencimiento: ${format(new Date(invoice.Vencimiento), dateFormat)}`,
     pageWidthWithoutMargins - datesWidth,
     clientStartPosY + datesGutter,
     {
@@ -60,7 +66,7 @@ export const generateInvoice = (invoice: any, details: any, user: any) => {
     }
   );
   invoiceDoc.text(
-    `Período de Fin: ${format(invoice.PeriodoFin, dateFormat)}`,
+    `Período de Fin: ${format(new Date(invoice.PeriodoFin), dateFormat)}`,
     pageWidthWithoutMargins - datesWidth,
     clientStartPosY + datesGutter * 2,
     {

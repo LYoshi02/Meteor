@@ -2,7 +2,7 @@ export { query } from "./db";
 export {
   getAllInternetServices,
   getAllPromotions,
-  getContractByInvoiceNumber,
+  getContractNumberByInvoiceNumber,
   getDetailsByInvoiceNumber,
   getInvoiceById,
   getOptionalOrRequiredCableServices,

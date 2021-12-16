@@ -55,7 +55,6 @@ const ServicesForm = (props: Props) => {
     const isValid = validateForm();
     if (!isValid) return;
 
-    console.log(values);
     props.onSetFormValues(values);
     props.onSetNextStep();
   };

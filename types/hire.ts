@@ -1,3 +1,5 @@
+import { CableServiceSchema, PromotionSchema, ServiceSchema } from "./";
+
 export type Services = {
   internet: InternetService[];
   cable: {
@@ -6,23 +8,31 @@ export type Services = {
   };
 };
 
-export type InternetService = {
-  NroServicio: number;
-  Nombre: string;
-  Precio: string;
+export type InternetService = ServiceSchema;
+
+export type CableService = ServiceSchema & CableServiceSchema;
+
+export type Promotion = PromotionSchema & { Servicios: number[] };
+
+export type UserFormValues = {
+  firstName: string;
+  lastName: string;
+  dni: string;
+  birthDate: string;
+  address: string;
+  phone: string;
+  email: string;
 };
 
-export type CableService = {
-  NroServicio: number;
-  Nombre: string;
-  Precio: string;
-  CantTvs: number;
-  Opcional: boolean;
+export type ServicesFormValues = {
+  internet: string;
+  cable: {
+    required: string;
+    optional: string[];
+  };
 };
 
-export type Promotion = {
-  NroPromocion: number;
-  PorcentajeDto: number;
-  Duracion: number;
-  Servicios: number[];
+export type HireFormValues = {
+  user: UserFormValues;
+  services: ServicesFormValues;
 };

@@ -11,6 +11,7 @@ import {
 import ServicesForm from "./services-form";
 import HireSummary from "./hire-summary";
 import StepsHeader from "./steps-header";
+import fetchJson from "../../utils/fetchJson";
 
 type Props = {
   services: Services | undefined;
@@ -61,14 +62,13 @@ const HireForm = (props: Props) => {
     };
 
     try {
-      const result = await fetch("/api/hire", {
+      const result = await fetchJson("/api/hire", {
         method: "POST",
         body: JSON.stringify(hiringData),
         headers: {
           "Content-Type": "application/json",
         },
       });
-      console.log(await result.json());
     } catch (error) {
       console.log(error);
     }

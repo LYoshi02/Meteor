@@ -1,7 +1,17 @@
 import { query } from "./index";
+import {
+  CableServiceSchema,
+  ClientSchema,
+  ContractSchema,
+  InternetServiceSchema,
+  InvoiceSchema,
+  InvoiceDetailSchema,
+  ServiceSchema,
+  PromotionSchema,
+} from "../types/index";
 
 export const getAllInternetServices = async () => {
-  const result = await query(`
+  const result = await query<InternetServiceSchema & ServiceSchema>(`
     SELECT * FROM "Internet" AS Int
     JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio"
   `);
@@ -11,7 +21,7 @@ export const getAllInternetServices = async () => {
 export const getOptionalOrRequiredCableServices = async (
   optionalServices: boolean
 ) => {
-  const result = await query(
+  const result = await query<CableServiceSchema & ServiceSchema>(
     `
     SELECT * FROM "Cable" AS Cab
     JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
@@ -23,7 +33,7 @@ export const getOptionalOrRequiredCableServices = async (
 };
 
 export const getAllPromotions = async () => {
-  const result = await query(`
+  const result = await query<PromotionSchema & { Servicios: number[] }>(`
     SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", 
         array_agg(Ser."NroServicio") AS "Servicios"
     FROM "Promociones" AS Pro
@@ -35,7 +45,7 @@ export const getAllPromotions = async () => {
 };
 
 export const getValidPromotionFromContract = async (contractNumber: number) => {
-  const result = await query(
+  const result = await query<ContractSchema & PromotionSchema>(
     `
     SELECT * FROM "Contratos" cont
     JOIN "Promociones" prom
@@ -50,9 +60,9 @@ export const getValidPromotionFromContract = async (contractNumber: number) => {
 };
 
 export const getPromotionBySelectedServices = async (
-  selectedServices: string[]
+  selectedServices: number[]
 ) => {
-  const result = await query(
+  const result = await query<{ NroPromocion: number }>(
     `
       SELECT "NroPromocion" FROM (
           SELECT pro."NroPromocion", array_agg(ser."NroServicio") AS "Servicios"
@@ -74,7 +84,7 @@ export const getUserByEmailAndPassword = async (
   email: string,
   submittedPassword: string
 ) => {
-  const result = await query(
+  const result = await query<{ Dni: string; Nombre: string; Apellido: string }>(
     `
       SELECT "Dni", "Nombre", "Apellido" FROM "Clientes"
       WHERE "CorreoElectronico" = $1 AND
@@ -86,10 +96,12 @@ export const getUserByEmailAndPassword = async (
   return result.rows;
 };
 
-export const getContractByInvoiceNumber = async (invoiceNumber: number) => {
-  const result = await query(
+export const getContractNumberByInvoiceNumber = async (
+  invoiceNumber: number
+) => {
+  const result = await query<{ NroContrato: number }>(
     `
-    SELECT * FROM "Facturas"
+    SELECT "NroContrato" FROM "Facturas"
     WHERE "NroFactura" = $1
   `,
     [invoiceNumber]
@@ -99,7 +111,7 @@ export const getContractByInvoiceNumber = async (invoiceNumber: number) => {
 };
 
 export const getUserInvoices = async (userDni: string) => {
-  const result = await query(
+  const result = await query<InvoiceSchema>(
     `
     SELECT * FROM "Facturas"
     WHERE "DniCliente" = $1
@@ -111,7 +123,7 @@ export const getUserInvoices = async (userDni: string) => {
 };
 
 export const getInvoiceById = async (invoiceNumber: number) => {
-  const result = await query(
+  const result = await query<InvoiceSchema>(
     `
     SELECT * FROM "Facturas"
     WHERE "NroFactura" = $1
@@ -123,7 +135,7 @@ export const getInvoiceById = async (invoiceNumber: number) => {
 };
 
 export const getUserByDni = async (userDni: string) => {
-  const result = await query(
+  const result = await query<ClientSchema>(
     `
     SELECT * FROM "Clientes"
     WHERE "Dni" = $1
@@ -135,7 +147,7 @@ export const getUserByDni = async (userDni: string) => {
 };
 
 export const getDetailsByInvoiceNumber = async (invoiceNumber: number) => {
-  const result = await query(
+  const result = await query<InvoiceDetailSchema>(
     `
     SELECT * FROM "Detalles"
     WHERE "NroFactura" = $1
