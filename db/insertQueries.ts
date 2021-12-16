@@ -110,13 +110,35 @@ export const insertInvoiceDetails = async (
   promotionNumber?: number
 ) => {
   await query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
-  const resultServices = await query(
+  const resultServices = await query<{
+    Cantidad: number;
+    TotalParcial: number;
+  }>(
     `
       INSERT INTO "Detalles" ("NroRenglon", "Descripcion", "Cantidad", "TotalParcial", "NroFactura", "NroServicio", "EsDescuento")
       SELECT nextval('"Detalles_NroRenglon_seq"') AS "NroRenglon", 
         ser."Nombre" AS "Descripcion",
         1 AS "Cantidad",
-        ser."Precio" AS "TotalParcial",
+        CASE 
+          WHEN extract(day from CURRENT_DATE) > 1 OR extract(day from CURRENT_DATE) < 28 THEN
+            round((
+              ser."Precio" *
+              (
+                extract(day from (
+                  date_trunc('month', CURRENT_DATE)
+                  + INTERVAL '1 month - 1 day'
+                ))
+                -
+                extract(day from CURRENT_DATE)
+              ) /
+              extract(day from (
+                date_trunc('month', CURRENT_DATE)
+                + INTERVAL '1 month - 1 day'
+              ))
+            )::NUMERIC, 2)
+          ELSE
+            ser."Precio"
+        END AS "TotalParcial",
         $1 AS "NroFactura",
         ser."NroServicio" AS "NroServicio",
         false AS "EsDescuento"
@@ -126,6 +148,7 @@ export const insertInvoiceDetails = async (
           SELECT unnest($2::int[])
         )
       ) AS ser
+      RETURNING "Cantidad", "TotalParcial"
     `,
     [invoiceNumber, servicesIds]
   );
