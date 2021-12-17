@@ -1,29 +1,31 @@
-import { SimpleGrid, Stack } from "@chakra-ui/react";
+import { Button, Divider, SimpleGrid, Stack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
-import ActionButtons from "../ui/action-buttons";
 import Input from "../ui/input";
-import { UserFormValues } from "../../types";
 import { emailRegex } from "../../utils/constants";
+import PasswordInput from "../ui/password-input";
 
-type Props = {
-  onSetNextStep: () => void;
-  onSetFormValues: (values: UserFormValues) => void;
-  savedValues: UserFormValues | undefined;
+type UserConfigFormValues = {
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
 };
 
-const UserForm = (props: Props) => {
+const UserForm = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<UserFormValues>({
-    defaultValues: props.savedValues,
+  } = useForm<UserConfigFormValues>({
+    // defaultValues: props.savedValues,
   });
 
-  const submitHandler = (values: UserFormValues) => {
-    props.onSetFormValues(values);
-    props.onSetNextStep();
+  const submitHandler = (values: any) => {
+    console.log(values);
   };
 
   return (
@@ -49,31 +51,6 @@ const UserForm = (props: Props) => {
             errorMsg={errors.lastName?.message}
           />
         </SimpleGrid>
-
-        <Input
-          id="dni"
-          label="DNI"
-          type="number"
-          hookForm={register("dni", {
-            required: "Este campo es obligatorio",
-            validate: {
-              isPositiveNumber: (dni) =>
-                +dni > 0 || "El DNI ingresado no es válido",
-            },
-            maxLength: { value: 8, message: "El DNI ingresado no es válido" },
-          })}
-          errorMsg={errors.dni?.message}
-        />
-
-        <Input
-          id="birth-date"
-          label="Fecha de Nacimiento"
-          type="date"
-          hookForm={register("birthDate", {
-            required: "Este campo es obligatorio",
-          })}
-          errorMsg={errors.birthDate?.message}
-        />
 
         <Input
           id="address"
@@ -108,8 +85,30 @@ const UserForm = (props: Props) => {
           })}
           errorMsg={errors.email?.message}
         />
+        <Divider />
+
+        <PasswordInput
+          id="currentPassword"
+          label="Contraseña Actual"
+          hookForm={register("currentPassword", {
+            required: "Este campo es obligatorio",
+          })}
+          errorMsg={errors.currentPassword?.message}
+        />
+
+        <PasswordInput
+          id="newPassword"
+          label="Nueva Contraseña"
+          hookForm={register("newPassword", {
+            required: "Este campo es obligatorio",
+          })}
+          errorMsg={errors.currentPassword?.message}
+        />
+
+        <Button type="submit" colorScheme="teal">
+          Guardar
+        </Button>
       </Stack>
-      <ActionButtons primaryBtn={{ text: "Siguiente", type: "submit" }} />
     </form>
   );
 };

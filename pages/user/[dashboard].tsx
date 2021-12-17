@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 
 import DashboardLayout from "../../components/layout/dashboard-layout";
 import Invoices from "../../components/user/invoices";
-import UserConfig from "../../components/user/config";
+import UserConfig from "../../components/user/user-config";
 
 export default function InvoicesPage() {
   const router = useRouter();
