@@ -23,8 +23,6 @@ export const generateInvoice = (
     },
   });
 
-  invoiceDoc.pipe(fs.createWriteStream("invoice.pdf"));
-
   invoiceDoc
     .fontSize(20)
     .font("Helvetica-Bold")
