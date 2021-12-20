@@ -19,3 +19,4 @@ export {
   insertNewContract,
   insertNewUser,
 } from "./insertQueries";
+export { updateUser } from "./updateQueries";

@@ -5,10 +5,7 @@ import { sessionOptions } from "../../../lib/withSession";
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
   if (req.session.user) {
-    res.status(200).json({
-      isLoggedIn: true,
-      data: { ...req.session.user },
-    });
+    res.status(200).json({ ...req.session.user });
   } else {
     res.status(200).json({
       isLoggedIn: false,

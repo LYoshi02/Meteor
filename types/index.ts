@@ -20,3 +20,9 @@ export type {
   ServiceSchema,
   PromotionSchema,
 } from "./dbSchemas";
+
+export type {
+  UserConfigData,
+  UserConfigFormValues,
+  UserConfigPassword,
+} from "./user";

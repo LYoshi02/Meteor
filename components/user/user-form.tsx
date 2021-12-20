@@ -1,31 +1,54 @@
+import { useEffect } from "react";
+import useSWR from "swr";
 import { Button, Divider, SimpleGrid, Stack } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 import Input from "../ui/input";
 import { emailRegex } from "../../utils/constants";
 import PasswordInput from "../ui/password-input";
-
-type UserConfigFormValues = {
-  firstName?: string;
-  lastName?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  currentPassword?: string;
-  newPassword?: string;
-};
+import { UserConfigFormValues, UserConfigData } from "../../types";
+import fetchJson from "../../utils/fetchJson";
 
 const UserForm = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<UserConfigFormValues>({
-    // defaultValues: props.savedValues,
-  });
+    setValue,
+    setError,
+  } = useForm<UserConfigFormValues>();
+  const { data: userData } = useSWR<UserConfigData>("/api/user");
 
-  const submitHandler = (values: any) => {
-    console.log(values);
+  useEffect(() => {
+    if (userData) {
+      setValue("firstName", userData.firstName);
+      setValue("lastName", userData.lastName);
+      setValue("address", userData.address);
+      setValue("phone", userData.phone);
+      setValue("email", userData.email);
+    }
+  }, [userData, setValue]);
+
+  const validatePasswords = (currentPassword: string, newPassword: string) => {
+    if (currentPassword.length === 0 && newPassword.length > 0) {
+      setError("currentPassword", { message: "Ingrese la contraseña actual" });
+      return false;
+    }
+    if (currentPassword.length > 0 && newPassword.length === 0) {
+      setError("newPassword", { message: "Ingresa la nueva contraseña" });
+      return false;
+    }
+
+    return true;
+  };
+
+  const submitHandler: SubmitHandler<UserConfigFormValues> = async (values) => {
+    if (!validatePasswords(values.currentPassword, values.newPassword)) return;
+    await fetchJson("/api/user", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: values }),
+    });
   };
 
   return (
@@ -85,13 +108,18 @@ const UserForm = () => {
           })}
           errorMsg={errors.email?.message}
         />
+
         <Divider />
 
         <PasswordInput
           id="currentPassword"
           label="Contraseña Actual"
           hookForm={register("currentPassword", {
-            required: "Este campo es obligatorio",
+            validate: (value) => {
+              if (value.length === 0 || value.length >= 8) return true;
+
+              return "La contraseña debe tener al menos 8 caracteres";
+            },
           })}
           errorMsg={errors.currentPassword?.message}
         />
@@ -100,9 +128,16 @@ const UserForm = () => {
           id="newPassword"
           label="Nueva Contraseña"
           hookForm={register("newPassword", {
-            required: "Este campo es obligatorio",
+            validate: (value) => {
+              if (!value || value.length === 0) return true;
+
+              if (value && value.length < 8)
+                return "La contraseña debe tener al menos 8 caracteres";
+
+              if (value && value.length >= 8) return true;
+            },
           })}
-          errorMsg={errors.currentPassword?.message}
+          errorMsg={errors.newPassword?.message}
         />
 
         <Button type="submit" colorScheme="teal">
