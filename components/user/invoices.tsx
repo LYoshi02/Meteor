@@ -11,27 +11,15 @@ import {
 } from "@chakra-ui/react";
 import { format } from "date-fns";
 import esLocale from "date-fns/locale/es";
+import useSWR from "swr";
 
 import DocumentDownload from "../../assets/icons/document-download";
-import useUser from "../../hooks/useUser";
-import fetchJson from "../../utils/fetchJson";
 import { InvoiceSchema } from "../../types";
 
 const Invoices = () => {
-  const { user } = useUser({});
-  const [userInvoices, setUserInvoices] = useState<InvoiceSchema[]>([]);
+  const { data } = useSWR<{ invoices: InvoiceSchema[] }>("/api/invoices");
 
-  useEffect(() => {
-    if (user && user.data?.dni) {
-      fetchJson<{ invoices: InvoiceSchema[] }>("/api/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: user.data.dni }),
-      }).then((res) => {
-        setUserInvoices(res.invoices);
-      });
-    }
-  }, [user]);
+  const userInvoices: InvoiceSchema[] = data?.invoices || [];
 
   return (
     <Box>

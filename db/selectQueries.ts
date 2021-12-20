@@ -122,13 +122,16 @@ export const getUserInvoices = async (userDni: string) => {
   return result.rows;
 };
 
-export const getInvoiceById = async (invoiceNumber: number) => {
+export const getUserInvoiceById = async (
+  invoiceNumber: number,
+  dni: string
+) => {
   const result = await query<InvoiceSchema>(
     `
     SELECT * FROM "Facturas"
-    WHERE "NroFactura" = $1
+    WHERE "NroFactura" = $1 AND "DniCliente" = $2
   `,
-    [invoiceNumber]
+    [invoiceNumber, dni]
   );
 
   return result.rows;

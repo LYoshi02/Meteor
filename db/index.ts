@@ -4,7 +4,7 @@ export {
   getAllPromotions,
   getContractNumberByInvoiceNumber,
   getDetailsByInvoiceNumber,
-  getInvoiceById,
+  getUserInvoiceById,
   getOptionalOrRequiredCableServices,
   getPromotionBySelectedServices,
   getUserByDni,
