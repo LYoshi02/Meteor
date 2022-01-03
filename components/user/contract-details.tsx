@@ -1,22 +1,15 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import useSWR from "swr";
+import { UserContractDetails } from "../../types";
 
-import { PromotionSchema, ServiceSchema } from "../../types";
 import Contract from "./contract-details/contract";
 import HiredServices from "./contract-details/hired-services";
 import Promotion from "./contract-details/promotion";
 
-const ContractDetails = () => {
-  const { data } = useSWR<{
-    contract: { NroContrato: number; FechaInicio: string };
-    services: ServiceSchema[];
-    promotion: PromotionSchema | null;
-  }>("/api/user/contract-details");
+type Props = {
+  details: UserContractDetails;
+};
 
-  if (!data) {
-    return null;
-  }
-
+const ContractDetails = ({ details }: Props) => {
   return (
     <Grid templateColumns="repeat(8, 1fr)" mt="8" gap="4">
       <GridItem
@@ -26,7 +19,7 @@ const ContractDetails = () => {
         borderRadius="sm"
         shadow="sm"
       >
-        <Contract contract={data.contract} />
+        <Contract contract={details.contract} />
       </GridItem>
 
       <GridItem
@@ -37,10 +30,10 @@ const ContractDetails = () => {
         borderRadius="sm"
         shadow="sm"
       >
-        <HiredServices services={data.services} />
+        <HiredServices services={details.services} />
       </GridItem>
 
-      {data.promotion && (
+      {details.promotion && (
         <GridItem
           colSpan={3}
           bgGradient="linear(to-bl, cyan.600, cyan.800)"
@@ -49,8 +42,8 @@ const ContractDetails = () => {
           shadow="sm"
         >
           <Promotion
-            promotion={data.promotion}
-            contractStartDate={data.contract.FechaInicio}
+            promotion={details.promotion}
+            contractStartDate={details.contract.FechaInicio}
           />
         </GridItem>
       )}

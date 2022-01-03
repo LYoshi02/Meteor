@@ -8,7 +8,7 @@ import {
 import ListItem from "./list-item";
 
 const dashboardItems = [
-  { name: "Inicio", path: "/user", icon: <HomeIcon /> },
+  { name: "Inicio", path: "/user/home", icon: <HomeIcon /> },
   { name: "Facturas", path: "/user/invoices", icon: <DocumentTextIcon /> },
   { name: "Usuario", path: "/user/config", icon: <UserIcon /> },
 ];

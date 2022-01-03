@@ -1,3 +1,5 @@
+import { PromotionSchema, ServiceSchema } from ".";
+
 export type UserConfigFormValues = UserConfigData & UserConfigPassword;
 
 export type UserConfigData = {
@@ -11,4 +13,10 @@ export type UserConfigData = {
 export type UserConfigPassword = {
   currentPassword: string;
   newPassword: string;
+};
+
+export type UserContractDetails = {
+  contract: { NroContrato: number; FechaInicio: string };
+  services: ServiceSchema[];
+  promotion: PromotionSchema | null;
 };

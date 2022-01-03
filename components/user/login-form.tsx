@@ -17,10 +17,7 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-  const { mutateUser } = useUser({
-    redirectTo: "/user",
-    redirectIfFound: true,
-  });
+  const { mutateUser } = useUser({});
 
   const submitHandler = async (values: FormValues) => {
     try {

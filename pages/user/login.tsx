@@ -6,7 +6,7 @@ import MainLayout from "../../components/layout/main-layout";
 import useUser from "../../hooks/useUser";
 
 export default function UserLoginPage() {
-  const {} = useUser({ redirectTo: "/user", redirectIfFound: true });
+  const {} = useUser({ redirectTo: "/user/home", redirectIfFound: true });
 
   return (
     <MainLayout>

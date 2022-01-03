@@ -25,4 +25,5 @@ export type {
   UserConfigData,
   UserConfigFormValues,
   UserConfigPassword,
+  UserContractDetails,
 } from "./user";
