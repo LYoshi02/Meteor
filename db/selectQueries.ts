@@ -59,6 +59,18 @@ export const getValidPromotionFromContract = async (contractNumber: number) => {
   return result.rows;
 };
 
+export const getPromotionById = async (promotionNumber: number) => {
+  const result = await query<PromotionSchema>(
+    `
+      SELECT * FROM "Promociones"
+      WHERE "NroPromocion" = $1
+  `,
+    [promotionNumber]
+  );
+
+  return result.rows;
+};
+
 export const getPromotionBySelectedServices = async (
   selectedServices: number[]
 ) => {
@@ -91,6 +103,18 @@ export const getUserByEmailAndPassword = async (
         "Contrasena" = crypt($2, "Contrasena")
   `,
     [email, submittedPassword]
+  );
+
+  return result.rows;
+};
+
+export const getCurrentContractByDni = async (userDni: string) => {
+  const result = await query<ContractSchema>(
+    `
+    SELECT * FROM "Contratos" 
+    WHERE "DniCliente" = $1 AND "FechaFin" IS NULL
+  `,
+    [userDni]
   );
 
   return result.rows;
@@ -156,6 +180,21 @@ export const getDetailsByInvoiceNumber = async (invoiceNumber: number) => {
     WHERE "NroFactura" = $1
   `,
     [invoiceNumber]
+  );
+
+  return result.rows;
+};
+
+export const getHiredServices = async (contractNumber: number) => {
+  const result = await query<ServiceSchema>(
+    `
+    SELECT ser."NroServicio", ser."Nombre", ser."Precio" 
+    FROM "ServiciosContratados" cont
+    JOIN "Servicios" ser 
+      ON cont."NroServicio" = ser."NroServicio" 
+    WHERE "NroContrato" = $1
+  `,
+    [contractNumber]
   );
 
   return result.rows;

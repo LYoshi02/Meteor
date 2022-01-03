@@ -17,7 +17,7 @@ import DocumentDownload from "../../assets/icons/document-download";
 import { InvoiceSchema } from "../../types";
 
 const Invoices = () => {
-  const { data } = useSWR<{ invoices: InvoiceSchema[] }>("/api/invoices");
+  const { data } = useSWR<{ invoices: InvoiceSchema[] }>("/api/user/invoices");
 
   const userInvoices: InvoiceSchema[] = data?.invoices || [];
 
@@ -49,7 +49,7 @@ const Invoices = () => {
               </Td>
               <Td textAlign="center" h="16" cursor="pointer">
                 <a
-                  href={`/api/invoices/${invoice.NroFactura}`}
+                  href={`/api/user/invoices/${invoice.NroFactura}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

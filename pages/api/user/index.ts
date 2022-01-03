@@ -1,10 +1,14 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { getUserByDni, getUserByEmailAndPassword, updateUser } from "../../db";
-import { UserConfigData, UserConfigFormValues } from "../../types";
-import { isValidSession } from "../../utils/validateSession";
-import { sessionOptions } from "../../lib/withSession";
+import {
+  getUserByDni,
+  getUserByEmailAndPassword,
+  updateUser,
+} from "../../../db";
+import { UserConfigData, UserConfigFormValues } from "../../../types";
+import { isValidSession } from "../../../utils/validateSession";
+import { sessionOptions } from "../../../lib/withSession";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: { user: UserConfigFormValues };

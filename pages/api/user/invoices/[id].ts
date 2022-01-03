@@ -5,10 +5,10 @@ import {
   getDetailsByInvoiceNumber,
   getUserInvoiceById,
   getUserByDni,
-} from "../../../db";
-import { sessionOptions } from "../../../lib/withSession";
-import { generateInvoice } from "../../../utils/invoicePdf";
-import { isValidSession } from "../../../utils/validateSession";
+} from "../../../../db";
+import { sessionOptions } from "../../../../lib/withSession";
+import { generateInvoice } from "../../../../utils/invoicePdf";
+import { isValidSession } from "../../../../utils/validateSession";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
