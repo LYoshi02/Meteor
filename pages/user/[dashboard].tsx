@@ -11,8 +11,6 @@ export default function UserDashboardPage() {
   const {} = useUser({ redirectTo: "/", redirectIfFound: false });
   const dashboardRoute = router.query.dashboard;
 
-  console.log(dashboardRoute);
-
   if (!dashboardRoute) return null;
 
   let dashboardElement: React.ReactElement;

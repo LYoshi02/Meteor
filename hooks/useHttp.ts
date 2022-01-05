@@ -11,6 +11,7 @@ type State = {
 };
 
 type ActionTypes =
+  | { type: "reset" }
   | { type: "init" }
   | { type: "success" }
   | { type: "error"; error: ErrorObj };
@@ -23,6 +24,8 @@ const initialState: State = {
 
 const reducer = (state: State, action: ActionTypes) => {
   switch (action.type) {
+    case "reset":
+      return initialState;
     case "init":
       return { loading: true, error: null, success: false };
     case "success":
@@ -30,7 +33,7 @@ const reducer = (state: State, action: ActionTypes) => {
     case "error":
       return { loading: false, error: action.error, success: false };
     default:
-      return initialState;
+      return state;
   }
 };
 
@@ -67,8 +70,9 @@ const useHttp = () => {
   return {
     isLoading: state.loading,
     error: state.error,
-    sendRequest,
     success: state.success,
+    dispatch,
+    sendRequest,
   };
 };
 

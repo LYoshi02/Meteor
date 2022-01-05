@@ -1,10 +1,14 @@
-import { Button, Stack } from "@chakra-ui/react";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { Button, Stack, useToast, ToastId } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import Input from "../ui/input";
-import fetchJson from "../../utils/fetchJson";
 import useUser from "../../hooks/useUser";
 import { AuthUser } from "../../types";
+import useHttp from "../../hooks/useHttp";
+import Alert from "../ui/alert";
+import PasswordInput from "../ui/password-input";
 
 type FormValues = {
   email: string;
@@ -17,19 +21,58 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
+  const { isLoading, error, sendRequest, dispatch } = useHttp();
   const { mutateUser } = useUser({});
+  const router = useRouter();
+  const toast = useToast();
+  const toastRef = useRef<ToastId | undefined | null>(null);
+
+  useEffect(() => {
+    const showSuccessMessage = (url: string) => {
+      if (url !== "/user/home") return;
+
+      toastRef.current = toast({
+        title: "Éxito!",
+        description: "Iniciando sesión...",
+        status: "success",
+        isClosable: true,
+        variant: "solid",
+      });
+    };
+
+    const closeSuccessMessage = (url: string) => {
+      if (url !== "/user/home") return;
+      toast.close(toastRef.current!);
+    };
+
+    router.events.on("routeChangeStart", showSuccessMessage);
+    router.events.on("routeChangeComplete", closeSuccessMessage);
+
+    return () => {
+      router.events.off("routeChangeStart", showSuccessMessage);
+      router.events.off("routeChangeComplete", closeSuccessMessage);
+    };
+  }, [router, toast]);
 
   const submitHandler = async (values: FormValues) => {
-    try {
-      const userData = await fetchJson<AuthUser>("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: values }),
-      });
-      mutateUser(userData);
-    } catch (error) {
-      console.log(error);
-    }
+    await sendRequest<AuthUser>(
+      {
+        input: "/api/auth/login",
+        init: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user: values }),
+        },
+      },
+      (userData) => {
+        mutateUser(userData);
+        router.push("/user/home");
+      }
+    );
+  };
+
+  const closeErrorAlert = () => {
+    dispatch({ type: "reset" });
   };
 
   return (
@@ -44,10 +87,9 @@ const LoginForm = () => {
           })}
           errorMsg={errors.email?.message}
         />
-        <Input
+        <PasswordInput
           id="password"
           label="Contraseña"
-          type="password"
           hookForm={register("password", {
             required: "Este campo es obligatorio",
             minLength: {
@@ -57,7 +99,15 @@ const LoginForm = () => {
           })}
           errorMsg={errors.password?.message}
         />
-        <Button type="submit" colorScheme="teal">
+        {error && (
+          <Alert
+            onClose={closeErrorAlert}
+            title="Error!"
+            description={error.message}
+            status="error"
+          />
+        )}
+        <Button type="submit" colorScheme="teal" isLoading={isLoading}>
           Iniciar Sesión
         </Button>
       </Stack>

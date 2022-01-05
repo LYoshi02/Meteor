@@ -5,6 +5,7 @@ import {
   AlertTitle,
 } from "@chakra-ui/alert";
 import { CloseButton } from "@chakra-ui/close-button";
+import { Box } from "@chakra-ui/react";
 
 type Props = {
   status?: "success" | "warning" | "error" | "info" | undefined;
@@ -17,8 +18,10 @@ const Alert = (props: Props) => {
   return (
     <AlertChakra status={props.status}>
       <AlertIcon />
-      <AlertTitle mr={2}>{props.title}</AlertTitle>
-      <AlertDescription>{props.description}</AlertDescription>
+      <Box flex="1">
+        <AlertTitle mr={2}>{props.title}</AlertTitle>
+        <AlertDescription display="block">{props.description}</AlertDescription>
+      </Box>
       <CloseButton
         position="absolute"
         right="8px"
