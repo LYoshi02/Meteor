@@ -173,6 +173,21 @@ export const getUserByDni = async (userDni: string) => {
   return result.rows;
 };
 
+export const getUserByDniOrEmail = async (
+  userDni: string,
+  userEmail: string
+) => {
+  const result = await query<ClientSchema>(
+    `
+    SELECT * FROM "Clientes"
+    WHERE "Dni" = $1 OR "CorreoElectronico" = $2
+  `,
+    [userDni, userEmail]
+  );
+
+  return result.rows;
+};
+
 export const getDetailsByInvoiceNumber = async (invoiceNumber: number) => {
   const result = await query<InvoiceDetailSchema>(
     `

@@ -11,6 +11,7 @@ export {
   getPromotionById,
   getPromotionBySelectedServices,
   getUserByDni,
+  getUserByDniOrEmail,
   getUserByEmailAndPassword,
   getUserInvoices,
   getValidPromotionFromContract,

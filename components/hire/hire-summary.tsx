@@ -14,6 +14,7 @@ type Props = {
   services: Services | undefined;
   selectedServices: ServicesFormValues | undefined;
   promotions: Promotion[] | undefined;
+  isReqLoading: boolean;
   onSetPrevStep: () => void;
   onHireService: () => void;
 };
@@ -113,8 +114,20 @@ const HireSummary = (props: Props) => {
         Total: {`$${total.toFixed(2)}`}
       </Text>
       <ActionButtons
-        primaryBtn={{ text: "Finalizar", action: props.onHireService }}
-        secondaryBtn={{ text: "Anterior", action: props.onSetPrevStep }}
+        primaryBtn={{
+          text: "Finalizar",
+          action: props.onHireService,
+          btnConfig: {
+            isLoading: props.isReqLoading,
+          },
+        }}
+        secondaryBtn={{
+          text: "Anterior",
+          action: props.onSetPrevStep,
+          btnConfig: {
+            isLoading: props.isReqLoading,
+          },
+        }}
       />
     </Box>
   );

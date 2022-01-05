@@ -8,7 +8,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 
 type Props = {
   id: string;
-  label: string;
+  label: string | JSX.Element;
   type: string;
   hookForm: UseFormRegisterReturn;
   errorMsg: string | undefined;

@@ -93,7 +93,7 @@ const ServicesForm = (props: Props) => {
             selectedServices={cableServicesSelected}
           />
           <ActionButtons
-            primaryBtn={{ text: "Siguiente", type: "submit" }}
+            primaryBtn={{ text: "Siguiente", btnConfig: { type: "submit" } }}
             secondaryBtn={{ text: "Anterior", action: props.onSetPrevStep }}
           />
         </Stack>

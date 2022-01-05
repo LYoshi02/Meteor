@@ -1,10 +1,11 @@
-import { SimpleGrid, Stack } from "@chakra-ui/react";
+import { Box, Flex, SimpleGrid, Stack, Tooltip } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
 import ActionButtons from "../ui/action-buttons";
 import Input from "../ui/input";
 import { UserFormValues } from "../../types";
 import { emailRegex } from "../../utils/constants";
+import { InformationIcon } from "../../assets/icons";
 
 type Props = {
   onSetNextStep: () => void;
@@ -97,7 +98,16 @@ const UserForm = (props: Props) => {
 
         <Input
           id="email"
-          label="Correo Electrónico"
+          label={
+            <Flex gridGap="2">
+              Correo Electrónico
+              <Tooltip label="Enviaremos tu contraseña al correo ingresado">
+                <Box w="6" h="6">
+                  <InformationIcon />
+                </Box>
+              </Tooltip>
+            </Flex>
+          }
           type="text"
           hookForm={register("email", {
             required: "Este campo es obligatorio",
@@ -109,7 +119,9 @@ const UserForm = (props: Props) => {
           errorMsg={errors.email?.message}
         />
       </Stack>
-      <ActionButtons primaryBtn={{ text: "Siguiente", type: "submit" }} />
+      <ActionButtons
+        primaryBtn={{ text: "Siguiente", btnConfig: { type: "submit" } }}
+      />
     </form>
   );
 };
