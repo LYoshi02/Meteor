@@ -54,14 +54,16 @@ const UserForm = (props: Props) => {
         <Input
           id="dni"
           label="DNI"
-          type="number"
+          type="text"
           hookForm={register("dni", {
             required: "Este campo es obligatorio",
             validate: {
               isPositiveNumber: (dni) =>
-                +dni > 0 || "El DNI ingresado no es válido",
+                +dni > 0 || "El Dni ingresado no es válido",
+              withoutDots: (dni) =>
+                !dni.includes(".") || "El Dni no debe contener puntos",
             },
-            maxLength: { value: 8, message: "El DNI ingresado no es válido" },
+            maxLength: { value: 8, message: "El Dni ingresado no es válido" },
           })}
           errorMsg={errors.dni?.message}
         />
