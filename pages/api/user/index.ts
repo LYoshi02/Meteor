@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import {
   getUserByDni,
+  getUserByDniOrEmail,
   getUserByEmailAndPassword,
   updateUser,
 } from "../../../db";
@@ -59,10 +60,23 @@ const handler = async (
           .json({ message: "No estas autorizado para realizar esta acción" });
       }
 
+      const userDni = user!.data!.dni;
       const userData = req.body.user;
+
+      const currentUser = await getUserByDniOrEmail(
+        user!.data!.dni,
+        userData.email
+      );
+
+      if (currentUser.length > 1) {
+        return res
+          .status(422)
+          .json({ message: "El correo ingresado ya se encuentra en uso" });
+      }
+
       if (userData.newPassword.length > 0) {
         const foundUser = await getUserByEmailAndPassword(
-          userData.email,
+          currentUser[0].CorreoElectronico,
           userData.currentPassword
         );
 
@@ -73,8 +87,7 @@ const handler = async (
         }
       }
 
-      const userDni = user!.data!.dni;
-      await updateUser(req.body.user, userDni);
+      await updateUser(userData, userDni);
 
       return res
         .status(200)
