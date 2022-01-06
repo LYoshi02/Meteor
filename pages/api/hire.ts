@@ -14,6 +14,7 @@ import {
   insertNewUser,
 } from "../../db/index";
 import sgMail from "../../utils/sendEmail";
+import { pool } from "../../db/index";
 import { UserFormValues } from "../../types";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
@@ -52,10 +53,18 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     const { user, services } = req.body;
+    const client = await pool.connect();
 
     try {
-      // 1) Validar no existencia del cliente
-      const foundUsers = await getUserByDniOrEmail(user.dni, user.email);
+      // 1) Iniciar transacción
+      await client.query("BEGIN");
+
+      // 2) Validar no existencia del cliente
+      const foundUsers = await getUserByDniOrEmail(
+        user.dni,
+        user.email,
+        client
+      );
       if (foundUsers.length > 0) {
         return res.status(422).json({
           message:
@@ -63,12 +72,12 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      // 2) Agregar al cliente a la BD
+      // 3) Agregar al cliente a la BD
       const userPassword = generator.generate({ length: 10, numbers: true });
-      await insertNewUser(user, userPassword);
+      await insertNewUser(user, userPassword, client);
 
-      // 3) Buscar promocion y crear contrato
-      const promotion = await getPromotionBySelectedServices(services);
+      // 4) Buscar promocion y crear contrato
+      const promotion = await getPromotionBySelectedServices(services, client);
 
       let promotionNumber: number | undefined;
       if (promotion.length > 0) {
@@ -77,20 +86,30 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
 
       const insertedContract = await insertNewContract(
         user.dni,
-        promotionNumber
+        promotionNumber,
+        client
       );
 
-      // 4) Agregar servicios contratados
+      // 5) Agregar servicios contratados
       const contractNumber = insertedContract.rows[0].NroContrato;
-      await insertHiredServices(contractNumber, services);
+      await insertHiredServices(contractNumber, services, client);
 
-      // 5) Generar 1er Factura con sus detalles
-      const insertedInvoice = await insertInvoice(user.dni, contractNumber);
+      // 6) Generar 1er Factura con sus detalles
+      const insertedInvoice = await insertInvoice(
+        user.dni,
+        contractNumber,
+        client
+      );
       const invoiceNumber: number = insertedInvoice.rows[0].NroFactura;
 
-      await insertInvoiceDetails(invoiceNumber, services, promotionNumber);
+      await insertInvoiceDetails(
+        invoiceNumber,
+        services,
+        promotionNumber,
+        client
+      );
 
-      // 6) Enviar contraseña al correo
+      // 7) Enviar contraseña al correo
       // TODO: mejorar este mensaje
       const msg = {
         to: user.email,
@@ -101,8 +120,15 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
 
       await sgMail.send(msg);
 
+      // 8) Guardar cambios de la transacción
+      await client.query("COMMIT");
+      client.release();
+
       return res.status(201).json({ message: "Servicio contratado!" });
     } catch (error) {
+      await client.query("ROLLBACK");
+      client.release();
+
       return res
         .status(500)
         .json({ message: "Se produjo un error en el servidor" });

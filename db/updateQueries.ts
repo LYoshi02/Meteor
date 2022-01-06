@@ -1,8 +1,13 @@
-import { query } from ".";
+import { Pool, PoolClient } from "pg";
+import { pool } from ".";
 import { UserConfigFormValues } from "../types";
 
-export const updateUser = async (user: UserConfigFormValues, dni: string) => {
-  const result = await query(
+export const updateUser = async (
+  user: UserConfigFormValues,
+  dni: string,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
     `
         UPDATE "Clientes"
         SET "Nombre" = $2, "Apellido" = $3, "Direccion" = $4, 

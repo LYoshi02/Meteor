@@ -1,4 +1,4 @@
-export { query } from "./db";
+export { pool } from "./db";
 export {
   getAllInternetServices,
   getAllPromotions,

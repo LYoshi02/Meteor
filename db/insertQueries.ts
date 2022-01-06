@@ -1,12 +1,18 @@
-import { query } from "./index";
+import { pool } from "./index";
 import {
   getContractNumberByInvoiceNumber,
   getValidPromotionFromContract,
 } from "./selectQueries";
 import { ContractSchema, InvoiceSchema, UserFormValues } from "../types";
 
-export const insertNewUser = async (user: UserFormValues, password: string) => {
-  const result = await query(
+import { PoolClient, Pool } from "pg";
+
+export const insertNewUser = async (
+  user: UserFormValues,
+  password: string,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
     `
       INSERT INTO "Clientes" ("Dni", "Nombre", "Apellido", "FechaNacimiento", "Direccion", 
         "Telefono", "CorreoElectronico", "Contrasena")
@@ -23,14 +29,16 @@ export const insertNewUser = async (user: UserFormValues, password: string) => {
       password,
     ]
   );
+
   return result;
 };
 
 export const insertNewContract = async (
   dni: string,
-  promotionNumber?: number
+  promotionNumber?: number,
+  client: PoolClient | Pool = pool
 ) => {
-  const result = await query<ContractSchema>(
+  const result = await client.query<ContractSchema>(
     `
         INSERT INTO "Contratos" ("DniCliente", "NroPromocion")
         VALUES ($1, $2)
@@ -44,9 +52,10 @@ export const insertNewContract = async (
 
 export const insertHiredServices = async (
   contractNumber: number,
-  services: number[]
+  services: number[],
+  client: PoolClient | Pool = pool
 ) => {
-  const result = await query(
+  const result = await client.query(
     `
         INSERT INTO "ServiciosContratados" ("NroServicio", "NroContrato", "Cantidad")
         SELECT u.val, $1, 1
@@ -57,8 +66,12 @@ export const insertHiredServices = async (
   return result;
 };
 
-export const insertInvoice = async (dni: string, contractNumber: number) => {
-  const result = await query<InvoiceSchema>(
+export const insertInvoice = async (
+  dni: string,
+  contractNumber: number,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<InvoiceSchema>(
     `
     INSERT INTO "Facturas" ("Vencimiento", "PeriodoInicio", "PeriodoFin", "DniCliente", "NroContrato")
     SELECT 
@@ -107,10 +120,11 @@ export const insertInvoice = async (dni: string, contractNumber: number) => {
 export const insertInvoiceDetails = async (
   invoiceNumber: number,
   servicesIds: number[],
-  promotionNumber?: number
+  promotionNumber?: number,
+  client: PoolClient | Pool = pool
 ) => {
-  await query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
-  const resultServices = await query<{
+  await client.query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
+  const resultServices = await client.query<{
     Cantidad: number;
     TotalParcial: number;
   }>(
@@ -169,7 +183,7 @@ export const insertInvoiceDetails = async (
       0
     );
 
-    await query(
+    await client.query(
       `
         INSERT INTO "Detalles" ("NroRenglon", "Descripcion", "Cantidad", "TotalParcial", "NroFactura", "NroServicio", "EsDescuento")
         SELECT nextval('"Detalles_NroRenglon_seq"') AS "NroRenglon",
