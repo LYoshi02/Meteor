@@ -102,8 +102,10 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
       await sgMail.send(msg);
 
       return res.status(201).json({ message: "Servicio contratado!" });
-    } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Se produjo un error en el servidor" });
     }
   }
 };

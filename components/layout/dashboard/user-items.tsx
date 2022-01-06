@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 
 import {
   HomeIcon,
@@ -13,18 +13,23 @@ const dashboardItems = [
   { name: "Usuario", path: "/user/config", icon: <UserIcon /> },
 ];
 
-const UserDashboardItems = () => {
+type Props = {
+  onCloseDrawer?: () => void;
+};
+
+const UserDashboardItems = (props: Props) => {
   return (
-    <Box as="ul" listStyleType="none">
+    <Stack as="ul" listStyleType="none" spacing="2">
       {dashboardItems.map((item) => (
         <ListItem
           key={item.path}
           name={item.name}
           path={item.path}
           icon={item.icon}
+          clicked={props.onCloseDrawer}
         />
       ))}
-    </Box>
+    </Stack>
   );
 };
 

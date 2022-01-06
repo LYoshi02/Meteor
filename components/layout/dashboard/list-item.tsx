@@ -6,11 +6,12 @@ type Props = {
   path: string;
   name: string;
   icon: React.ReactElement;
+  clicked?: () => void;
 };
 
 const ListItem = (props: Props) => {
   return (
-    <Box as="li">
+    <Box as="li" onClick={props.clicked}>
       <Link
         href={props.path}
         styles={{
@@ -22,7 +23,7 @@ const ListItem = (props: Props) => {
           borderRadius: "sm",
           cursor: "pointer",
           fontWeight: "bold",
-          _hover: { bgColor: "gray.900" },
+          _hover: { bgColor: "gray.700" },
         }}
       >
         <Flex alignItems="center">

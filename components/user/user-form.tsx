@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import useSWR from "swr";
-import { Button, Divider, SimpleGrid, Stack } from "@chakra-ui/react";
+import { Button, Divider, SimpleGrid, Stack, useToast } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import Input from "../ui/input";
 import { emailRegex } from "../../utils/constants";
 import PasswordInput from "../ui/password-input";
 import { UserConfigFormValues, UserConfigData } from "../../types";
-import fetchJson from "../../utils/fetchJson";
+import LoadingSpinner from "./loading-spinner";
+import Alert from "../ui/alert";
+import useHttp from "../../hooks/useHttp";
 
 const UserForm = () => {
   const {
@@ -17,7 +19,16 @@ const UserForm = () => {
     setValue,
     setError,
   } = useForm<UserConfigFormValues>();
-  const { data: userData } = useSWR<UserConfigData>("/api/user");
+  const { data: userData, error: userError } =
+    useSWR<UserConfigData>("/api/user");
+  const {
+    isLoading,
+    error: reqError,
+    sendRequest,
+    success: reqSuccess,
+    dispatch,
+  } = useHttp();
+  const toast = useToast();
 
   useEffect(() => {
     if (userData) {
@@ -28,6 +39,32 @@ const UserForm = () => {
       setValue("email", userData.email);
     }
   }, [userData, setValue]);
+
+  useEffect(() => {
+    if (reqSuccess) {
+      toast({
+        title: "Éxito!",
+        description: "Tus datos se actualizaron correctamente",
+        status: "success",
+        isClosable: true,
+        variant: "solid",
+        onCloseComplete: () => dispatch({ type: "reset" }),
+      });
+    }
+  }, [reqSuccess, toast, dispatch]);
+
+  useEffect(() => {
+    if (reqError) {
+      toast({
+        title: "Error!",
+        description: reqError.message,
+        status: "error",
+        isClosable: true,
+        variant: "solid",
+        onCloseComplete: () => dispatch({ type: "reset" }),
+      });
+    }
+  }, [reqError, toast, dispatch]);
 
   const validatePasswords = (currentPassword: string, newPassword: string) => {
     if (currentPassword.length === 0 && newPassword.length > 0) {
@@ -44,12 +81,28 @@ const UserForm = () => {
 
   const submitHandler: SubmitHandler<UserConfigFormValues> = async (values) => {
     if (!validatePasswords(values.currentPassword, values.newPassword)) return;
-    await fetchJson("/api/user", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: values }),
+
+    await sendRequest({
+      input: "/api/user",
+      init: {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: values }),
+      },
     });
   };
+
+  if (!userData && !userError) {
+    return <LoadingSpinner />;
+  } else if (userError) {
+    return (
+      <Alert
+        title="Error!"
+        description="Se produjo un error, intente más tarde."
+        status="error"
+      />
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
@@ -140,7 +193,13 @@ const UserForm = () => {
           errorMsg={errors.newPassword?.message}
         />
 
-        <Button type="submit" colorScheme="teal">
+        <Button
+          type="submit"
+          colorScheme="teal"
+          width={{ base: "full", sm: "36" }}
+          alignSelf="flex-end"
+          isLoading={isLoading}
+        >
           Guardar
         </Button>
       </Stack>

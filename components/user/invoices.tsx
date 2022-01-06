@@ -14,16 +14,19 @@ import useSWR from "swr";
 
 import DocumentDownload from "../../assets/icons/document-download";
 import { InvoiceSchema } from "../../types";
+import Alert from "../ui/alert";
+import LoadingSpinner from "./loading-spinner";
 
 const Invoices = () => {
-  const { data } = useSWR<{ invoices: InvoiceSchema[] }>("/api/user/invoices");
+  const { data, error } =
+    useSWR<{ invoices: InvoiceSchema[] }>("/api/user/invoices");
 
   const userInvoices: InvoiceSchema[] = data?.invoices || [];
 
-  return (
-    <Box>
-      <Heading as="h2">Mis Facturas</Heading>
-      <Table variant="simple" mt="4">
+  let mainContent: JSX.Element;
+  if (data) {
+    mainContent = (
+      <Table variant="simple">
         <Thead>
           <Tr>
             <Th textAlign="center">Factura</Th>
@@ -59,6 +62,25 @@ const Invoices = () => {
           ))}
         </Tbody>
       </Table>
+    );
+  } else if (error) {
+    mainContent = (
+      <Alert
+        title="Error!"
+        description="Se produjo un error, intente más tarde."
+        status="error"
+      />
+    );
+  } else {
+    mainContent = <LoadingSpinner />;
+  }
+
+  return (
+    <Box>
+      <Heading as="h2">Mis Facturas</Heading>
+      <Box height="full" maxWidth="full" overflow="auto" mt="4">
+        {mainContent}
+      </Box>
     </Box>
   );
 };

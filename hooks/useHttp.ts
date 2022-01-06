@@ -55,7 +55,7 @@ const useHttp = () => {
       dispatch({ type: "success" });
     } catch (error: any) {
       const errorMessage =
-        error.data.message || error.message || "Se produjo un error";
+        error.data?.message || error.message || "Se produjo un error";
 
       dispatch({
         type: "error",

@@ -25,7 +25,7 @@ const HiredServices = (props: Props) => {
             as="dl"
             direction={{ base: "column", sm: "row" }}
           >
-            <Box as="dt" minWidth="40">
+            <Box as="dt" minWidth="32">
               {service.Nombre}
             </Box>
             <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">
@@ -35,7 +35,7 @@ const HiredServices = (props: Props) => {
         ))}
 
         <Flex as="dl" direction={{ base: "column", sm: "row" }}>
-          <Box as="dt" minWidth="40">
+          <Box as="dt" minWidth="32">
             Total
           </Box>
           <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">

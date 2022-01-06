@@ -11,9 +11,17 @@ type Props = {
 
 const ContractDetails = ({ details }: Props) => {
   return (
-    <Grid templateColumns="repeat(8, 1fr)" mt="8" gap="4">
+    <Grid
+      templateColumns={{ base: "1fr", lg: "repeat(8, 1fr)" }}
+      templateRows={{
+        base: "repeat(3, min-content)",
+        lg: "repeat(auto-fill, min-content)",
+      }}
+      mt="8"
+      gap="4"
+    >
       <GridItem
-        colSpan={3}
+        colSpan={{ base: 1, lg: 3 }}
         bgGradient="linear(to-tl, purple.600, purple.800)"
         p="4"
         borderRadius="sm"
@@ -23,8 +31,8 @@ const ContractDetails = ({ details }: Props) => {
       </GridItem>
 
       <GridItem
-        colSpan={5}
-        rowSpan={2}
+        gridColumn={{ base: " 1 / -1", lg: "4 / -1" }}
+        gridRow={{ lg: "1 / -1" }}
         bgGradient="linear(to-tr, red.600, red.800)"
         p="4"
         borderRadius="sm"
@@ -35,7 +43,8 @@ const ContractDetails = ({ details }: Props) => {
 
       {details.promotion && (
         <GridItem
-          colSpan={3}
+          colSpan={{ base: 1, lg: 3 }}
+          gridRow={{ lg: "2 / -1" }}
           bgGradient="linear(to-bl, cyan.600, cyan.800)"
           p="4"
           borderRadius="sm"

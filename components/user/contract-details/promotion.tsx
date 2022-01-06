@@ -17,7 +17,7 @@ const Promotion = (props: Props) => {
 
       <Stack spacing="4" mt="4">
         <Flex as="dl" direction={{ base: "column", sm: "row" }}>
-          <Box as="dt" minWidth="40">
+          <Box as="dt" minWidth="32">
             Nro de Promoción
           </Box>
           <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">
@@ -26,7 +26,7 @@ const Promotion = (props: Props) => {
         </Flex>
 
         <Flex as="dl" direction={{ base: "column", sm: "row" }}>
-          <Box as="dt" minWidth="40">
+          <Box as="dt" minWidth="32">
             Descuento
           </Box>
           <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">
@@ -35,7 +35,7 @@ const Promotion = (props: Props) => {
         </Flex>
 
         <Flex as="dl" direction={{ base: "column", sm: "row" }}>
-          <Box as="dt" minWidth="40">
+          <Box as="dt" minWidth="32">
             Fecha de Fin
           </Box>
           <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">

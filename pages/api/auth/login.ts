@@ -15,11 +15,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     if (foundUser.length === 0) {
-      return res
-        .status(422)
-        .json({
-          message: "El correo o la contraseña ingresados son incorrectos",
-        });
+      return res.status(422).json({
+        message: "El correo o la contraseña ingresados son incorrectos",
+      });
     }
 
     const authenticatedUser: AuthUser = {
@@ -33,9 +31,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     req.session.user = authenticatedUser;
     await req.session.save();
 
-    res.status(200).json(authenticatedUser);
+    return res.status(200).json(authenticatedUser);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return res
+      .status(500)
+      .json({ message: "Se produjo un error en el servidor" });
   }
 };
 

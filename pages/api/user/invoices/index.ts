@@ -9,15 +9,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     const user = req.session.user;
 
-    if (!isValidSession(user)) {
-      res.status(401).end();
-      return;
+    try {
+      if (!isValidSession(user)) {
+        return res
+          .status(401)
+          .json({ message: "No estas autorizado para realizar esta acción" });
+      }
+
+      const userDni = user!.data!.dni;
+      const invoices = await getUserInvoices(userDni);
+
+      res.status(200).json({ invoices });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Se produjo un error en el servidor" });
     }
-
-    const userDni = user!.data!.dni;
-    const invoices = await getUserInvoices(userDni);
-
-    res.status(200).json({ invoices });
   }
 };
 
