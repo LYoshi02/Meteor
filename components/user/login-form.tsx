@@ -15,6 +15,9 @@ type FormValues = {
   password: string;
 };
 
+const USER_DASHBOARD_ROUTE = "/user/home";
+const ADMIN_DASHBOARD_ROUTE = "/admin/home";
+
 const LoginForm = () => {
   const {
     register,
@@ -29,7 +32,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     const showSuccessMessage = (url: string) => {
-      if (url !== "/user/home") return;
+      if (url !== USER_DASHBOARD_ROUTE && url !== ADMIN_DASHBOARD_ROUTE) return;
 
       toastRef.current = toast({
         title: "Éxito!",
@@ -41,7 +44,7 @@ const LoginForm = () => {
     };
 
     const closeSuccessMessage = (url: string) => {
-      if (url !== "/user/home") return;
+      if (url !== USER_DASHBOARD_ROUTE && url !== ADMIN_DASHBOARD_ROUTE) return;
       toast.close(toastRef.current!);
     };
 
@@ -66,7 +69,11 @@ const LoginForm = () => {
       },
       (userData) => {
         mutateUser(userData);
-        router.push("/user/home");
+        if (userData.isAdmin) {
+          router.push(ADMIN_DASHBOARD_ROUTE);
+        } else {
+          router.push(USER_DASHBOARD_ROUTE);
+        }
       }
     );
   };

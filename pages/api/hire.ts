@@ -4,18 +4,21 @@ import generator from "generate-password";
 import {
   getAllInternetServices,
   getAllPromotions,
-  getOptionalOrRequiredCableServices,
+  getOptionalCableServices,
+  getRequiredCableServices,
   getPromotionBySelectedServices,
-  getUserByDniOrEmail,
+  getCurrentCustomerContract,
   insertHiredServices,
   insertInvoice,
   insertInvoiceDetails,
   insertNewContract,
   insertNewUser,
+  insertNewCustomer,
 } from "../../db/index";
 import sgMail from "../../utils/sendEmail";
 import { pool } from "../../db/index";
 import { UserFormValues } from "../../types";
+import { USER_ROLE } from "../../utils/constants";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
@@ -28,12 +31,8 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       const internetServices = await getAllInternetServices();
-      const requiredCableServices = await getOptionalOrRequiredCableServices(
-        false
-      );
-      const optionalCableServices = await getOptionalOrRequiredCableServices(
-        true
-      );
+      const requiredCableServices = await getRequiredCableServices();
+      const optionalCableServices = await getOptionalCableServices();
       const promotions = await getAllPromotions();
 
       return res.status(200).json({
@@ -60,21 +59,20 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
       await client.query("BEGIN");
 
       // 2) Validar no existencia del cliente
-      const foundUsers = await getUserByDniOrEmail(
-        user.dni,
-        user.email,
-        client
-      );
-      if (foundUsers.length > 0) {
-        return res.status(422).json({
-          message:
-            "El DNI o correo electrónico ingresados ya se encuentra en uso.",
-        });
+      const currentContact = await getCurrentCustomerContract(user.dni, client);
+      if (currentContact.length > 0) {
+        return res
+          .status(422)
+          .json({ message: "Usted ya tiene un contrato vigente" });
       }
 
       // 3) Agregar al cliente a la BD
       const userPassword = generator.generate({ length: 10, numbers: true });
-      await insertNewUser(user, userPassword, client);
+      await insertNewUser(
+        { email: user.email, password: userPassword, role: USER_ROLE },
+        client
+      );
+      await insertNewCustomer(user, client);
 
       // 4) Buscar promocion y crear contrato
       const promotion = await getPromotionBySelectedServices(services, client);
@@ -100,12 +98,10 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
         contractNumber,
         client
       );
-      const invoiceNumber: number = insertedInvoice.rows[0].NroFactura;
+      const invoiceDetails = insertedInvoice.rows[0];
 
       await insertInvoiceDetails(
-        invoiceNumber,
-        services,
-        promotionNumber,
+        { invoice: invoiceDetails, servicesIds: services, promotionNumber },
         client
       );
 
@@ -128,7 +124,7 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
     } catch (error) {
       await client.query("ROLLBACK");
       client.release();
-
+      console.log(error);
       return res
         .status(500)
         .json({ message: "Se produjo un error en el servidor" });

@@ -3,8 +3,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import {
   getDetailsByInvoiceNumber,
-  getUserInvoiceById,
-  getUserByDni,
+  getCustomerInvoiceById,
+  getCustomerByDni,
 } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
 import { generateInvoice } from "../../../../utils/invoicePdf";
@@ -24,12 +24,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const userDni = user!.data!.dni;
       const invoiceNumber = +req.query.id;
 
-      const userResult = await getUserByDni(userDni);
+      const userResult = await getCustomerByDni(userDni);
       if (userResult.length === 0) {
         return res.status(404).json({ message: "Usuario no encontrado" });
       }
 
-      const invoiceResult = await getUserInvoiceById(invoiceNumber, userDni);
+      const invoiceResult = await getCustomerInvoiceById(
+        invoiceNumber,
+        userDni
+      );
       if (invoiceResult.length === 0) {
         return res.status(404).json({ message: "Factura no encontrada" });
       }

@@ -45,9 +45,19 @@ export type ClientSchema = {
   Apellido: string;
   FechaNacimiento: string;
   Direccion: string;
+  Telefono: string;
+  CorreoElectronico: string;
+};
+
+export type UserSchema = {
   Contrasena: string;
   CorreoElectronico: string;
-  Telefono: string;
+  Rol: number;
+};
+
+export type RoleSchema = {
+  NroRol: number;
+  Nombre: string;
 };
 
 export type InvoiceDetailSchema = {

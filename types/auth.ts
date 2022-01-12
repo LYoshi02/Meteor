@@ -1,5 +1,6 @@
 export type AuthUser = {
   isLoggedIn: boolean;
+  isAdmin: boolean;
   data: UserData | null;
 };
 

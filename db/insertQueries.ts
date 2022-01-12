@@ -8,15 +8,29 @@ import { ContractSchema, InvoiceSchema, UserFormValues } from "../types";
 import { PoolClient, Pool } from "pg";
 
 export const insertNewUser = async (
+  user: { email: string; password: string; role: number },
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
+    `
+      INSERT INTO "Usuarios" ("CorreoElectronico", "Contrasena", "Rol")
+      VALUES ($1, crypt($2, gen_salt('bf')), $3)
+    `,
+    [user.email, user.password, user.role]
+  );
+
+  return result;
+};
+
+export const insertNewCustomer = async (
   user: UserFormValues,
-  password: string,
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query(
     `
       INSERT INTO "Clientes" ("Dni", "Nombre", "Apellido", "FechaNacimiento", "Direccion", 
-        "Telefono", "CorreoElectronico", "Contrasena")
-      VALUES ($1, $2, $3, $4, $5, $6, $7, crypt($8, gen_salt('bf')))
+        "Telefono", "CorreoElectronico")
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
     `,
     [
       user.dni,
@@ -26,7 +40,6 @@ export const insertNewUser = async (
       user.address,
       user.phone,
       user.email,
-      password,
     ]
   );
 
@@ -118,11 +131,16 @@ export const insertInvoice = async (
 };
 
 export const insertInvoiceDetails = async (
-  invoiceNumber: number,
-  servicesIds: number[],
-  promotionNumber?: number,
+  data: {
+    invoice: InvoiceSchema;
+    servicesIds: number[];
+    promotionNumber?: number;
+  },
   client: PoolClient | Pool = pool
 ) => {
+  const { invoice, servicesIds, promotionNumber } = data;
+  const invoiceNumber = invoice.NroFactura;
+
   await client.query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
   const resultServices = await client.query<{
     Cantidad: number;
@@ -168,11 +186,11 @@ export const insertInvoiceDetails = async (
   );
 
   if (promotionNumber) {
-    const contractData = await getContractNumberByInvoiceNumber(invoiceNumber);
-    const contractNumber = contractData[0].NroContrato;
+    const contractNumber = invoice.NroContrato;
 
     const promotionDetails = await getValidPromotionFromContract(
-      contractNumber
+      contractNumber,
+      client
     );
 
     if (!promotionDetails || promotionDetails.length === 0) return;

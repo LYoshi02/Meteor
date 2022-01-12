@@ -8,6 +8,7 @@ import {
   InvoiceDetailSchema,
   ServiceSchema,
   PromotionSchema,
+  UserSchema,
 } from "../types/index";
 
 import { PoolClient, Pool } from "pg";
@@ -22,17 +23,28 @@ export const getAllInternetServices = async (
   return result.rows;
 };
 
-export const getOptionalOrRequiredCableServices = async (
-  optionalServices: boolean,
+export const getOptionalCableServices = async (
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<CableServiceSchema & ServiceSchema>(
     `
     SELECT * FROM "Cable" AS Cab
     JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
-    WHERE Cab."Opcional" = $1
-    `,
-    [optionalServices]
+    WHERE Cab."Opcional" = TRUE
+    `
+  );
+  return result.rows;
+};
+
+export const getRequiredCableServices = async (
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<CableServiceSchema & ServiceSchema>(
+    `
+    SELECT * FROM "Cable" AS Cab
+    JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
+    WHERE Cab."Opcional" = FALSE
+    `
   );
   return result.rows;
 };
@@ -60,15 +72,13 @@ export const getUserByEmailAndPassword = async (
   submittedPassword: string,
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<{
-    Dni: string;
-    Nombre: string;
-    Apellido: string;
-  }>(
-    `
-      SELECT "Dni", "Nombre", "Apellido" FROM "Clientes"
-      WHERE "CorreoElectronico" = $1 AND
-        "Contrasena" = crypt($2, "Contrasena")
+  const result = await client.query<ClientSchema & UserSchema>(
+    `    
+      SELECT * FROM "Usuarios" usu
+      LEFT JOIN "Clientes" cli
+      ON cli."CorreoElectronico" = usu."CorreoElectronico"
+      WHERE usu."CorreoElectronico" = $1 AND
+        "Contrasena" = crypt($2, "Contrasena");
   `,
     [email, submittedPassword]
   );
@@ -76,7 +86,24 @@ export const getUserByEmailAndPassword = async (
   return result.rows;
 };
 
-export const getUserInvoices = async (
+export const getUserByEmail = async (
+  email: string,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<ClientSchema & UserSchema>(
+    `
+    SELECT * FROM "Usuarios" usu
+    LEFT JOIN "Clientes" cli
+    ON cli."CorreoElectronico" = usu."CorreoElectronico"
+    WHERE usu."CorreoElectronico" = $1;
+  `,
+    [email]
+  );
+
+  return result.rows;
+};
+
+export const getCustomerInvoices = async (
   userDni: string,
   client: PoolClient | Pool = pool
 ) => {
@@ -91,7 +118,7 @@ export const getUserInvoices = async (
   return result.rows;
 };
 
-export const getUserInvoiceById = async (
+export const getCustomerInvoiceById = async (
   invoiceNumber: number,
   dni: string,
   client: PoolClient | Pool = pool
@@ -107,7 +134,7 @@ export const getUserInvoiceById = async (
   return result.rows;
 };
 
-export const getUserByDni = async (
+export const getCustomerByDni = async (
   userDni: string,
   client: PoolClient | Pool = pool
 ) => {
@@ -122,17 +149,16 @@ export const getUserByDni = async (
   return result.rows;
 };
 
-export const getUserByDniOrEmail = async (
+export const getCurrentCustomerContract = async (
   userDni: string,
-  userEmail: string,
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<ClientSchema>(
+  const result = await client.query<ContractSchema>(
     `
-    SELECT * FROM "Clientes"
-    WHERE "Dni" = $1 OR "CorreoElectronico" = $2
+    SELECT * FROM "Contratos"
+    WHERE "DniCliente" = $1 AND "FechaFin" IS NOT NULL;
   `,
-    [userDni, userEmail]
+    [userDni]
   );
 
   return result.rows;

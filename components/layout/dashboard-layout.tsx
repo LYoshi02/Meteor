@@ -17,7 +17,7 @@ import {
 import UserInfo from "./dashboard/user-info";
 
 import LogoutBtn from "./dashboard/logout-btn";
-import UserDashboardItems from "./dashboard/user-items";
+import DashboardItems from "./dashboard/items";
 import { MenuIcon } from "../../assets/icons";
 
 type Props = {
@@ -44,7 +44,7 @@ const DashboardLayout = (props: Props) => {
             <Box>
               <UserInfo />
               <Box mt="8">
-                <UserDashboardItems />
+                <DashboardItems />
               </Box>
             </Box>
 
@@ -68,7 +68,7 @@ const DashboardLayout = (props: Props) => {
             </DrawerHeader>
 
             <DrawerBody>
-              <UserDashboardItems onCloseDrawer={onClose} />
+              <DashboardItems onCloseDrawer={onClose} />
             </DrawerBody>
 
             <DrawerFooter>

@@ -1,7 +1,7 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { getUserInvoices } from "../../../../db";
+import { getCustomerInvoices } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
 import { isValidSession } from "../../../../utils/validateSession";
 
@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const userDni = user!.data!.dni;
-      const invoices = await getUserInvoices(userDni);
+      const invoices = await getCustomerInvoices(userDni);
 
       res.status(200).json({ invoices });
     } catch (error) {

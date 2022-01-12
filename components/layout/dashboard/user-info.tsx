@@ -8,6 +8,8 @@ const UserInfo = () => {
   let userFullName = "";
   if (user?.data) {
     userFullName = `${user.data.firstName} ${user.data.lastName}`;
+  } else if (user?.isAdmin) {
+    userFullName = "ADMIN";
   }
 
   return (

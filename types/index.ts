@@ -18,7 +18,9 @@ export type {
   InvoiceSchema,
   InvoiceDetailSchema,
   ServiceSchema,
+  UserSchema,
   PromotionSchema,
+  RoleSchema,
 } from "./dbSchemas";
 
 export type {

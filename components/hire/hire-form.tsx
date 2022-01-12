@@ -55,7 +55,7 @@ const HireForm = (props: Props) => {
 
   const closeModalHandler = () => {
     setIsModalOpen(false);
-    router.push("/user/login");
+    router.push("/login");
   };
 
   const setUserFormValuesHandler = (values: UserFormValues) => {

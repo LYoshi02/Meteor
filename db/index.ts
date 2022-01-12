@@ -6,15 +6,17 @@ export {
   getCurrentContractByDni,
   getDetailsByInvoiceNumber,
   getHiredServices,
-  getUserInvoiceById,
-  getOptionalOrRequiredCableServices,
+  getCustomerInvoiceById,
+  getOptionalCableServices,
+  getRequiredCableServices,
   getPromotionById,
   getPromotionBySelectedServices,
-  getUserByDni,
-  getUserByDniOrEmail,
+  getCustomerByDni,
+  getUserByEmail,
   getUserByEmailAndPassword,
-  getUserInvoices,
+  getCustomerInvoices,
   getValidPromotionFromContract,
+  getCurrentCustomerContract,
 } from "./selectQueries";
 export {
   insertHiredServices,
@@ -22,5 +24,6 @@ export {
   insertInvoiceDetails,
   insertNewContract,
   insertNewUser,
+  insertNewCustomer,
 } from "./insertQueries";
-export { updateUser } from "./updateQueries";
+export { updateCustomer, updateUser } from "./updateQueries";
