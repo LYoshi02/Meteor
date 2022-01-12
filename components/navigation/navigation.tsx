@@ -5,13 +5,13 @@ import useUser from "../../hooks/useUser";
 
 const navigationItemsWithAuth = [
   { path: "/", name: "Inicio" },
-  { path: "/user/logout", name: "Cerrar Sesión" },
+  { path: "/logout", name: "Cerrar Sesión" },
 ];
 
 const navigationItemsWithoutAuth = [
   { path: "/", name: "Inicio" },
   { path: "/hire", name: "Contratar Servicios" },
-  { path: "/user/login", name: "Iniciar Sesión" },
+  { path: "/login", name: "Iniciar Sesión" },
 ];
 
 const Navigation = () => {

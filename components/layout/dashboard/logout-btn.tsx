@@ -6,7 +6,7 @@ import Link from "../../ui/link";
 const LogoutBtn = () => {
   return (
     <Link
-      href="/user/logout"
+      href="/logout"
       styles={{
         fontSize: "lg",
         fontWeight: "bold",

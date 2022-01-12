@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-import useUser from "../../hooks/useUser";
-import fetchJson from "../../utils/fetchJson";
-import { AuthUser } from "../../types";
+import useUser from "../hooks/useUser";
+import fetchJson from "../utils/fetchJson";
+import { AuthUser } from "../types";
 
 function LogoutPage() {
   const { mutateUser } = useUser({ redirectTo: "/", redirectIfFound: false });
