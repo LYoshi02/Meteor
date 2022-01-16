@@ -44,3 +44,26 @@ export const updateCustomer = async (
 
   return result;
 };
+
+export const updateInvoiceStatus = async (
+  invoiceNumber: string,
+  isPaid: boolean,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
+    `
+        UPDATE "Facturas"
+        SET "FechaFacturacion" = CASE
+          WHEN $2 IS TRUE THEN
+            CURRENT_DATE
+          ELSE
+            NULL
+          END
+        WHERE "NroFactura" = $1::Integer
+        RETURNING *
+    `,
+    [invoiceNumber, isPaid]
+  );
+
+  return result;
+};

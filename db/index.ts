@@ -17,6 +17,8 @@ export {
   getCustomerInvoices,
   getValidPromotionFromContract,
   getCurrentCustomerContract,
+  getInvoices,
+  getInvoicesCount,
 } from "./selectQueries";
 export {
   insertHiredServices,
@@ -26,4 +28,8 @@ export {
   insertNewUser,
   insertNewCustomer,
 } from "./insertQueries";
-export { updateCustomer, updateUser } from "./updateQueries";
+export {
+  updateCustomer,
+  updateUser,
+  updateInvoiceStatus,
+} from "./updateQueries";

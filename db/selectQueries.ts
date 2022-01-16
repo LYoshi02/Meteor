@@ -275,3 +275,20 @@ export const getDetailsByInvoiceNumber = async (
 
   return result.rows;
 };
+
+export const getInvoices = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<InvoiceSchema>(`
+    SELECT * FROM "Facturas"
+    ORDER BY "PeriodoInicio" DESC, "NroFactura" DESC
+  `);
+
+  return result.rows;
+};
+
+export const getInvoicesCount = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<{ count: string }>(
+    `SELECT COUNT(*) FROM "Facturas"`
+  );
+
+  return result.rows;
+};
