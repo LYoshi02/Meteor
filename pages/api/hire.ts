@@ -14,6 +14,7 @@ import {
   insertNewContract,
   insertNewUser,
   insertNewCustomer,
+  getCustomerByDni,
 } from "../../db/index";
 import sgMail from "../../utils/sendEmail";
 import { pool } from "../../db/index";
@@ -58,7 +59,7 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
       // 1) Iniciar transacción
       await client.query("BEGIN");
 
-      // 2) Validar no existencia del cliente
+      // 2) Validar que no haya un contrato vigente
       const currentContact = await getCurrentCustomerContract(user.dni, client);
       if (currentContact.length > 0) {
         return res
@@ -67,12 +68,18 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
       }
 
       // 3) Agregar al cliente a la BD
-      const userPassword = generator.generate({ length: 10, numbers: true });
-      await insertNewUser(
-        { email: user.email, password: userPassword, role: USER_ROLE },
-        client
-      );
-      await insertNewCustomer(user, client);
+      const currentUser = await getCustomerByDni(user.dni);
+      const userExists = currentUser.length > 0;
+
+      let userPassword = "";
+      if (!userExists) {
+        userPassword = generator.generate({ length: 10, numbers: true });
+        await insertNewUser(
+          { email: user.email, password: userPassword, role: USER_ROLE },
+          client
+        );
+        await insertNewCustomer(user, client);
+      }
 
       // 4) Buscar promocion y crear contrato
       const promotion = await getPromotionBySelectedServices(services, client);
@@ -107,20 +114,24 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
 
       // 7) Enviar contraseña al correo
       // TODO: mejorar este mensaje
-      const msg = {
-        to: user.email,
-        from: process.env.SENDGRID_SENDER_EMAIL!,
-        subject: "Servicios Contratados!",
-        html: `<b>Tu contraseña es: </b>${userPassword}`,
-      };
-
-      await sgMail.send(msg);
+      if (!userExists) {
+        const msg = {
+          to: user.email,
+          from: process.env.SENDGRID_SENDER_EMAIL!,
+          subject: "Servicios Contratados!",
+          html: `<b>Tu contraseña es: </b>${userPassword}`,
+        };
+        await sgMail.send(msg);
+      }
 
       // 8) Guardar cambios de la transacción
       await client.query("COMMIT");
       client.release();
 
-      return res.status(201).json({ message: "Servicio contratado!" });
+      return res.status(201).json({
+        message: "Servicio contratado!",
+        existingUser: userExists ? currentUser[0] : null,
+      });
     } catch (error) {
       await client.query("ROLLBACK");
       client.release();

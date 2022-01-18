@@ -1,15 +1,29 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import { UserContractDetails } from "../../types";
 
+import Alert from "../ui/alert";
 import Contract from "./contract-details/contract";
 import HiredServices from "./contract-details/hired-services";
 import Promotion from "./contract-details/promotion";
+import { UserContractDetails } from "../../types";
+import { formateDateToFullDate } from "../../utils/dateHelpers";
 
 type Props = {
   details: UserContractDetails;
 };
 
 const ContractDetails = ({ details }: Props) => {
+  if (details.contract.FechaFin) {
+    return (
+      <Alert
+        status="info"
+        title="Contrato Finalizado"
+        description={`Tu contrato finalizó el ${formateDateToFullDate(
+          details.contract.FechaFin
+        )}`}
+      />
+    );
+  }
+
   return (
     <Grid
       templateColumns={{ base: "1fr", lg: "repeat(8, 1fr)" }}

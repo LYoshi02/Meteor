@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { withIronSessionApiRoute } from "iron-session/next";
 
 import {
-  getCurrentContractByDni,
+  getLastContractByDni,
   getHiredServices,
   getPromotionById,
 } from "../../../db";
@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ message: "No estas autorizado para realizar esta acción" });
       }
 
-      const contractResult = await getCurrentContractByDni(user!.data!.dni);
+      const contractResult = await getLastContractByDni(user!.data!.dni);
       const userContract = contractResult[0];
 
       const hiredServices = await getHiredServices(userContract.NroContrato);
@@ -38,6 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         contract: {
           NroContrato: userContract.NroContrato,
           FechaInicio: userContract.FechaInicio,
+          FechaFin: userContract.FechaFin,
         },
         services: hiredServices,
         promotion: promotionDetails,

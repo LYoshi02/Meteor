@@ -16,7 +16,11 @@ export type UserConfigPassword = {
 };
 
 export type UserContractDetails = {
-  contract: { NroContrato: number; FechaInicio: string };
+  contract: {
+    NroContrato: number;
+    FechaInicio: string;
+    FechaFin: string | null;
+  };
   services: ServiceSchema[];
   promotion: PromotionSchema | null;
 };

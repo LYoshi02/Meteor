@@ -31,6 +31,7 @@ const Invoices = () => {
             <Th textAlign="center">Factura</Th>
             <Th textAlign="center">Mes</Th>
             <Th textAlign="center">Dni</Th>
+            <Th textAlign="center">Nro. de Contrato</Th>
             <Th textAlign="center">Estado de Pago</Th>
             <Th textAlign="center">Generar</Th>
           </Tr>
@@ -43,6 +44,7 @@ const Invoices = () => {
                 {formatDateToMonthAndYear(invoice.PeriodoInicio)}
               </Td>
               <Td textAlign="center">{invoice.DniCliente}</Td>
+              <Td textAlign="center">{invoice.NroContrato}</Td>
               <Td textAlign="center">
                 {invoice.FechaFacturacion ? "Pagado" : "Adeuda"}
               </Td>

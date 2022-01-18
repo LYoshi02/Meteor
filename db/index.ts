@@ -3,7 +3,7 @@ export {
   getAllInternetServices,
   getAllPromotions,
   getContractNumberByInvoiceNumber,
-  getCurrentContractByDni,
+  getLastContractByDni,
   getDetailsByInvoiceNumber,
   getHiredServices,
   getCustomerInvoiceById,

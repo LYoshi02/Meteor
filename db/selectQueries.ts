@@ -111,6 +111,7 @@ export const getCustomerInvoices = async (
     `
     SELECT * FROM "Facturas"
     WHERE "DniCliente" = $1
+    ORDER BY "NroFactura" DESC
   `,
     [userDni]
   );
@@ -156,7 +157,7 @@ export const getCurrentCustomerContract = async (
   const result = await client.query<ContractSchema>(
     `
     SELECT * FROM "Contratos"
-    WHERE "DniCliente" = $1 AND "FechaFin" IS NOT NULL;
+    WHERE "DniCliente" = $1 AND "FechaFin" IS NULL;
   `,
     [userDni]
   );
@@ -231,14 +232,16 @@ export const getPromotionBySelectedServices = async (
   return result.rows;
 };
 
-export const getCurrentContractByDni = async (
+export const getLastContractByDni = async (
   userDni: string,
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<ContractSchema>(
     `
     SELECT * FROM "Contratos" 
-    WHERE "DniCliente" = $1 AND "FechaFin" IS NULL
+    WHERE "DniCliente" = $1
+    ORDER BY "NroContrato" DESC
+    LIMIT 1
   `,
     [userDni]
   );

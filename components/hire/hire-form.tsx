@@ -4,6 +4,7 @@ import { Box, useToast } from "@chakra-ui/react";
 
 import UserForm from "./user-form";
 import {
+  ClientSchema,
   Promotion,
   Services,
   ServicesFormValues,
@@ -27,6 +28,7 @@ const HireForm = (props: Props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const { error, isLoading, success, sendRequest } = useHttp();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [existingUser, setExistingUser] = useState<ClientSchema | null>(null);
   const router = useRouter();
   const toast = useToast();
 
@@ -95,16 +97,22 @@ const HireForm = (props: Props) => {
       services: selectedServices,
     };
 
-    await sendRequest<{ hello: string }>({
-      input: "/api/hire",
-      init: {
-        method: "POST",
-        body: JSON.stringify(hiringData),
-        headers: {
-          "Content-Type": "application/json",
+    await sendRequest<{ message: string; existingUser: ClientSchema | null }>(
+      {
+        input: "/api/hire",
+        init: {
+          method: "POST",
+          body: JSON.stringify(hiringData),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       },
-    });
+      (data) => {
+        console.log(data);
+        setExistingUser(data.existingUser);
+      }
+    );
   };
 
   let currentForm;
@@ -147,6 +155,7 @@ const HireForm = (props: Props) => {
         isOpen={isModalOpen}
         onClose={closeModalHandler}
         email={userFormValues?.email}
+        userExists={existingUser}
       />
     </Box>
   );
