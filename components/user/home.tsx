@@ -6,7 +6,7 @@ import ContractDetails from "../../components/user/contract-details";
 import useUser from "../../hooks/useUser";
 import { UserContractDetails } from "../../types";
 import Alert from "../ui/alert";
-import LoadingSpinner from "./loading-spinner";
+import LoadingSpinner from "../ui/loading-spinner";
 
 const Home = () => {
   const { user } = useUser({});

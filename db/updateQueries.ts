@@ -1,6 +1,6 @@
 import { Pool, PoolClient } from "pg";
 import { pool } from ".";
-import { UserConfigFormValues } from "../types";
+import { ContractSchema, InvoiceSchema, UserConfigFormValues } from "../types";
 
 export const updateUser = async (
   user: {
@@ -50,7 +50,7 @@ export const updateInvoiceStatus = async (
   isPaid: boolean,
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query(
+  const result = await client.query<InvoiceSchema>(
     `
         UPDATE "Facturas"
         SET "FechaFacturacion" = CASE
@@ -63,6 +63,29 @@ export const updateInvoiceStatus = async (
         RETURNING *
     `,
     [invoiceNumber, isPaid]
+  );
+
+  return result;
+};
+
+export const updateContractStatus = async (
+  contractNumber: string,
+  isFinished: boolean,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<ContractSchema>(
+    `
+        UPDATE "Contratos"
+        SET "FechaFin" = CASE
+          WHEN $2 IS TRUE THEN
+            CURRENT_DATE
+          ELSE
+            NULL
+          END
+        WHERE "NroContrato" = $1::Integer
+        RETURNING *
+    `,
+    [contractNumber, isFinished]
   );
 
   return result;

@@ -7,7 +7,7 @@ import Input from "../ui/input";
 import { emailRegex } from "../../utils/constants";
 import PasswordInput from "../ui/password-input";
 import { UserConfigFormValues, UserConfigData } from "../../types";
-import LoadingSpinner from "./loading-spinner";
+import LoadingSpinner from "../ui/loading-spinner";
 import Alert from "../ui/alert";
 import useHttp from "../../hooks/useHttp";
 

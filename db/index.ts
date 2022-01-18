@@ -19,6 +19,9 @@ export {
   getCurrentCustomerContract,
   getInvoices,
   getInvoicesCount,
+  getContracts,
+  getContractsCount,
+  getContractById,
 } from "./selectQueries";
 export {
   insertHiredServices,
@@ -32,4 +35,5 @@ export {
   updateCustomer,
   updateUser,
   updateInvoiceStatus,
+  updateContractStatus,
 } from "./updateQueries";

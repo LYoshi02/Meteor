@@ -1,9 +1,9 @@
 import { Alert, Box, Heading, ToastId, useToast } from "@chakra-ui/react";
-import { ChangeEvent, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import useSWR from "swr";
 
 import { InvoiceSchema } from "../../types";
-import LoadingSpinner from "../user/loading-spinner";
+import LoadingSpinner from "../ui/loading-spinner";
 import useHttp from "../../hooks/useHttp";
 import InvoicesTable from "./invoices/table";
 
@@ -37,7 +37,7 @@ const Invoices = () => {
   }, [reqError, toast]);
 
   const changeInvoiceStatus = async (
-    event: ChangeEvent<HTMLInputElement>,
+    isPaid: boolean,
     invoiceNumber: number
   ) => {
     await sendRequest<{ message: string; invoice: InvoiceSchema }>(
@@ -48,7 +48,7 @@ const Invoices = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ isPaid: event.target.checked }),
+          body: JSON.stringify({ isPaid }),
         },
       },
       (res) => updateInvoice(res.invoice)

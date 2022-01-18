@@ -1,19 +1,14 @@
 import { Box, Table, Tbody, Td, Th, Thead, Tr, Switch } from "@chakra-ui/react";
-import { format } from "date-fns";
-import esLocale from "date-fns/locale/es";
-import { ChangeEvent } from "react";
 
 import { InvoiceSchema } from "../../../types";
 import usePagination from "../../../hooks/usePagination";
 import PaginationFooter from "../../ui/pagination-foooter";
+import { formatDateToMonthAndYear } from "../../../utils/dateHelpers";
 
 type Props = {
   invoices: InvoiceSchema[];
   invoicesCount: number;
-  onChangeStatus: (
-    e: ChangeEvent<HTMLInputElement>,
-    invoiceNumber: number
-  ) => void;
+  onChangeStatus: (isPaid: boolean, invoiceNumber: number) => void;
 };
 
 const InvoicesTable = (props: Props) => {
@@ -44,16 +39,14 @@ const InvoicesTable = (props: Props) => {
               <Tr key={invoice.NroFactura}>
                 <Td textAlign="center">{invoice.NroFactura}</Td>
                 <Td textAlign="center" textTransform="capitalize">
-                  {format(new Date(invoice.PeriodoInicio), "MMMM - yyyy", {
-                    locale: esLocale,
-                  })}
+                  {formatDateToMonthAndYear(invoice.PeriodoInicio)}
                 </Td>
                 <Td textAlign="center">{invoice.DniCliente}</Td>
                 <Td textAlign="center">
                   <Switch
                     defaultChecked={invoice.FechaFacturacion !== null}
                     onChange={(e) =>
-                      props.onChangeStatus(e, invoice.NroFactura)
+                      props.onChangeStatus(e.target.checked, invoice.NroFactura)
                     }
                   />
                 </Td>

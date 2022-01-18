@@ -8,14 +8,13 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { format } from "date-fns";
-import esLocale from "date-fns/locale/es";
 import useSWR from "swr";
 
 import DocumentDownload from "../../assets/icons/document-download";
 import { InvoiceSchema } from "../../types";
+import { formatDateToMonthAndYear } from "../../utils/dateHelpers";
 import Alert from "../ui/alert";
-import LoadingSpinner from "./loading-spinner";
+import LoadingSpinner from "../ui/loading-spinner";
 
 const Invoices = () => {
   const { data, error } =
@@ -41,9 +40,7 @@ const Invoices = () => {
             <Tr key={invoice.NroFactura}>
               <Td textAlign="center">{invoice.NroFactura}</Td>
               <Td textAlign="center" textTransform="capitalize">
-                {format(new Date(invoice.PeriodoInicio), "MMMM - yyyy", {
-                  locale: esLocale,
-                })}
+                {formatDateToMonthAndYear(invoice.PeriodoInicio)}
               </Td>
               <Td textAlign="center">{invoice.DniCliente}</Td>
               <Td textAlign="center">

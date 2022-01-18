@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import DashboardLayout from "../../components/layout/dashboard-layout";
 import Invoices from "../../components/admin/invoices";
 import useUser from "../../hooks/useUser";
+import Contracts from "../../components/admin/contracts";
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function UserDashboardPage() {
   let dashboardElement: React.ReactElement;
   if (dashboardRoute === "invoices") {
     dashboardElement = <Invoices />;
+  } else if (dashboardRoute === "contracts") {
+    dashboardElement = <Contracts />;
   } else {
     router.push("/admin/invoices");
   }

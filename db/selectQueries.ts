@@ -246,6 +246,21 @@ export const getCurrentContractByDni = async (
   return result.rows;
 };
 
+export const getContractById = async (
+  contractNumber: string,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<ContractSchema>(
+    `
+    SELECT * FROM "Contratos" 
+    WHERE "NroContrato" = $1
+  `,
+    [contractNumber]
+  );
+
+  return result.rows;
+};
+
 export const getContractNumberByInvoiceNumber = async (
   invoiceNumber: number,
   client: PoolClient | Pool = pool
@@ -256,6 +271,23 @@ export const getContractNumberByInvoiceNumber = async (
     WHERE "NroFactura" = $1
   `,
     [invoiceNumber]
+  );
+
+  return result.rows;
+};
+
+export const getContracts = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<ContractSchema>(`
+    SELECT * FROM "Contratos"
+    ORDER BY "NroContrato" DESC
+  `);
+
+  return result.rows;
+};
+
+export const getContractsCount = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<{ count: string }>(
+    `SELECT COUNT(*) FROM "Contratos"`
   );
 
   return result.rows;
