@@ -1,8 +1,5 @@
 import { pool } from "./index";
-import {
-  getContractNumberByInvoiceNumber,
-  getValidPromotionFromContract,
-} from "./selectQueries";
+import { getValidPromotionFromContract } from "./selectQueries";
 import { ContractSchema, InvoiceSchema, UserFormValues } from "../types";
 
 import { PoolClient, Pool } from "pg";
@@ -219,4 +216,52 @@ export const insertInvoiceDetails = async (
       [invoiceNumber, promotionNumber, totalPrice]
     );
   }
+};
+
+export const insertNewService = async (
+  service: { name: string; price: string },
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<{ NroServicio: number }>(
+    `
+    INSERT INTO "Servicios" ("Nombre", "Precio")
+    VALUES ($1, $2)
+    RETURNING "NroServicio"
+  `,
+    [service.name, service.price]
+  );
+
+  return result;
+};
+
+export const insertCableService = async (
+  serviceNumber: number,
+  isOptional: boolean,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
+    `
+    INSERT INTO "Cable" ("NroServicio", "CantTvs", "Opcional")
+    VALUES ($1, 1, $2)
+  `,
+    [serviceNumber, isOptional]
+  );
+
+  return result;
+};
+
+export const insertInternetService = async (
+  serviceNumber: number,
+  speed: number,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
+    `
+    INSERT INTO "Internet" ("NroServicio", "Velocidad")
+    VALUES ($1, $2)
+  `,
+    [serviceNumber, speed]
+  );
+
+  return result;
 };

@@ -8,3 +8,4 @@ export { default as MenuIcon } from "./menu";
 export { default as TagIcon } from "./tag";
 export { default as GlobeIcon } from "./globe";
 export { default as CashIcon } from "./cash";
+export { default as TrashIcon } from "./trash";

@@ -22,6 +22,8 @@ export {
   getContracts,
   getContractsCount,
   getContractById,
+  getServices,
+  getServicesCount,
 } from "./selectQueries";
 export {
   insertHiredServices,
@@ -30,6 +32,9 @@ export {
   insertNewContract,
   insertNewUser,
   insertNewCustomer,
+  insertNewService,
+  insertCableService,
+  insertInternetService,
 } from "./insertQueries";
 export {
   updateCustomer,

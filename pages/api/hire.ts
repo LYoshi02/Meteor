@@ -135,7 +135,7 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
     } catch (error) {
       await client.query("ROLLBACK");
       client.release();
-      console.log(error);
+
       return res
         .status(500)
         .json({ message: "Se produjo un error en el servidor" });

@@ -29,3 +29,5 @@ export type {
   UserConfigPassword,
   UserContractDetails,
 } from "./user";
+
+export type { ServiceFormValues } from "./admin";

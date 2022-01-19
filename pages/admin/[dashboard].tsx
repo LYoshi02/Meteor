@@ -4,6 +4,7 @@ import DashboardLayout from "../../components/layout/dashboard-layout";
 import Invoices from "../../components/admin/invoices";
 import useUser from "../../hooks/useUser";
 import Contracts from "../../components/admin/contracts";
+import Services from "../../components/admin/services";
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function UserDashboardPage() {
     dashboardElement = <Invoices />;
   } else if (dashboardRoute === "contracts") {
     dashboardElement = <Contracts />;
+  } else if (dashboardRoute === "services") {
+    dashboardElement = <Services />;
   } else {
     router.push("/admin/invoices");
   }
