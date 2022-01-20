@@ -6,6 +6,7 @@ import useUser from "../../hooks/useUser";
 import Contracts from "../../components/admin/contracts";
 import Services from "../../components/admin/services";
 import Customers from "../../components/admin/customers";
+import Promotions from "../../components/admin/promotions";
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -23,6 +24,8 @@ export default function UserDashboardPage() {
     dashboardElement = <Services />;
   } else if (dashboardRoute === "customers") {
     dashboardElement = <Customers />;
+  } else if (dashboardRoute === "promotions") {
+    dashboardElement = <Promotions />;
   } else {
     router.push("/admin/invoices");
   }

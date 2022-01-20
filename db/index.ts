@@ -26,7 +26,10 @@ export {
   getServicesCount,
   getCustomers,
   getCustomersCount,
+  getPromotions,
+  getPromotionsCount,
 } from "./selectQueries";
+
 export {
   insertHiredServices,
   insertInvoice,
@@ -38,6 +41,7 @@ export {
   insertCableService,
   insertInternetService,
 } from "./insertQueries";
+
 export {
   updateCustomerPartially,
   updateCustomer,

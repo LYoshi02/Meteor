@@ -221,6 +221,22 @@ export const getAllPromotions = async (client: PoolClient | Pool = pool) => {
   return result.rows;
 };
 
+export const getPromotions = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<PromotionSchema>(`
+    SELECT * FROM "Promociones"
+    ORDER BY "NroPromocion"
+  `);
+  return result.rows;
+};
+
+export const getPromotionsCount = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<{ count: string }>(`
+    SELECT COUNT(*) FROM "Promociones"
+  `);
+
+  return result.rows;
+};
+
 export const getValidPromotionFromContract = async (
   contractNumber: number,
   client: PoolClient | Pool = pool

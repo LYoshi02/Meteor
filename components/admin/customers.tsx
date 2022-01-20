@@ -48,7 +48,7 @@ const Customers = () => {
   }
 
   return (
-    <Box maxW="full">
+    <Box>
       <EditCustomerModal
         isOpen={isOpen}
         onClose={closeModalHandler}
