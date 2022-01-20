@@ -32,7 +32,7 @@ const adminDashboardItems: Item[] = [
     icon: <TagIcon />,
   },
   { name: "Servicios", path: "/admin/services", icon: <GlobeIcon /> },
-  { name: "Usuarios", path: "/admin/users", icon: <UserIcon /> },
+  { name: "Clientes", path: "/admin/customers", icon: <UserIcon /> },
 ];
 
 type Props = {

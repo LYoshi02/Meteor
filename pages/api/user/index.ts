@@ -6,7 +6,7 @@ import {
   getUserByEmail,
   getUserByEmailAndPassword,
   pool,
-  updateCustomer,
+  updateCustomerPartially,
   updateUser,
 } from "../../../db";
 import { UserConfigData, UserConfigFormValues } from "../../../types";
@@ -103,7 +103,7 @@ const handler = async (
         },
         client
       );
-      await updateCustomer(userData, userDni, client);
+      await updateCustomerPartially(userData, userDni, client);
 
       await client.query("COMMIT");
       client.release();

@@ -9,3 +9,4 @@ export { default as TagIcon } from "./tag";
 export { default as GlobeIcon } from "./globe";
 export { default as CashIcon } from "./cash";
 export { default as TrashIcon } from "./trash";
+export { default as PencilIcon } from "./pencil";

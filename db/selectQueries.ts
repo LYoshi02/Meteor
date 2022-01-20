@@ -173,6 +173,27 @@ export const getCustomerByDni = async (
   return result.rows;
 };
 
+export const getCustomers = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<ClientSchema>(
+    `
+    SELECT * FROM "Clientes"
+    ORDER BY "Dni"
+  `
+  );
+
+  return result.rows;
+};
+
+export const getCustomersCount = async (client: PoolClient | Pool = pool) => {
+  const result = await client.query<{ count: string }>(
+    `
+    SELECT COUNT(*) FROM "Clientes"
+  `
+  );
+
+  return result.rows;
+};
+
 export const getCurrentCustomerContract = async (
   userDni: string,
   client: PoolClient | Pool = pool

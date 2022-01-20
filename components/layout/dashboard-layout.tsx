@@ -78,7 +78,7 @@ const DashboardLayout = (props: Props) => {
         </Drawer>
       )}
 
-      <Box p="4" w="full" position="relative">
+      <Box p="4" w="full" position="relative" overflowX="hidden">
         {!isLargerThan750 && (
           <Box position="absolute" top="4" right="4">
             <IconButton
