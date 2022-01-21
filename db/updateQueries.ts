@@ -3,6 +3,7 @@ import { pool } from ".";
 import {
   ContractSchema,
   InvoiceSchema,
+  PromotionSchema,
   UserConfigFormValues,
   UserFormValues,
 } from "../types";
@@ -117,6 +118,24 @@ export const updateContractStatus = async (
         RETURNING *
     `,
     [contractNumber, isFinished]
+  );
+
+  return result;
+};
+
+export const updatePromotionStatus = async (
+  promotionNumber: string,
+  isFinished: boolean,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<PromotionSchema>(
+    `
+        UPDATE "Promociones"
+        SET "Finalizado" = $2
+        WHERE "NroPromocion" = $1::Integer
+        RETURNING *
+    `,
+    [promotionNumber, isFinished]
   );
 
   return result;

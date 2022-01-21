@@ -48,4 +48,5 @@ export {
   updateUser,
   updateInvoiceStatus,
   updateContractStatus,
+  updatePromotionStatus,
 } from "./updateQueries";

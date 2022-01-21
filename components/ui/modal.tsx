@@ -5,6 +5,7 @@ import {
   ModalHeader,
   ModalOverlay,
   ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
@@ -27,6 +28,7 @@ const Modal = (props: Props) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{props.title}</ModalHeader>
+        <ModalCloseButton />
         {props.body && <ModalBody>{props.body}</ModalBody>}
         {props.modalFooterEl && (
           <ModalFooter>{props.modalFooterEl}</ModalFooter>

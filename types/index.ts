@@ -30,4 +30,4 @@ export type {
   UserContractDetails,
 } from "./user";
 
-export type { ServiceFormValues } from "./admin";
+export type { ServiceFormValues, PromotionFormValues } from "./admin";

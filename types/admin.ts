@@ -5,3 +5,9 @@ export type ServiceFormValues = {
   speed: number;
   optional: boolean;
 };
+
+export type PromotionFormValues = {
+  duration: number;
+  discount: number;
+  services: number[];
+};

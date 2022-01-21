@@ -19,6 +19,7 @@ export type PromotionSchema = {
   NroPromocion: number;
   PorcentajeDto: number;
   Duracion: number;
+  Finalizado: boolean;
 };
 
 export type ContractSchema = {
