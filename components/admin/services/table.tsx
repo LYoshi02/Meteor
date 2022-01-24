@@ -1,9 +1,21 @@
-import { Box, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { useState } from "react";
+import {
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  useDisclosure,
+} from "@chakra-ui/react";
 
+import AlertDialog from "../../ui/alert-dialog";
+import DeleteButton from "./delete-button";
 import PaginationFooter from "../../ui/pagination-foooter";
 import usePagination from "../../../hooks/usePagination";
 import { ServiceSchema } from "../../../types/index";
-import DeleteButton from "./delete-button";
+import useHttp from "../../../hooks/useHttp";
 
 type Props = {
   services: (ServiceSchema & { Tipo: string })[];
@@ -11,6 +23,13 @@ type Props = {
 };
 
 const ServicesTable = (props: Props) => {
+  const [savedServiceNumber, setSavedServiceNumber] = useState<number>();
+  const {
+    isOpen: isAlertOpen,
+    onOpen: onOpenAlert,
+    onClose: onCloseAlert,
+  } = useDisclosure();
+  const { sendRequest } = useHttp();
   const { pagination, setNextPage, setPrevPage, changePageSize } =
     usePagination({
       totalElements: props.servicesCount,
@@ -21,13 +40,44 @@ const ServicesTable = (props: Props) => {
     pagination.elementIndexEnd
   );
 
-  const deleteService = (serviceNumber: number) => {
-    // TODO: finish this
-    console.log(serviceNumber);
+  const openAlertDialog = (serviceNumber: number) => {
+    setSavedServiceNumber(serviceNumber);
+    onOpenAlert();
+  };
+
+  const closeAlertDialog = () => {
+    setSavedServiceNumber(undefined);
+    onCloseAlert();
+  };
+
+  const deleteService = async () => {
+    await sendRequest({
+      input: `/api/admin/services/${savedServiceNumber}`,
+      init: {
+        method: "DELETE",
+      },
+    });
+    closeAlertDialog();
   };
 
   return (
     <>
+      <AlertDialog
+        title={`Borrar Servicio ${savedServiceNumber}`}
+        description="Solo se pueden borrar servicios que no han sido contratados."
+        isOpen={isAlertOpen}
+        onClose={closeAlertDialog}
+        actions={{
+          primaryBtn: {
+            text: "Aceptar",
+            action: deleteService,
+          },
+          secondaryBtn: {
+            text: "Cancelar",
+            action: closeAlertDialog,
+          },
+        }}
+      />
       <Box height="full" maxWidth="full" overflow="auto">
         <Table variant="simple" w="full">
           <Thead>
@@ -48,7 +98,7 @@ const ServicesTable = (props: Props) => {
                 <Td textAlign="center">{service.Precio}</Td>
                 <Td textAlign="center">
                   <DeleteButton
-                    onClick={() => deleteService(service.NroServicio)}
+                    onClick={() => openAlertDialog(service.NroServicio)}
                   />
                 </Td>
               </Tr>

@@ -52,3 +52,5 @@ export {
   updateContractStatus,
   updatePromotionStatus,
 } from "./updateQueries";
+
+export { deleteServiceById } from "./deleteQueries";
