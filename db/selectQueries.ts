@@ -221,10 +221,19 @@ export const getAllPromotions = async (client: PoolClient | Pool = pool) => {
   return result.rows;
 };
 
-export const getPromotions = async (client: PoolClient | Pool = pool) => {
-  const result = await client.query<PromotionSchema>(`
-    SELECT * FROM "Promociones"
-    ORDER BY "NroPromocion"
+export const getPromotionsWithServices = async (
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<PromotionSchema & { Servicios: string[] }>(`
+    SELECT prom."NroPromocion", prom."PorcentajeDto", prom."Duracion", 
+      prom."Finalizado", array_agg(serv."Nombre") AS "Servicios"
+    FROM "Promociones" prom
+    JOIN "ServiciosEnPromocion" serpro
+      ON serpro."NroPromocion" = prom."NroPromocion"
+    JOIN "Servicios" serv
+      ON serv."NroServicio" = serpro."NroServicio"
+    GROUP BY prom."NroPromocion"
+    ORDER BY "NroPromocion";
   `);
   return result.rows;
 };
@@ -274,9 +283,9 @@ export const getPromotionBySelectedServices = async (
   selectedServices: number[],
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<{ NroPromocion: number }>(
+  const result = await client.query<PromotionSchema>(
     `
-      SELECT "NroPromocion" FROM (
+      SELECT * FROM (
           SELECT pro."NroPromocion", array_agg(ser."NroServicio") AS "Servicios"
               FROM "Promociones" pro
           JOIN "ServiciosEnPromocion" ser 

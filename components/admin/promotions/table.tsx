@@ -8,6 +8,7 @@ import {
   Td,
   Switch,
   useDisclosure,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -17,7 +18,7 @@ import { PromotionSchema } from "../../../types/index";
 import AlertDialog from "../../ui/alert-dialog";
 
 type Props = {
-  promotions: PromotionSchema[];
+  promotions: (PromotionSchema & { Servicios: string[] })[];
   promotionsCount: number;
   onChangeStatus: (promoNum: number) => void;
 };
@@ -81,6 +82,7 @@ const PromotionsTable = (props: Props) => {
               <Th textAlign="center">Nro. de Promoción</Th>
               <Th textAlign="center">% de Descuento</Th>
               <Th textAlign="center">Duración</Th>
+              <Th textAlign="center">Servicios</Th>
               <Th textAlign="center">Finalizado</Th>
             </Tr>
           </Thead>
@@ -90,6 +92,11 @@ const PromotionsTable = (props: Props) => {
                 <Td textAlign="center">{promo.NroPromocion}</Td>
                 <Td textAlign="center">{promo.PorcentajeDto} %</Td>
                 <Td textAlign="center">{promo.Duracion} Meses</Td>
+                <Td textAlign="center">
+                  {promo.Servicios.map((service) => (
+                    <Text key={service}>{service}</Text>
+                  ))}
+                </Td>
                 <Td textAlign="center">
                   <Switch
                     isChecked={promo.Finalizado}

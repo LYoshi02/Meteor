@@ -1,6 +1,11 @@
 import { pool } from "./index";
 import { getValidPromotionFromContract } from "./selectQueries";
-import { ContractSchema, InvoiceSchema, UserFormValues } from "../types";
+import {
+  ContractSchema,
+  InvoiceSchema,
+  PromotionFormValues,
+  UserFormValues,
+} from "../types";
 
 import { PoolClient, Pool } from "pg";
 
@@ -261,6 +266,38 @@ export const insertInternetService = async (
     VALUES ($1, $2)
   `,
     [serviceNumber, speed]
+  );
+
+  return result;
+};
+
+export const insertPromotion = async (
+  data: PromotionFormValues,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<{ NroPromocion: number }>(
+    `
+    INSERT INTO "Promociones" ("Duracion", "PorcentajeDto")
+    VALUES ($1, $2)
+    RETURNING "NroPromocion"
+  `,
+    [data.duration, data.discount]
+  );
+
+  return result;
+};
+
+export const insertServicesInPromotion = async (
+  services: number[],
+  promotionNumber: number,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<{ NroPromocion: number }>(
+    `
+    INSERT INTO "ServiciosEnPromocion" ("NroServicio", "NroPromocion")
+    SELECT unnest($1::int[]) as "NroServicio", $2 as "NroPromocion"
+  `,
+    [services, promotionNumber]
   );
 
   return result;

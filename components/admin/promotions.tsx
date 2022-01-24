@@ -10,9 +10,10 @@ import CreatePromotionModal from "./promotions/create-modal";
 
 const Promotions = () => {
   const { data, error, mutate } = useSWR<{
-    promotions: PromotionSchema[];
+    promotions: (PromotionSchema & { Servicios: string[] })[];
     promotionsCount: number;
   }>("/api/admin/promotions");
+
   const { sendRequest } = useHttp();
   const {
     isOpen: isModalOpen,
@@ -41,7 +42,10 @@ const Promotions = () => {
         (p) => p.NroPromocion === promotion.NroPromocion
       );
 
-      updatedPromos[updatedPromotionIndex] = promotion;
+      updatedPromos[updatedPromotionIndex] = {
+        ...updatedPromos[updatedPromotionIndex],
+        ...promotion,
+      };
 
       return {
         promotions: updatedPromos,

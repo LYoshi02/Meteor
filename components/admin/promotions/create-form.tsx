@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
@@ -10,22 +11,16 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import useHttp from "../../../hooks/useHttp";
+import useSWR from "swr";
 
 import { PromotionFormValues } from "../../../types";
 import Input from "../../ui/input";
+import useHttp from "../../../hooks/useHttp";
+import { ServiceSchema } from "../../../types";
 
 type Props = {
   onCloseModal: () => void;
 };
-
-const services = [
-  { NroServicio: 1, Nombre: "Internet 1" },
-  { NroServicio: 2, Nombre: "Internet 2" },
-  { NroServicio: 3, Nombre: "Internet 3" },
-  { NroServicio: 4, Nombre: "Internet 4" },
-  { NroServicio: 5, Nombre: "Internet 5" },
-];
 
 const CreatePromotionForm = (props: Props) => {
   const {
@@ -37,10 +32,17 @@ const CreatePromotionForm = (props: Props) => {
     setValue,
     setError,
     clearErrors,
-  } = useForm<PromotionFormValues>({ defaultValues: { services: [] } });
+  } = useForm<PromotionFormValues>({
+    defaultValues: { services: [], discount: 0 },
+  });
+  const { sendRequest } = useHttp();
+  const { data } = useSWR<{
+    services: (ServiceSchema & { Tipo: string })[];
+    servicesCount: number;
+  }>("/api/admin/services");
 
   const selectedServices = watch("services");
-  console.log(errors);
+  const appliedDiscount = watch("discount");
 
   const submitHandler = async (values: PromotionFormValues) => {
     if (selectedServices.length === 0) {
@@ -50,15 +52,15 @@ const CreatePromotionForm = (props: Props) => {
       });
       return;
     }
-    // await sendRequest({
-    //   input: "/api/admin/services",
-    //   init: {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ service: values }),
-    //   },
-    // });
-    console.log(values);
+
+    await sendRequest({
+      input: "/api/admin/promotions",
+      init: {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ promotion: values }),
+      },
+    });
     props.onCloseModal();
   };
 
@@ -76,6 +78,20 @@ const CreatePromotionForm = (props: Props) => {
     );
     setValue("services", updatedServices);
   };
+
+  const selectedServicesDetails = selectedServices.map((id) => {
+    return data?.services.find((service) => service.NroServicio === id);
+  });
+
+  let totalServicesValue = 0;
+  if (selectedServicesDetails.length > 0) {
+    totalServicesValue = selectedServicesDetails.reduce(
+      (prevTotal, currService) => prevTotal + parseFloat(currService!.Precio),
+      0
+    );
+  }
+  const servicesDiscount = totalServicesValue * (appliedDiscount / 100) || 0;
+  const totalServicesValueWithDiscount = totalServicesValue - servicesDiscount;
 
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
@@ -121,13 +137,13 @@ const CreatePromotionForm = (props: Props) => {
             onChange={(e) => setSelectedService(e.target.value)}
             value=""
           >
-            {services.map((service, index) => (
+            {data?.services.map((service, index) => (
               <option
                 key={service.NroServicio}
                 value={service.NroServicio}
                 disabled={selectedServices.includes(service.NroServicio)}
               >
-                {service.Nombre}
+                {`${service.Nombre} ($${service.Precio})`}
               </option>
             ))}
           </Select>
@@ -136,7 +152,7 @@ const CreatePromotionForm = (props: Props) => {
           </FormErrorMessage>
           <HStack spacing={2} mt="2">
             {selectedServices.map((id) => {
-              const serviceDetails = services.find(
+              const serviceDetails = data?.services.find(
                 (service) => service.NroServicio === id
               );
               return (
@@ -155,6 +171,22 @@ const CreatePromotionForm = (props: Props) => {
             })}
           </HStack>
         </FormControl>
+
+        <Divider />
+
+        <Text>
+          <Text as="span" fontWeight="bold">
+            Total:
+          </Text>{" "}
+          ${totalServicesValue}
+        </Text>
+
+        <Text>
+          <Text as="span" fontWeight="bold">
+            Total c/ Descuento:
+          </Text>{" "}
+          ${totalServicesValueWithDiscount}
+        </Text>
 
         <Button type="submit" colorScheme="teal">
           Crear
