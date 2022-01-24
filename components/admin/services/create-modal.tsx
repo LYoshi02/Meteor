@@ -1,21 +1,22 @@
 import Modal from "../../ui/modal";
-import CreateServiceForm from "./create-form";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  isEditing: boolean;
+  body: JSX.Element;
 };
 
-const CreateServiceModal = (props: Props) => {
+const ServiceModal = (props: Props) => {
   return (
     <Modal
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title="Crear Servicio"
-      body={<CreateServiceForm onCloseModal={props.onClose} />}
+      title={props.isEditing ? "Editar Servicio" : "Crear Servicio"}
+      body={props.body}
       modalConfig={{ isCentered: true, size: "xl" }}
     />
   );
 };
 
-export default CreateServiceModal;
+export default ServiceModal;

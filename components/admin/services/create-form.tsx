@@ -16,6 +16,7 @@ import Input from "../../ui/input";
 
 type Props = {
   onCloseModal: () => void;
+  serviceNumberToEdit?: number;
 };
 
 const CreateServiceForm = (props: Props) => {
@@ -55,7 +56,7 @@ const CreateServiceForm = (props: Props) => {
         />
         <Input
           id="price"
-          type="number"
+          type="text"
           label="Precio"
           errorMsg={errors.price?.message}
           hookForm={register("price", {

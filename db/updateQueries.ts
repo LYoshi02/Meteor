@@ -6,6 +6,7 @@ import {
   PromotionSchema,
   UserConfigFormValues,
   UserFormValues,
+  ServiceFormValues,
 } from "../types";
 
 export const updateUser = async (
@@ -136,6 +137,23 @@ export const updatePromotionStatus = async (
         RETURNING *
     `,
     [promotionNumber, isFinished]
+  );
+
+  return result;
+};
+
+export const updateService = async (
+  serviceNumber: string,
+  service: { name: string; price: string },
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query(
+    `
+        UPDATE "Servicios"
+        SET "Nombre" = $2, "Precio" = $3
+        WHERE "NroServicio" = $1::Integer
+    `,
+    [serviceNumber, service.name, service.price]
   );
 
   return result;

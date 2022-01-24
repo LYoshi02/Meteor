@@ -5,7 +5,8 @@ import Alert from "../ui/alert";
 import LoadingSpinner from "../ui/loading-spinner";
 import ServicesTable from "./services/table";
 import { ServiceSchema } from "../../types";
-import CreateServiceModal from "./services/create-modal";
+import ServiceModal from "./services/create-modal";
+import CreateServiceForm from "./services/create-form";
 
 const Services = () => {
   const { data, error, mutate } = useSWR<{
@@ -41,7 +42,12 @@ const Services = () => {
 
   return (
     <Box>
-      <CreateServiceModal isOpen={isOpen} onClose={onClose} />
+      <ServiceModal
+        isOpen={isOpen}
+        onClose={onClose}
+        isEditing={false}
+        body={<CreateServiceForm onCloseModal={onClose} />}
+      />
       <Heading as="h2">Servicios</Heading>
       <Box mt="4">{mainContent}</Box>
     </Box>

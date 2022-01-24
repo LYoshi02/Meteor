@@ -28,6 +28,7 @@ export {
   getCustomersCount,
   getPromotionsWithServices,
   getPromotionsCount,
+  getServiceById,
 } from "./selectQueries";
 
 export {
@@ -51,6 +52,7 @@ export {
   updateInvoiceStatus,
   updateContractStatus,
   updatePromotionStatus,
+  updateService,
 } from "./updateQueries";
 
 export { deleteServiceById } from "./deleteQueries";

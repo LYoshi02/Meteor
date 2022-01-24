@@ -90,6 +90,21 @@ export const getServicesCount = async (client: PoolClient | Pool = pool) => {
   return result.rows;
 };
 
+export const getServiceById = async (
+  serviceNumber: string,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<ServiceSchema>(
+    `
+    SELECT * FROM "Servicios"
+    WHERE "NroServicio" = $1::Integer
+  `,
+    [serviceNumber]
+  );
+
+  return result.rows;
+};
+
 export const getUserByEmailAndPassword = async (
   email: string,
   submittedPassword: string,

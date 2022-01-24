@@ -7,6 +7,7 @@ import {
   Tr,
   Th,
   Td,
+  HStack,
   useDisclosure,
 } from "@chakra-ui/react";
 
@@ -16,6 +17,9 @@ import PaginationFooter from "../../ui/pagination-foooter";
 import usePagination from "../../../hooks/usePagination";
 import { ServiceSchema } from "../../../types/index";
 import useHttp from "../../../hooks/useHttp";
+import EditButton from "../customers/edit-button";
+import ServiceModal from "./create-modal";
+import EditServiceForm from "./edit-form";
 
 type Props = {
   services: (ServiceSchema & { Tipo: string })[];
@@ -28,6 +32,11 @@ const ServicesTable = (props: Props) => {
     isOpen: isAlertOpen,
     onOpen: onOpenAlert,
     onClose: onCloseAlert,
+  } = useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
   } = useDisclosure();
   const { sendRequest } = useHttp();
   const { pagination, setNextPage, setPrevPage, changePageSize } =
@@ -50,6 +59,16 @@ const ServicesTable = (props: Props) => {
     onCloseAlert();
   };
 
+  const openModal = (serviceNumber: number) => {
+    setSavedServiceNumber(serviceNumber);
+    onOpenModal();
+  };
+
+  const closeModal = () => {
+    setSavedServiceNumber(undefined);
+    onCloseModal();
+  };
+
   const deleteService = async () => {
     await sendRequest({
       input: `/api/admin/services/${savedServiceNumber}`,
@@ -62,6 +81,17 @@ const ServicesTable = (props: Props) => {
 
   return (
     <>
+      <ServiceModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        isEditing={true}
+        body={
+          <EditServiceForm
+            onCloseModal={closeModal}
+            serviceNumber={savedServiceNumber}
+          />
+        }
+      />
       <AlertDialog
         title={`Borrar Servicio ${savedServiceNumber}`}
         description="Solo se pueden borrar servicios que no han sido contratados."
@@ -97,9 +127,14 @@ const ServicesTable = (props: Props) => {
                 <Td textAlign="center">{service.Tipo}</Td>
                 <Td textAlign="center">{service.Precio}</Td>
                 <Td textAlign="center">
-                  <DeleteButton
-                    onClick={() => openAlertDialog(service.NroServicio)}
-                  />
+                  <HStack spacing={2} justifyContent="center">
+                    <DeleteButton
+                      onClick={() => openAlertDialog(service.NroServicio)}
+                    />
+                    <EditButton
+                      onClick={() => openModal(service.NroServicio)}
+                    />
+                  </HStack>
                 </Td>
               </Tr>
             ))}

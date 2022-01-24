@@ -68,6 +68,7 @@ const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
         client
       );
       await client.query("COMMIT");
+      client.release();
 
       return res.status(201).json({
         message: "Promocion creada correctamente",
