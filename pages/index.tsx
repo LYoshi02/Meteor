@@ -1,20 +1,18 @@
-import { Box, Container, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
-import Header from "../components/home/header";
+import Hero from "../components/home/hero";
 import Steps from "../components/home/steps";
-import Navigation from "../components/navigation/navigation";
+import Feature from "../components/home/feature";
 
 function HomePage() {
   return (
-    <Box bgGradient="linear(to-br, #000000, #152331 85%)" overflow="hidden">
-      <Container maxW="container.xl">
-        <Flex minH="100vh" direction="column">
-          <Navigation />
-          <Header />
-        </Flex>
+    <>
+      <Box bgGradient="linear(to-br, #000000, #152331 85%)" overflow="hidden">
+        <Hero />
         <Steps />
-      </Container>
-    </Box>
+      </Box>
+      <Feature />
+    </>
   );
 }
 

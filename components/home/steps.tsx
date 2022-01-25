@@ -1,6 +1,7 @@
-import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import Image from "next/image";
 
+import Container from "../ui/container";
 import astronautSvg from "../../assets/svgs/astronaut.svg";
 
 const stepsDetails = [
@@ -17,13 +18,14 @@ const stepsDetails = [
 
 const Steps = () => {
   return (
-    <Grid
-      as="section"
-      templateColumns="repeat(12, 1fr)"
-      alignContent="center"
-      pb="72"
-      pt="12"
-      position="relative"
+    <Container
+      config={{
+        as: "section",
+        alignContent: "center",
+        pb: "72",
+        pt: "12",
+        position: "relative",
+      }}
     >
       <Box
         position="absolute"
@@ -74,7 +76,7 @@ const Steps = () => {
           </Box>
         ))}
       </Flex>
-    </Grid>
+    </Container>
   );
 };
 

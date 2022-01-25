@@ -1,17 +1,18 @@
-import { Box, Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import Image from "next/image";
 
 import rocketSvg from "../../assets/svgs/rocket.svg";
+import Container from "../ui/container";
 import Link from "../ui/link";
 
 const Header = () => {
   return (
-    <Grid
-      as="header"
-      templateColumns="repeat(12, 1fr)"
-      alignContent="center"
-      h="full"
-      flex="1"
+    <Container
+      config={{
+        as: "header",
+        alignContent: "center",
+        flex: "1",
+      }}
     >
       <Box
         position="absolute"
@@ -53,7 +54,7 @@ const Header = () => {
           Contratar Ahora
         </Link>
       </Button>
-    </Grid>
+    </Container>
   );
 };
 
