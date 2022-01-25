@@ -10,3 +10,4 @@ export { default as GlobeIcon } from "./globe";
 export { default as CashIcon } from "./cash";
 export { default as TrashIcon } from "./trash";
 export { default as PencilIcon } from "./pencil";
+export { default as CheckCircleIcon } from "./check-circle";

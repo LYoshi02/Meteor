@@ -3,6 +3,7 @@ import { Box } from "@chakra-ui/react";
 import Hero from "../components/home/hero";
 import Steps from "../components/home/steps";
 import Feature from "../components/home/feature";
+import Promotions from "../components/home/promotions";
 
 function HomePage() {
   return (
@@ -12,6 +13,7 @@ function HomePage() {
         <Steps />
       </Box>
       <Feature />
+      <Promotions />
     </>
   );
 }
