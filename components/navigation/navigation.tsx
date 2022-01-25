@@ -1,7 +1,9 @@
 import { Box, Flex, Heading } from "@chakra-ui/react";
+import Image from "next/image";
 
 import Link from "../ui/link";
 import useUser from "../../hooks/useUser";
+import logoSvg from "../../assets/svgs/logo.svg";
 
 const navigationItemsWithAuth = [
   { path: "/", name: "Inicio" },
@@ -23,15 +25,27 @@ const Navigation = () => {
   }
 
   return (
-    <Flex bgColor="teal.500" px="4" py="2" justifyContent="space-between">
-      <Heading as="h1" size="md">
-        <Link href="/">Bases de Datos</Link>
-      </Heading>
+    <Flex py="4" justifyContent="space-between" alignItems="center">
+      <Box>
+        <Link href="/">
+          <Image src={logoSvg} alt="Meteor Logo" />
+        </Link>
+      </Box>
       <Box as="nav">
-        <Box as="ul" d="flex">
+        <Box as="ul" d="flex" gridGap="6">
           {navigationItems.map(({ path, name }) => (
-            <Box key={path} as="li" listStyleType="none" mr="4">
-              <Link href={path} styles={{ fontSize: "lg" }}>
+            <Box key={path} as="li" listStyleType="none">
+              <Link
+                href={path}
+                styles={{
+                  fontSize: "lg",
+                  _hover: {
+                    textShadow: "0 0 1px white, 0 0 1px white, 0 0 1px white",
+                  },
+                  transition: ".3s all",
+                  textAlign: "center",
+                }}
+              >
                 {name}
               </Link>
             </Box>
