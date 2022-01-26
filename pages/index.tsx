@@ -5,6 +5,7 @@ import Steps from "../components/home/steps";
 import Feature from "../components/home/feature";
 import Promotions from "../components/home/promotions";
 import Testimonials from "../components/home/testimonials";
+import Footer from "../components/home/footer";
 
 function HomePage() {
   return (
@@ -16,6 +17,7 @@ function HomePage() {
       <Feature />
       <Promotions />
       <Testimonials />
+      <Footer />
     </>
   );
 }

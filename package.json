@@ -12,6 +12,7 @@
     "@chakra-ui/react": "^1.6.9",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@heroicons/react": "^1.0.5",
     "@sendgrid/mail": "^6.5.5",
     "@types/pdfkit": "^0.12.3",
     "date-fns": "^2.27.0",
