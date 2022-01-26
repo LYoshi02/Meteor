@@ -4,6 +4,7 @@ import Hero from "../components/home/hero";
 import Steps from "../components/home/steps";
 import Feature from "../components/home/feature";
 import Promotions from "../components/home/promotions";
+import Testimonials from "../components/home/testimonials";
 
 function HomePage() {
   return (
@@ -14,6 +15,7 @@ function HomePage() {
       </Box>
       <Feature />
       <Promotions />
+      <Testimonials />
     </>
   );
 }
