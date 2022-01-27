@@ -9,7 +9,7 @@ type Props = {
 const EditButton = (props: Props) => {
   return (
     <IconButton
-      colorScheme="teal"
+      colorScheme="purple"
       aria-label="Delete Service"
       variant="outline"
       icon={<PencilIcon />}

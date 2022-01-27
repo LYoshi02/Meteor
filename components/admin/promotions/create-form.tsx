@@ -188,7 +188,7 @@ const CreatePromotionForm = (props: Props) => {
           ${totalServicesValueWithDiscount}
         </Text>
 
-        <Button type="submit" colorScheme="teal">
+        <Button type="submit" colorScheme="purple">
           Crear
         </Button>
       </Stack>

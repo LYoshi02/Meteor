@@ -72,14 +72,14 @@ const CreateServiceForm = (props: Props) => {
           <RadioGroup>
             <Stack spacing={5} direction="row">
               <Radio
-                colorScheme="teal"
+                colorScheme="purple"
                 value="Internet"
                 {...register("type", { required: true })}
               >
                 Internet
               </Radio>
               <Radio
-                colorScheme="teal"
+                colorScheme="purple"
                 value="TV"
                 {...register("type", { required: true })}
               >
@@ -108,7 +108,7 @@ const CreateServiceForm = (props: Props) => {
           <Checkbox {...register("optional")}>Servicio Opcional</Checkbox>
         )}
 
-        <Button type="submit" colorScheme="teal" isLoading={isLoading}>
+        <Button type="submit" colorScheme="purple" isLoading={isLoading}>
           Crear
         </Button>
       </Stack>

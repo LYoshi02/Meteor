@@ -10,7 +10,7 @@ import Promotions from "../../components/admin/promotions";
 
 export default function UserDashboardPage() {
   const router = useRouter();
-  const {} = useUser({ redirectTo: "/", redirectIfFound: false });
+  const {} = useUser({ redirectTo: "/", redirectIfNotAdmin: true });
   const dashboardRoute = router.query.dashboard;
 
   if (!dashboardRoute) return null;

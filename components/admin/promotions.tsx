@@ -58,7 +58,7 @@ const Promotions = () => {
   if (data) {
     mainContent = (
       <>
-        <Button mb="2" onClick={onOpenModal} colorScheme="teal">
+        <Button mb="2" onClick={onOpenModal} colorScheme="purple">
           Crear Promoción
         </Button>
         <PromotionsTable

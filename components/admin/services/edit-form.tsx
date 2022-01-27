@@ -70,7 +70,7 @@ const EditServiceForm = (props: Props) => {
           })}
         />
 
-        <Button type="submit" colorScheme="teal" isLoading={isLoading}>
+        <Button type="submit" colorScheme="purple" isLoading={isLoading}>
           Editar
         </Button>
       </Stack>

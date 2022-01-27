@@ -114,7 +114,7 @@ const LoginForm = () => {
             status="error"
           />
         )}
-        <Button type="submit" colorScheme="teal" isLoading={isLoading}>
+        <Button type="submit" colorScheme="purple" isLoading={isLoading}>
           Iniciar Sesión
         </Button>
       </Stack>

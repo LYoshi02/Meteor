@@ -147,8 +147,8 @@ const EditCustomerForm = (props: Props) => {
           errorMsg={errors.email?.message}
         />
 
-        <Button type="submit" colorScheme="teal" isLoading={isLoading}>
-          Crear
+        <Button type="submit" colorScheme="purple" isLoading={isLoading}>
+          Editar
         </Button>
       </Stack>
     </form>

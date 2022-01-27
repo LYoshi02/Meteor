@@ -21,6 +21,7 @@ const Step = (props: Props) => {
             w="full"
             alignSelf="center"
             ml="4"
+            opacity="0.5"
             d={{ base: "none", md: "block" }}
           ></Box>
         )}

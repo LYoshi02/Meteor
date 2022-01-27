@@ -19,7 +19,7 @@ const Services = () => {
   if (data) {
     mainContent = (
       <>
-        <Button mb="2" onClick={onOpen} colorScheme="teal">
+        <Button mb="2" onClick={onOpen} colorScheme="purple">
           Crear Servicio
         </Button>
         <ServicesTable

@@ -21,7 +21,7 @@ const ActionButtons = (props: Props) => {
     secondaryButton = (
       <Button
         variant="outline"
-        colorScheme="teal"
+        colorScheme="purple"
         onClick={props.secondaryBtn.action}
         mr={{ lg: "2" }}
         mb={{ base: "2", lg: "0" }}
@@ -41,7 +41,7 @@ const ActionButtons = (props: Props) => {
       {secondaryButton}
       <Button
         onClick={props.primaryBtn.action}
-        colorScheme="teal"
+        colorScheme="purple"
         {...props.primaryBtn.btnConfig}
       >
         {props.primaryBtn.text}

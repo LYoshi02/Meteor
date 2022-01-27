@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Heading,
   Table,
@@ -46,7 +47,11 @@ const Invoices = () => {
               <Td textAlign="center">{invoice.DniCliente}</Td>
               <Td textAlign="center">{invoice.NroContrato}</Td>
               <Td textAlign="center">
-                {invoice.FechaFacturacion ? "Pagado" : "Adeuda"}
+                {invoice.FechaFacturacion ? (
+                  <Badge colorScheme="green">Pagado</Badge>
+                ) : (
+                  <Badge colorScheme="red">Adeuda</Badge>
+                )}
               </Td>
               <Td textAlign="center" h="16" cursor="pointer">
                 <a

@@ -7,23 +7,35 @@ import Link from "../ui/link";
 import useUser from "../../hooks/useUser";
 import logoSvg from "../../assets/svgs/logo.svg";
 
-const navigationItemsWithAuth = [
-  { path: "/", name: "Inicio" },
-  { path: "/logout", name: "Cerrar Sesión" },
-];
-
-const navigationItemsWithoutAuth = [
-  { path: "/", name: "Inicio" },
-  { path: "/hire", name: "Contratar Servicios" },
-  { path: "/login", name: "Iniciar Sesión" },
-];
-
 const Navigation = () => {
   const { user } = useUser({});
   const router = useRouter();
 
+  const navigationItemsWithAuth = [
+    { path: "/", name: "Inicio" },
+    { path: "/logout", name: "Cerrar Sesión" },
+  ];
+
+  const navigationItemsWithoutAuth = [
+    { path: "/", name: "Inicio" },
+    { path: "/hire", name: "Contratar Servicios" },
+    { path: "/login", name: "Iniciar Sesión" },
+  ];
+
   let navigationItems = navigationItemsWithoutAuth;
-  if (user?.isLoggedIn) {
+  if (user && user.isLoggedIn) {
+    if (user.isAdmin) {
+      navigationItemsWithAuth.splice(1, 0, {
+        path: "/admin/invoices",
+        name: "Administrador",
+      });
+    } else {
+      navigationItemsWithAuth.splice(1, 0, {
+        path: "/user/home",
+        name: "Panel de Usuario",
+      });
+    }
+
     navigationItems = navigationItemsWithAuth;
   }
 
