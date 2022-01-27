@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import Container from "../ui/container";
 import astronautSvg from "../../assets/svgs/astronaut.svg";
+import Step from "./steps/step";
 
 const stepsDetails = [
   {
@@ -18,65 +19,55 @@ const stepsDetails = [
 
 const Steps = () => {
   return (
-    <Container
-      config={{
-        as: "section",
-        alignContent: "center",
-        pb: "72",
-        pt: "12",
-        position: "relative",
-      }}
-    >
+    <Box as="section" pb="72" pt="12" position="relative">
       <Box
         position="absolute"
         top="0"
         right="0"
-        transform="rotate(25deg) translateX(50%) translateY(-60%)"
+        transform={{
+          base: "rotate(25deg) translate(0%, -40%)",
+          md: "rotate(25deg) translate(-20%, -40%)",
+          lg: "rotate(25deg) translate(30%, -40%)",
+        }}
         opacity="0.1"
+        w={{ base: "40", sm: "52", md: "64", lg: "md" }}
       >
-        <Image src={astronautSvg} alt="Astronaut" width={263} height={356} />
+        <Image
+          src={astronautSvg}
+          alt="Astronaut"
+          width={239}
+          height={324}
+          priority
+        />
       </Box>
-      <Heading
-        as="h2"
-        fontSize="5xl"
-        textAlign="center"
-        color="white"
-        gridColumn="3 / 11"
-      >
-        ¿Como Contratar Nuestros Servicios?
-      </Heading>
-      <Flex mt="28" gridGap="20" gridColumn="2 / 12">
-        {stepsDetails.map((step, index) => (
-          <Box key={step.title} flex="1">
-            <Flex>
-              <Text
-                fontWeight="black"
-                fontSize="7xl"
-                lineHeight="1"
-                color="#5800FF"
-              >
-                {index + 1}
-              </Text>
-              {index + 1 < stepsDetails.length && (
-                <Box
-                  as="hr"
-                  borderTop="4px dotted #5800FF"
-                  w="full"
-                  alignSelf="center"
-                  ml="4"
-                ></Box>
-              )}
-            </Flex>
-            <Text fontWeight="bold" fontSize="2xl" mt="4">
-              {step.title}
-            </Text>
-            <Text fontSize="lg" color="gray.200">
-              {step.description}
-            </Text>
-          </Box>
-        ))}
-      </Flex>
-    </Container>
+      <Container>
+        <Heading
+          as="h2"
+          fontSize={{ base: "3xl", sm: "4xl", md: "5xl" }}
+          textAlign="center"
+          color="white"
+          gridColumn={{ base: "1 / -1", md: "3 / 11" }}
+        >
+          ¿Como Contratar Nuestros Servicios?
+        </Heading>
+        <Flex
+          mt="28"
+          gridGap="20"
+          gridColumn={{ base: "1 / -1", sm: "2 / 12", lg: "2 / 12" }}
+          flexDirection={{ base: "column", md: "row" }}
+        >
+          {stepsDetails.map((step, index) => (
+            <Step
+              key={step.title}
+              title={step.title}
+              description={step.description}
+              number={index + 1}
+              isLastStep={index + 1 < stepsDetails.length}
+            />
+          ))}
+        </Flex>
+      </Container>
+    </Box>
   );
 };
 

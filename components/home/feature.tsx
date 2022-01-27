@@ -8,9 +8,12 @@ import Link from "../ui/link";
 const Feature = () => {
   return (
     <Box as="section" bgColor="gray.900" py="48">
-      <Container>
-        <Box gridColumn="1 / 7" alignSelf="center">
-          <Heading as="h3">Administrá tu Cuenta</Heading>
+      <Container config={{ gridRowGap: "24" }}>
+        <Box
+          gridColumn={{ base: "1 / -1", md: "2 / 12", lg: "1 / 7" }}
+          alignSelf="center"
+        >
+          <Heading as="h2">Administrá tu Cuenta</Heading>
           <Box fontSize="xl" mt="4">
             <Text>
               Desde nuestro panel de usuario vas a poder ver el resumen de tus
@@ -46,13 +49,21 @@ const Feature = () => {
             </Link>
           </Box>
         </Box>
-        <Box gridColumn="8 / -1" justifySelf="flex-end">
+        <Box
+          gridColumn={{ base: "1 / -1", lg: "8 / -1" }}
+          justifySelf={{ base: "center", lg: "flex-end" }}
+          w="full"
+          h={{ base: "2xl", md: "4xl" }}
+          position="relative"
+        >
           <Image
             src={phoneImg}
             alt="User screen"
             quality={100}
-            width={379}
-            height={730}
+            layout="fill"
+            objectFit="contain"
+            width={1640}
+            height={3044}
           />
         </Box>
       </Container>

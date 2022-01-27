@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 import Container from "../ui/container";
 import Link from "../ui/link";
@@ -19,6 +20,7 @@ const navigationItemsWithoutAuth = [
 
 const Navigation = () => {
   const { user } = useUser({});
+  const router = useRouter();
 
   let navigationItems = navigationItemsWithoutAuth;
   if (user?.isLoggedIn) {
@@ -32,6 +34,7 @@ const Navigation = () => {
         justifyContent="space-between"
         alignItems="center"
         gridColumn="1 / -1"
+        zIndex="100"
       >
         <Box>
           <Link href="/" styles={{ d: "inline-block" }}>
@@ -39,13 +42,23 @@ const Navigation = () => {
           </Link>
         </Box>
         <Box as="nav">
-          <Box as="ul" d="flex" gridGap="6">
+          <Flex
+            as="ul"
+            d="flex"
+            gridGap={{ base: "4", md: "6" }}
+            flexDirection={{ base: "column", md: "row" }}
+            alignItems="flex-end"
+          >
             {navigationItems.map(({ path, name }) => (
               <Box key={path} as="li" listStyleType="none">
                 <Link
                   href={path}
                   styles={{
-                    fontSize: "lg",
+                    fontSize: { base: "md", sm: "lg" },
+                    textShadow:
+                      router.pathname === path
+                        ? "0 0 1px white, 0 0 1px white, 0 0 1px white"
+                        : "",
                     _hover: {
                       textShadow: "0 0 1px white, 0 0 1px white, 0 0 1px white",
                     },
@@ -57,7 +70,7 @@ const Navigation = () => {
                 </Link>
               </Box>
             ))}
-          </Box>
+          </Flex>
         </Box>
       </Flex>
     </Container>

@@ -11,6 +11,7 @@ const Testimonial = () => {
         color="gray.900"
         position="relative"
         zIndex="10"
+        shadow="lg"
         _after={{
           display: "inline-block",
           width: "0px",
