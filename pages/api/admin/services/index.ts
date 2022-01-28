@@ -7,11 +7,11 @@ import {
   insertCableService,
   insertInternetService,
   insertNewService,
-  pool,
 } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
 import { ServiceFormValues } from "../../../../types";
-import { isValidAdminSession } from "../../../../utils/validateSession";
+import { apiHandler } from "../../../../utils/api";
+import { Transaction } from "../../../../utils/transaction";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
@@ -19,78 +19,61 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   };
 }
 
-const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
-  if (req.method === "GET") {
-    const user = req.session.user;
+const getServicesData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const services = await getServices();
+  const result = await getServicesCount();
 
-    if (!isValidAdminSession(user)) {
-      return res
-        .status(401)
-        .json({ message: "No estas autorizado para realizar esta acción" });
-    }
+  res.status(200).json({ services, servicesCount: +result[0].count });
+};
 
-    try {
-      const services = await getServices();
-      const result = await getServicesCount();
+const saveNewService = async (
+  req: ExtendedNextApiRequest,
+  res: NextApiResponse
+) => {
+  const client = await Transaction.getClientInstance();
 
-      res.status(200).json({ services, servicesCount: +result[0].count });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
+  try {
+    await Transaction.start(client);
 
-  if (req.method === "POST") {
-    const user = req.session.user;
+    const newServiceData = req.body.service;
+    const result = await insertNewService(
+      { name: newServiceData.name, price: newServiceData.price },
+      client
+    );
+    const newServiceNumber = result.rows[0].NroServicio;
 
-    if (!isValidAdminSession(user)) {
-      return res
-        .status(401)
-        .json({ message: "No estas autorizado para realizar esta acción" });
-    }
-
-    const client = await pool.connect();
-
-    try {
-      await client.query("BEGIN");
-
-      const newServiceData = req.body.service;
-      const result = await insertNewService(
-        { name: newServiceData.name, price: newServiceData.price },
+    if (newServiceData.type === "TV") {
+      await insertCableService(
+        newServiceNumber,
+        newServiceData.optional,
         client
       );
-      const newServiceNumber = result.rows[0].NroServicio;
-
-      if (newServiceData.type === "TV") {
-        await insertCableService(
-          newServiceNumber,
-          newServiceData.optional,
-          client
-        );
-      } else {
-        await insertInternetService(
-          newServiceNumber,
-          newServiceData.speed,
-          client
-        );
-      }
-
-      await client.query("COMMIT");
-      client.release();
-
-      return res.status(201).json({ message: "Servicio creado correctamente" });
-    } catch (error) {
-      console.log(error);
-
-      await client.query("ROLLBACK");
-      client.release();
-
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
+    } else {
+      await insertInternetService(
+        newServiceNumber,
+        newServiceData.speed,
+        client
+      );
     }
+
+    await Transaction.saveChanges(client);
+    Transaction.releaseClient(client);
+
+    return res.status(201).json({ message: "Servicio creado correctamente" });
+  } catch (error) {
+    await Transaction.removeChanges(client);
+    Transaction.releaseClient(client);
+
+    throw error;
   }
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getServicesData,
+  post: saveNewService,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);

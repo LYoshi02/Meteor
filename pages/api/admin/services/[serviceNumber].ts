@@ -7,7 +7,30 @@ import {
   getServiceById,
 } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
-import { isValidAdminSession } from "../../../../utils/validateSession";
+import { NotFoundError } from "../../../../types";
+import { apiHandler } from "../../../../utils/api";
+
+const getServiceData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const serviceNumber = req.query.serviceNumber as string;
+
+  const result = await getServiceById(serviceNumber);
+  if (result.length === 0) {
+    throw new NotFoundError("Servicio no encontrado");
+  }
+
+  return res.status(200).json({
+    service: result[0],
+  });
+};
+
+const deleteServiceData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const serviceNumber = req.query.serviceNumber as string;
+  await deleteServiceById(serviceNumber);
+
+  return res.status(200).json({
+    message: "Servicio eliminado correctamente",
+  });
+};
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
@@ -15,62 +38,27 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   };
 }
 
-const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
-  const user = req.session.user;
-  if (!isValidAdminSession(user)) {
-    return res
-      .status(401)
-      .json({ message: "No estas autorizado para realizar esta acción" });
-  }
-
+const updateServiceData = async (
+  req: ExtendedNextApiRequest,
+  res: NextApiResponse
+) => {
   const serviceNumber = req.query.serviceNumber as string;
+  const serviceData = req.body.service;
 
-  if (req.method === "GET") {
-    try {
-      const result = await getServiceById(serviceNumber);
-      if (result.length === 0) {
-        return res.status(404).json({ message: "Servicio no encontrado" });
-      }
+  await updateService(serviceNumber, serviceData);
 
-      return res.status(200).json({
-        service: result[0],
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
-
-  if (req.method === "DELETE") {
-    try {
-      await deleteServiceById(serviceNumber);
-
-      return res.status(200).json({
-        message: "Servicio eliminado correctamente",
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
-
-  if (req.method === "PUT") {
-    const serviceData = req.body.service;
-
-    try {
-      await updateService(serviceNumber, serviceData);
-
-      return res
-        .status(200)
-        .json({ message: "Servicio actualizado correctamente" });
-    } catch (error) {
-      return res.status(500).json({
-        message: "Se produjo un error en el servidor",
-      });
-    }
-  }
+  return res
+    .status(200)
+    .json({ message: "Servicio actualizado correctamente" });
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getServiceData,
+  put: updateServiceData,
+  delete: deleteServiceData,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);

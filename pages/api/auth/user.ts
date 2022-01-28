@@ -2,16 +2,23 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { withIronSessionApiRoute } from "iron-session/next";
 
 import { sessionOptions } from "../../../lib/withSession";
+import { AuthUser } from "../../../types";
+import { apiHandler } from "../../../utils/api";
 
-const handler = (req: NextApiRequest, res: NextApiResponse) => {
+const getUserData = (req: NextApiRequest, res: NextApiResponse<AuthUser>) => {
   if (req.session.user) {
-    res.status(200).json({ ...req.session.user });
+    return res.status(200).json({ ...req.session.user });
   } else {
-    res.status(200).json({
+    return res.status(200).json({
       isLoggedIn: false,
       data: null,
+      isAdmin: false,
     });
   }
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getUserData,
+};
+
+export default withIronSessionApiRoute(apiHandler(handler), sessionOptions);

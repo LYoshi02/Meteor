@@ -7,11 +7,18 @@ import {
   getPromotionBySelectedServices,
   insertPromotion,
   insertServicesInPromotion,
-  pool,
 } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
-import { isValidAdminSession } from "../../../../utils/validateSession";
-import { PromotionFormValues } from "../../../../types";
+import { apiHandler } from "../../../../utils/api";
+import { PromotionFormValues, ValidationError } from "../../../../types";
+import { Transaction } from "../../../../utils/transaction";
+
+const getPromotionsData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const promotions = await getPromotionsWithServices();
+  const result = await getPromotionsCount();
+
+  res.status(200).json({ promotions, promotionsCount: +result[0].count });
+};
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
@@ -19,70 +26,56 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   };
 }
 
-const handler = async (req: ExtendedNextApiRequest, res: NextApiResponse) => {
-  const user = req.session.user;
-  if (!isValidAdminSession(user)) {
-    return res
-      .status(401)
-      .json({ message: "No estas autorizado para realizar esta acción" });
-  }
+const savePromotionData = async (
+  req: ExtendedNextApiRequest,
+  res: NextApiResponse
+) => {
+  const client = await Transaction.getClientInstance();
+  const promotionData = req.body.promotion;
 
-  if (req.method === "GET") {
-    try {
-      const promotions = await getPromotionsWithServices();
-      const result = await getPromotionsCount();
+  try {
+    await Transaction.start(client);
 
-      res.status(200).json({ promotions, promotionsCount: +result[0].count });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
-
-  if (req.method === "POST") {
-    const client = await pool.connect();
-    const promotionData = req.body.promotion;
-
-    try {
-      await client.query("BEGIN");
-
-      const existentPromotion = await getPromotionBySelectedServices(
-        promotionData.services,
-        client
+    const existentPromotion = await getPromotionBySelectedServices(
+      promotionData.services,
+      client
+    );
+    if (existentPromotion.length > 0 && !existentPromotion[0].Finalizado) {
+      // TODO: handle the transaction
+      throw new ValidationError(
+        "Ya existe una promoción activa con los servicios seleccionados"
       );
-      if (existentPromotion.length > 0 && !existentPromotion[0].Finalizado) {
-        // TODO: handle the transaction
-        return res.status(422).json({
-          message:
-            "Ya existe una promoción activa con los servicios seleccionados",
-        });
-      }
-
-      const result = await insertPromotion(promotionData, client);
-      const promotionNumber = result.rows[0].NroPromocion;
-
-      await insertServicesInPromotion(
-        promotionData.services,
-        promotionNumber,
-        client
-      );
-      await client.query("COMMIT");
-      client.release();
-
-      return res.status(201).json({
-        message: "Promocion creada correctamente",
-      });
-    } catch (error) {
-      console.log(error);
-      await client.query("ROLLBACK");
-      client.release();
-
-      return res.status(500).json({
-        message: "Se produjo un error en el servidor",
-      });
     }
+
+    const result = await insertPromotion(promotionData, client);
+    const promotionNumber = result.rows[0].NroPromocion;
+
+    await insertServicesInPromotion(
+      promotionData.services,
+      promotionNumber,
+      client
+    );
+
+    await Transaction.saveChanges(client);
+    Transaction.releaseClient(client);
+
+    return res.status(201).json({
+      message: "Promocion creada correctamente",
+    });
+  } catch (error) {
+    await Transaction.removeChanges(client);
+    Transaction.releaseClient(client);
+
+    throw error;
   }
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getPromotionsData,
+  post: savePromotionData,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);

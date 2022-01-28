@@ -3,47 +3,36 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { getContractById, updateContractStatus } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
-import { isValidAdminSession } from "../../../../utils/validateSession";
+import { apiHandler } from "../../../../utils/api";
+import { NotFoundError, ValidationError } from "../../../../types";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "PUT") {
-    const user = req.session.user;
+const changeContractStatus = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
+  const contractNumber = req.query.contractNumber as string;
+  const isContractFinished = req.body.isFinished as boolean;
 
-    try {
-      if (!isValidAdminSession(user)) {
-        return res
-          .status(401)
-          .json({ message: "No estas autorizado para realizar esta acción" });
-      }
+  const currentContract = await getContractById(contractNumber);
 
-      const contractNumber = req.query.contractNumber as string;
-      const isContractFinished = req.body.isFinished as boolean;
-
-      const currentContract = await getContractById(contractNumber);
-
-      if (currentContract.length === 0) {
-        return res.status(404).json({ message: "Contrato no encontrado" });
-      } else if (currentContract[0].FechaFin !== null) {
-        return res
-          .status(422)
-          .json({ message: "No puedes reestablecer un contrato finalizado" });
-      }
-
-      const result = await updateContractStatus(
-        contractNumber,
-        isContractFinished
-      );
-
-      return res.status(200).json({
-        message: "Factura actualizada correctamente",
-        contract: result.rows[0],
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
+  if (currentContract.length === 0) {
+    throw new NotFoundError("Contrato no encontrado");
+  } else if (currentContract[0].FechaFin !== null) {
+    throw new ValidationError("No puedes reestablecer un contrato finalizado");
   }
+
+  const result = await updateContractStatus(contractNumber, isContractFinished);
+
+  return res.status(200).json({
+    contract: result.rows[0],
+  });
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  put: changeContractStatus,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);

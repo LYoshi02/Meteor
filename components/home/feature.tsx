@@ -62,8 +62,6 @@ const Feature = () => {
             quality={100}
             layout="fill"
             objectFit="contain"
-            width={1640}
-            height={3044}
           />
         </Box>
       </Container>

@@ -3,29 +3,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { getInvoices, getInvoicesCount } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
-import { isValidAdminSession } from "../../../../utils/validateSession";
+import { apiHandler } from "../../../../utils/api";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "GET") {
-    const user = req.session.user;
+const getInvoicesData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const invoices = await getInvoices();
+  const result = await getInvoicesCount();
 
-    try {
-      if (!isValidAdminSession(user)) {
-        return res
-          .status(401)
-          .json({ message: "No estas autorizado para realizar esta acción" });
-      }
-
-      const invoices = await getInvoices();
-      const result = await getInvoicesCount();
-
-      res.status(200).json({ invoices, invoicesCount: +result[0].count });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
+  res.status(200).json({ invoices, invoicesCount: +result[0].count });
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getInvoicesData,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);

@@ -3,29 +3,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { getContracts, getContractsCount } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
-import { isValidAdminSession } from "../../../../utils/validateSession";
+import { apiHandler } from "../../../../utils/api";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "GET") {
-    const user = req.session.user;
+const getContractsData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const contracts = await getContracts();
+  const result = await getContractsCount();
 
-    try {
-      if (!isValidAdminSession(user)) {
-        return res
-          .status(401)
-          .json({ message: "No estas autorizado para realizar esta acción" });
-      }
-
-      const contracts = await getContracts();
-      const result = await getContractsCount();
-
-      res.status(200).json({ contracts, contractsCount: +result[0].count });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
+  return res.status(200).json({ contracts, contractsCount: +result[0].count });
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getContractsData,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);

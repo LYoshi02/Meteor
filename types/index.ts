@@ -31,3 +31,12 @@ export type {
 } from "./user";
 
 export type { ServiceFormValues, PromotionFormValues } from "./admin";
+
+export {
+  AuthenticationError,
+  GenericError,
+  ValidationError,
+  NotFoundError,
+} from "./error";
+
+export type { ErrorTypes } from "./error";

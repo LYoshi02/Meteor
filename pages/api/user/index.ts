@@ -5,121 +5,112 @@ import {
   getCustomerByDni,
   getUserByEmail,
   getUserByEmailAndPassword,
-  pool,
   updateCustomerPartially,
   updateUser,
 } from "../../../db";
-import { UserConfigData, UserConfigFormValues } from "../../../types";
-import { isValidSession } from "../../../utils/validateSession";
+import {
+  NotFoundError,
+  UserConfigData,
+  UserConfigFormValues,
+  ValidationError,
+} from "../../../types";
 import { sessionOptions } from "../../../lib/withSession";
+import { apiHandler } from "../../../utils/api";
+import { Transaction } from "../../../utils/transaction";
+
+const getUserData = async (
+  req: NextApiRequest,
+  res: NextApiResponse<UserConfigData>
+) => {
+  const user = req.session.user;
+
+  const foundUser = await getCustomerByDni(user!.data!.dni);
+  if (foundUser.length === 0) {
+    throw new NotFoundError("Usuario no encontrado");
+  }
+
+  const { Apellido, CorreoElectronico, Direccion, Nombre, Telefono } =
+    foundUser[0];
+
+  return res.status(200).json({
+    address: Direccion,
+    email: CorreoElectronico,
+    firstName: Nombre,
+    lastName: Apellido,
+    phone: Telefono,
+  });
+};
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: { user: UserConfigFormValues };
 }
 
-const handler = async (
+const updateUserData = async (
   req: ExtendedNextApiRequest,
-  res: NextApiResponse<UserConfigData | { message: string }>
+  res: NextApiResponse
 ) => {
-  if (req.method === "GET") {
-    const user = req.session.user;
+  const user = req.session.user;
+  const client = await Transaction.getClientInstance();
 
-    try {
-      if (!isValidSession(user)) {
-        return res
-          .status(401)
-          .json({ message: "No estas autorizado para realizar esta acción" });
-      }
+  try {
+    await Transaction.start(client);
 
-      const foundUser = await getCustomerByDni(user!.data!.dni);
-      if (foundUser.length === 0) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
-      }
+    const userDni = user!.data!.dni;
+    const userData = req.body.user;
 
-      const { Apellido, CorreoElectronico, Direccion, Nombre, Telefono } =
-        foundUser[0];
-      return res.status(200).json({
-        address: Direccion,
-        email: CorreoElectronico,
-        firstName: Nombre,
-        lastName: Apellido,
-        phone: Telefono,
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
+    const currentUser = await getCustomerByDni(userDni, client);
+    const existentUser = await getUserByEmail(userData.email, client);
+
+    if (
+      existentUser.length === 1 &&
+      (existentUser[0].Dni === null ||
+        existentUser[0].Dni !== currentUser[0].Dni)
+    ) {
+      throw new ValidationError("El correo ingresado ya se encuentra en uso");
     }
-  }
 
-  if (req.method === "PUT") {
-    const user = req.session.user;
-    const client = await pool.connect();
-
-    try {
-      if (!isValidSession(user)) {
-        return res
-          .status(401)
-          .json({ message: "No estas autorizado para realizar esta acción" });
-      }
-
-      await client.query("BEGIN");
-
-      const userDni = user!.data!.dni;
-      const userData = req.body.user;
-
-      const currentUser = await getCustomerByDni(userDni, client);
-      const existentUser = await getUserByEmail(userData.email, client);
-
-      if (
-        existentUser.length === 1 &&
-        (existentUser[0].Dni === null ||
-          existentUser[0].Dni !== currentUser[0].Dni)
-      ) {
-        return res
-          .status(422)
-          .json({ message: "El correo ingresado ya se encuentra en uso" });
-      }
-
-      if (userData.newPassword.length > 0) {
-        const authenticatedUser = await getUserByEmailAndPassword(
-          currentUser[0].CorreoElectronico,
-          userData.currentPassword,
-          client
-        );
-
-        if (authenticatedUser.length === 0) {
-          return res
-            .status(422)
-            .json({ message: "La contraseña ingresada es incorrecta" });
-        }
-      }
-
-      await updateUser(
-        {
-          currentEmail: currentUser[0].CorreoElectronico,
-          password: userData.newPassword,
-          newEmail: userData.email,
-        },
+    if (userData.newPassword.length > 0) {
+      const authenticatedUser = await getUserByEmailAndPassword(
+        currentUser[0].CorreoElectronico,
+        userData.currentPassword,
         client
       );
-      await updateCustomerPartially(userData, userDni, client);
 
-      await client.query("COMMIT");
-      client.release();
-
-      return res
-        .status(200)
-        .json({ message: "Información actualizada correctamente" });
-    } catch (error) {
-      await client.query("ROLLBACK");
-      client.release();
-      console.log(error);
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
+      if (authenticatedUser.length === 0) {
+        throw new ValidationError("La contraseña ingresada es incorrecta");
+      }
     }
+
+    await updateUser(
+      {
+        currentEmail: currentUser[0].CorreoElectronico,
+        password: userData.newPassword,
+        newEmail: userData.email,
+      },
+      client
+    );
+    await updateCustomerPartially(userData, userDni, client);
+
+    await Transaction.saveChanges(client);
+    Transaction.releaseClient(client);
+
+    return res
+      .status(200)
+      .json({ message: "Información actualizada correctamente" });
+  } catch (error) {
+    await Transaction.removeChanges(client);
+    Transaction.releaseClient(client);
+
+    throw error;
   }
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  get: getUserData,
+  put: updateUserData,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresUserAuth: true }),
+  sessionOptions
+);

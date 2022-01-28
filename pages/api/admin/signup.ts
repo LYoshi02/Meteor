@@ -1,24 +1,32 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { insertNewUser } from "../../../db";
+import { apiHandler } from "../../../utils/api";
 import { ADMIN_ROLE } from "../../../utils/constants";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    const { email, password } = req.body;
+interface ExtendedNextApiRequest extends NextApiRequest {
+  body: {
+    email: string;
+    password: string;
+  };
+}
 
-    try {
-      await insertNewUser({ email, password, role: ADMIN_ROLE });
+// TODO: secure this route
+const saveNewAdmin = async (
+  req: ExtendedNextApiRequest,
+  res: NextApiResponse
+) => {
+  const { email, password } = req.body;
 
-      return res
-        .status(201)
-        .json({ message: "Administrador creado correctamente" });
-    } catch (error: any) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
+  await insertNewUser({ email, password, role: ADMIN_ROLE });
+
+  return res
+    .status(201)
+    .json({ message: "Administrador creado correctamente" });
 };
 
-export default handler;
+const handler = {
+  post: saveNewAdmin,
+};
+
+export default apiHandler(handler);

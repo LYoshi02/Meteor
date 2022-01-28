@@ -3,34 +3,33 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { updateInvoiceStatus } from "../../../../db";
 import { sessionOptions } from "../../../../lib/withSession";
-import { isValidAdminSession } from "../../../../utils/validateSession";
+import { apiHandler } from "../../../../utils/api";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "PUT") {
-    const user = req.session.user;
+interface ExtendedNextApiRequest extends NextApiRequest {
+  body: {
+    isPaid: boolean;
+  };
+}
 
-    try {
-      if (!isValidAdminSession(user)) {
-        return res
-          .status(401)
-          .json({ message: "No estas autorizado para realizar esta acción" });
-      }
+const changeInvoiceStatus = async (
+  req: ExtendedNextApiRequest,
+  res: NextApiResponse
+) => {
+  const invoiceNumber = req.query.invoiceNumber as string;
+  const isInvoicePaid = req.body.isPaid;
 
-      const invoiceNumber = req.query.invoiceNumber as string;
-      const isInvoicePaid = req.body.isPaid as boolean;
+  const result = await updateInvoiceStatus(invoiceNumber, isInvoicePaid);
 
-      const result = await updateInvoiceStatus(invoiceNumber, isInvoicePaid);
-
-      return res.status(200).json({
-        message: "Factura actualizada correctamente",
-        invoice: result.rows[0],
-      });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: "Se produjo un error en el servidor" });
-    }
-  }
+  return res.status(200).json({
+    invoice: result.rows[0],
+  });
 };
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+const handler = {
+  put: changeInvoiceStatus,
+};
+
+export default withIronSessionApiRoute(
+  apiHandler(handler, { requiresAdminAuth: true }),
+  sessionOptions
+);
