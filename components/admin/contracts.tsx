@@ -1,5 +1,4 @@
-import { useRef, useEffect } from "react";
-import { Box, Heading, ToastId, useToast } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import useSWR from "swr";
 
 import Alert from "../ui/alert";
@@ -7,33 +6,25 @@ import ContractsTable from "./contracts/table";
 import LoadingSpinner from "../ui/loading-spinner";
 import { ContractSchema } from "../../types";
 import useHttp from "../../hooks/useHttp";
-import { DEFAULT_ERROR_TOAST_PROPS } from "../../utils/constants";
+import useToastOnReq from "../../hooks/useToastOnReq";
 
 const Contracts = () => {
   const { data, error, mutate } = useSWR<{
     contracts: ContractSchema[];
     contractsCount: number;
   }>("/api/admin/contracts");
-  const { sendRequest, error: reqError } = useHttp();
-  const toast = useToast();
-  const toastRef = useRef<ToastId | undefined | null>(null);
+  const { sendRequest, error: reqError, success: reqSuccess } = useHttp();
 
-  useEffect(() => {
-    if (reqError) {
-      toastRef.current = toast({
-        ...DEFAULT_ERROR_TOAST_PROPS,
-        description:
-          reqError.message ||
-          "Se produjo un error al actualizar el estado de la factura",
-      });
-    }
-
-    return () => {
-      if (toastRef.current) {
-        toast.close(toastRef.current);
-      }
-    };
-  }, [reqError, toast]);
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Contrato actualizado correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const changeContractStatus = async (contractNumber: number) => {
     await sendRequest<{ message: string; contract: ContractSchema }>(

@@ -5,7 +5,7 @@ import Alert from "../ui/alert";
 import LoadingSpinner from "../ui/loading-spinner";
 import ServicesTable from "./services/table";
 import { ServiceSchema } from "../../types";
-import ServiceModal from "./services/create-modal";
+import ServiceModal from "./services/modal";
 import CreateServiceForm from "./services/create-form";
 
 const Services = () => {

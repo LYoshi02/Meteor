@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Box, useToast } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 import UserForm from "./user-form";
 import {
@@ -15,6 +15,7 @@ import HireSummary from "./hire-summary";
 import StepsHeader from "./steps-header";
 import useHttp from "../../hooks/useHttp";
 import HireModal from "./hire-modal";
+import useToastOnReq from "../../hooks/useToastOnReq";
 
 type Props = {
   services: Services | undefined;
@@ -26,34 +27,34 @@ const HireForm = (props: Props) => {
   const [servicesFormValues, setServicesFormValues] =
     useState<ServicesFormValues>();
   const [currentStep, setCurrentStep] = useState(1);
-  const { error, isLoading, success, sendRequest } = useHttp();
+  const {
+    error: reqError,
+    isLoading,
+    success: reqSuccess,
+    sendRequest,
+  } = useHttp();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [existingUser, setExistingUser] = useState<ClientSchema | null>(null);
   const router = useRouter();
-  const toast = useToast();
 
   useEffect(() => {
-    if (success) {
+    if (reqSuccess) {
       setIsModalOpen(true);
     }
-  }, [success]);
+  }, [reqSuccess]);
 
   useEffect(() => {
-    if (error) {
-      if (error.status === 422) {
-        setCurrentStep(1);
-      }
-
-      toast({
-        title: "Error!",
-        description: error.message,
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-        variant: "solid",
-      });
+    if (reqError && reqError.status === 422) {
+      setCurrentStep(1);
     }
-  }, [error, toast]);
+  }, [reqError]);
+
+  useToastOnReq({
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const closeModalHandler = () => {
     setIsModalOpen(false);

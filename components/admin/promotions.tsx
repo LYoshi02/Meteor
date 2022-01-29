@@ -8,19 +8,30 @@ import { PromotionSchema } from "../../types";
 import useHttp from "../../hooks/useHttp";
 import CreatePromotionModal from "./promotions/create-modal";
 import CreatePromotionForm from "./promotions/create-form";
+import useToastOnReq from "../../hooks/useToastOnReq";
 
 const Promotions = () => {
   const { data, error, mutate } = useSWR<{
     promotions: (PromotionSchema & { Servicios: string[] })[];
     promotionsCount: number;
   }>("/api/admin/promotions");
-
-  const { sendRequest } = useHttp();
+  const { sendRequest, error: reqError, success: reqSuccess } = useHttp();
   const {
     isOpen: isModalOpen,
     onClose: onCloseModal,
     onOpen: onOpenModal,
   } = useDisclosure();
+
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Promoción actualizada correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const changePromotionStatus = async (promoNumber: number) => {
     await sendRequest<{ message: string; promotion: PromotionSchema }>(

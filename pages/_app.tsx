@@ -6,13 +6,16 @@ import "slick-carousel/slick/slick-theme.css";
 
 import theme from "../styles/theme";
 import fetchJson from "../utils/fetchJson";
+import UiProvider from "../context/ui-context";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <SWRConfig value={{ fetcher: fetchJson }}>
-        <Component {...pageProps} />
-      </SWRConfig>
+      <UiProvider>
+        <SWRConfig value={{ fetcher: fetchJson }}>
+          <Component {...pageProps} />
+        </SWRConfig>
+      </UiProvider>
     </ChakraProvider>
   );
 }

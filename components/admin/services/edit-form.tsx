@@ -6,6 +6,8 @@ import useSWR from "swr";
 
 import { ServiceFormValues, ServiceSchema } from "../../../types";
 import Input from "../../ui/input";
+import useToastOnReq from "../../../hooks/useToastOnReq";
+import LoadingSpinner from "../../ui/loading-spinner";
 
 type Props = {
   onCloseModal: () => void;
@@ -20,10 +22,26 @@ const EditServiceForm = (props: Props) => {
     handleSubmit,
     setValue,
   } = useForm<{ name: string; price: string }>();
-  const { isLoading, sendRequest } = useHttp();
-  const { data: serviceData } = useSWR<{ service: ServiceSchema }>(
-    props.serviceNumber ? `/api/admin/services/${props.serviceNumber}` : null
-  );
+  const {
+    isLoading,
+    sendRequest,
+    error: reqError,
+    success: reqSuccess,
+  } = useHttp();
+  const { data: serviceData, error: fetchError } = useSWR<{
+    service: ServiceSchema;
+  }>(props.serviceNumber ? `/api/admin/services/${props.serviceNumber}` : null);
+
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Servicio editado correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   useEffect(() => {
     if (serviceData) {
@@ -48,6 +66,10 @@ const EditServiceForm = (props: Props) => {
 
     props.onCloseModal();
   };
+
+  if (!serviceData && !fetchError) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <form onSubmit={handleSubmit(submitHandler)}>

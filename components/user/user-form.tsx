@@ -10,6 +10,7 @@ import { UserConfigFormValues, UserConfigData } from "../../types";
 import LoadingSpinner from "../ui/loading-spinner";
 import Alert from "../ui/alert";
 import useHttp from "../../hooks/useHttp";
+import useToastOnReq from "../../hooks/useToastOnReq";
 
 const UserForm = () => {
   const {
@@ -26,7 +27,6 @@ const UserForm = () => {
     error: reqError,
     sendRequest,
     success: reqSuccess,
-    dispatch,
   } = useHttp();
   const toast = useToast();
 
@@ -40,31 +40,16 @@ const UserForm = () => {
     }
   }, [userData, setValue]);
 
-  useEffect(() => {
-    if (reqSuccess) {
-      toast({
-        title: "Éxito!",
-        description: "Tus datos se actualizaron correctamente",
-        status: "success",
-        isClosable: true,
-        variant: "solid",
-        onCloseComplete: () => dispatch({ type: "reset" }),
-      });
-    }
-  }, [reqSuccess, toast, dispatch]);
-
-  useEffect(() => {
-    if (reqError) {
-      toast({
-        title: "Error!",
-        description: reqError.message,
-        status: "error",
-        isClosable: true,
-        variant: "solid",
-        onCloseComplete: () => dispatch({ type: "reset" }),
-      });
-    }
-  }, [reqError, toast, dispatch]);
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Tus datos se actualizaron correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const validatePasswords = (currentPassword: string, newPassword: string) => {
     if (currentPassword.length === 0 && newPassword.length > 0) {

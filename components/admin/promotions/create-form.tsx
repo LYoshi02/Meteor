@@ -17,6 +17,7 @@ import { PromotionFormValues } from "../../../types";
 import Input from "../../ui/input";
 import useHttp from "../../../hooks/useHttp";
 import { ServiceSchema, PromotionSchema } from "../../../types";
+import useToastOnReq from "../../../hooks/useToastOnReq";
 
 type Props = {
   onCloseModal: () => void;
@@ -30,7 +31,6 @@ const CreatePromotionForm = (props: Props) => {
     register,
     formState: { errors },
     handleSubmit,
-    control,
     watch,
     setValue,
     setError,
@@ -38,11 +38,22 @@ const CreatePromotionForm = (props: Props) => {
   } = useForm<PromotionFormValues>({
     defaultValues: { services: [], discount: 0 },
   });
-  const { sendRequest } = useHttp();
+  const { sendRequest, error: reqError, success: reqSuccess } = useHttp();
   const { data } = useSWR<{
     services: (ServiceSchema & { Tipo: string })[];
     servicesCount: number;
   }>("/api/admin/services");
+
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Promoción creada correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const selectedServices = watch("services");
   const appliedDiscount = watch("discount");

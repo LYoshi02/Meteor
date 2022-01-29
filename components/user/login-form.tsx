@@ -16,7 +16,7 @@ type FormValues = {
 };
 
 const USER_DASHBOARD_ROUTE = "/user/home";
-const ADMIN_DASHBOARD_ROUTE = "/admin/home";
+const ADMIN_DASHBOARD_ROUTE = "/admin/invoices";
 
 const LoginForm = () => {
   const {
@@ -67,8 +67,8 @@ const LoginForm = () => {
           body: JSON.stringify({ user: values }),
         },
       },
-      (userData) => {
-        mutateUser(userData);
+      async (userData) => {
+        await mutateUser(userData);
         if (userData.isAdmin) {
           router.push(ADMIN_DASHBOARD_ROUTE);
         } else {

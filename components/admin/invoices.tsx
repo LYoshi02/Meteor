@@ -1,40 +1,29 @@
-import { Alert, Box, Heading, ToastId, useToast } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { Alert, Box, Heading } from "@chakra-ui/react";
 import useSWR from "swr";
 
 import { InvoiceSchema } from "../../types";
 import LoadingSpinner from "../ui/loading-spinner";
 import useHttp from "../../hooks/useHttp";
 import InvoicesTable from "./invoices/table";
+import useToastOnReq from "../../hooks/useToastOnReq";
 
 const Invoices = () => {
   const { data, error, mutate } = useSWR<{
     invoices: InvoiceSchema[];
     invoicesCount: number;
   }>("/api/admin/invoices");
-  const { sendRequest, error: reqError } = useHttp();
-  const toast = useToast();
-  const toastRef = useRef<ToastId | undefined | null>(null);
+  const { sendRequest, error: reqError, success: reqSuccess } = useHttp();
 
-  useEffect(() => {
-    if (reqError) {
-      toastRef.current = toast({
-        title: "Error!",
-        description:
-          "Se produjo un error al actualizar el estado de la factura",
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-        variant: "solid",
-      });
-    }
-
-    return () => {
-      if (toastRef.current) {
-        toast.close(toastRef.current);
-      }
-    };
-  }, [reqError, toast]);
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Factura actualizada correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const changeInvoiceStatus = async (
     isPaid: boolean,

@@ -8,6 +8,7 @@ import { emailRegex } from "../../../utils/constants";
 import Input from "../../ui/input";
 import useHttp from "../../../hooks/useHttp";
 import LoadingSpinner from "../../ui/loading-spinner";
+import useToastOnReq from "../../../hooks/useToastOnReq";
 
 type Props = {
   onCloseModal: () => void;
@@ -22,10 +23,26 @@ const EditCustomerForm = (props: Props) => {
     handleSubmit,
     setValue,
   } = useForm<UserFormValues>();
-  const { isLoading, sendRequest } = useHttp();
+  const {
+    isLoading,
+    sendRequest,
+    error: reqError,
+    success: reqSuccess,
+  } = useHttp();
   const { data: customerData } = useSWR<{
     customer: ClientSchema;
   }>(props.customerDni ? `/api/admin/customers/${props.customerDni}` : null);
+
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Cliente editado correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   useEffect(() => {
     if (customerData) {

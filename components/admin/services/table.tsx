@@ -18,8 +18,9 @@ import usePagination from "../../../hooks/usePagination";
 import { ServiceSchema } from "../../../types/index";
 import useHttp from "../../../hooks/useHttp";
 import EditButton from "../customers/edit-button";
-import ServiceModal from "./create-modal";
+import ServiceModal from "./modal";
 import EditServiceForm from "./edit-form";
+import useToastOnReq from "../../../hooks/useToastOnReq";
 
 type Props = {
   services: (ServiceSchema & { Tipo: string })[];
@@ -40,11 +41,22 @@ const ServicesTable = (props: Props) => {
     onOpen: onOpenModal,
     onClose: onCloseModal,
   } = useDisclosure();
-  const { sendRequest } = useHttp();
+  const { sendRequest, success: reqSuccess, error: reqError } = useHttp();
   const { pagination, setNextPage, setPrevPage, changePageSize } =
     usePagination({
       totalElements: props.servicesCount,
     });
+
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Servicio eliminado correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const shownServices = props.services.slice(
     pagination.elementIndexStart,

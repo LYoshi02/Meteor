@@ -9,8 +9,9 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import useHttp from "../../../hooks/useHttp";
 
+import useHttp from "../../../hooks/useHttp";
+import useToastOnReq from "../../../hooks/useToastOnReq";
 import { ServiceFormValues, ServiceSchema } from "../../../types";
 import Input from "../../ui/input";
 
@@ -27,7 +28,23 @@ const CreateServiceForm = (props: Props) => {
     handleSubmit,
     watch,
   } = useForm<ServiceFormValues>();
-  const { isLoading, sendRequest } = useHttp();
+  const {
+    isLoading,
+    sendRequest,
+    error: reqError,
+    success: reqSuccess,
+  } = useHttp();
+
+  useToastOnReq({
+    success: {
+      showToast: reqSuccess,
+      message: "Servicio creado correctamente",
+    },
+    error: {
+      showToast: reqError !== null,
+      message: reqError?.message,
+    },
+  });
 
   const selectedServiceType = watch("type");
 
