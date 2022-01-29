@@ -1,24 +1,9 @@
 import { ReactNode } from "react";
-import {
-  Box,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  Flex,
-  IconButton,
-  useDisclosure,
-  useMediaQuery,
-} from "@chakra-ui/react";
-import { MenuIcon } from "@heroicons/react/solid";
+import { Box, Flex, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 
-import UserInfo from "./dashboard/user-info";
-
-import LogoutBtn from "./dashboard/logout-btn";
-import DashboardItems from "./dashboard/items";
+import DesktopMenu from "./dashboard/desktop-menu";
+import MobileMenu from "./dashboard/mobile-menu";
+import MenuButton from "./dashboard/menu-button";
 
 type Props = {
   children: ReactNode;
@@ -31,67 +16,13 @@ const DashboardLayout = (props: Props) => {
   return (
     <Flex>
       {isLargerThan750 ? (
-        <Box minH="100vh" w="80" bgColor="gray.900" shadow="md">
-          <Flex
-            flexDirection="column"
-            justify="space-between"
-            h="100vh"
-            p="4"
-            gridGap="4"
-            position="sticky"
-            top="0"
-          >
-            <Box>
-              <UserInfo />
-              <Box mt="8">
-                <DashboardItems />
-              </Box>
-            </Box>
-
-            <Box>
-              <LogoutBtn />
-            </Box>
-          </Flex>
-        </Box>
+        <DesktopMenu />
       ) : (
-        <Drawer
-          isOpen={isOpen}
-          placement="right"
-          onClose={onClose}
-          isFullHeight
-        >
-          <DrawerOverlay />
-          <DrawerContent bgColor="gray.900">
-            <DrawerCloseButton top="4" right="4" size="lg" />
-            <DrawerHeader>
-              <UserInfo />
-            </DrawerHeader>
-
-            <DrawerBody>
-              <DashboardItems onCloseDrawer={onClose} />
-            </DrawerBody>
-
-            <DrawerFooter>
-              <LogoutBtn />
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+        <MobileMenu isOpen={isOpen} onClose={onClose} />
       )}
 
       <Box p="4" w="full" position="relative" overflowX="hidden">
-        {!isLargerThan750 && (
-          <Box position="absolute" top="4" right="4">
-            <IconButton
-              variant="outline"
-              colorScheme="white"
-              aria-label="Open Drawer"
-              size="md"
-              p="1"
-              icon={<MenuIcon />}
-              onClick={onOpen}
-            />
-          </Box>
-        )}
+        {!isLargerThan750 && <MenuButton onOpen={onOpen} />}
         {props.children}
       </Box>
     </Flex>

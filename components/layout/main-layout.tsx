@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Flex } from "@chakra-ui/react";
 
-import Navigation from "../navigation/navigation";
+import Navigation from "./navigation";
 
 type Props = {
   children?: ReactNode;

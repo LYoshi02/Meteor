@@ -1,6 +1,4 @@
-import { Box } from "@chakra-ui/react";
 import Modal from "../../ui/modal";
-import EditCustomerForm from "./edit-form";
 
 type Props = {
   isOpen: boolean;

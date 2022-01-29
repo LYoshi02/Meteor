@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 
-import Navigation from "../navigation/navigation";
+import Navigation from "../layout/navigation";
 import Header from "./header";
 
 const Hero = () => {
