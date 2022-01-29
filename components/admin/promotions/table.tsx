@@ -1,21 +1,12 @@
-import {
-  Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Switch,
-  useDisclosure,
-  Text,
-} from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 
 import PaginationFooter from "../../ui/pagination-foooter";
 import usePagination from "../../../hooks/usePagination";
 import { PromotionSchema } from "../../../types/index";
 import AlertDialog from "../../ui/alert-dialog";
+import PromotionsTableRows from "./rows";
+import Table from "../../ui/table";
 
 type Props = {
   promotions: (PromotionSchema & { Servicios: string[] })[];
@@ -75,40 +66,22 @@ const PromotionsTable = (props: Props) => {
           },
         }}
       />
-      <Box height="full" maxWidth="full" overflow="auto">
-        <Table variant="simple" w="full">
-          <Thead>
-            <Tr>
-              <Th textAlign="center">Nro. de Promoción</Th>
-              <Th textAlign="center">% de Descuento</Th>
-              <Th textAlign="center">Duración</Th>
-              <Th textAlign="center">Servicios</Th>
-              <Th textAlign="center">Finalizado</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {shownPromotions.map((promo) => (
-              <Tr key={promo.NroPromocion}>
-                <Td textAlign="center">{promo.NroPromocion}</Td>
-                <Td textAlign="center">{promo.PorcentajeDto} %</Td>
-                <Td textAlign="center">{promo.Duracion} Meses</Td>
-                <Td textAlign="center">
-                  {promo.Servicios.map((service) => (
-                    <Text key={service}>{service}</Text>
-                  ))}
-                </Td>
-                <Td textAlign="center">
-                  <Switch
-                    isChecked={promo.Finalizado}
-                    isDisabled={promo.Finalizado}
-                    onChange={() => inputChangedHandler(promo.NroPromocion)}
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+
+      <Table
+        headingElements={[
+          "Nro. de Promoción",
+          "% de Descuento",
+          "Duración",
+          "Servicios",
+          "Finalizado",
+        ]}
+        body={
+          <PromotionsTableRows
+            promotions={shownPromotions}
+            onChange={inputChangedHandler}
+          />
+        }
+      />
 
       <PaginationFooter
         pagination={{

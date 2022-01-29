@@ -1,11 +1,11 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 
-import Alert from "../ui/alert";
-import Contract from "./contract-details/contract";
-import HiredServices from "./contract-details/hired-services";
-import Promotion from "./contract-details/promotion";
-import { UserContractDetails } from "../../types";
-import { formateDateToFullDate } from "../../utils/dateHelpers";
+import Alert from "../../ui/alert";
+import Contract from "./contract";
+import HiredServices from "./hired-services";
+import Promotion from "./promotion";
+import { UserContractDetails } from "../../../types";
+import { formateDateToFullDate } from "../../../utils/dateHelpers";
 
 type Props = {
   details: UserContractDetails;

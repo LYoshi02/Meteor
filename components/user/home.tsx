@@ -1,8 +1,7 @@
 import { Box, Heading } from "@chakra-ui/react";
-import id from "date-fns/esm/locale/id/index.js";
 import useSWR from "swr";
 
-import ContractDetails from "../../components/user/contract-details";
+import ContractDetails from "./home/contract-details";
 import useUser from "../../hooks/useUser";
 import { UserContractDetails } from "../../types";
 import Alert from "../ui/alert";

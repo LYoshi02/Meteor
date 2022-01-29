@@ -29,6 +29,7 @@ export {
   getPromotionsWithServices,
   getPromotionsCount,
   getServiceById,
+  getCustomerInvoicesCount,
 } from "./selectQueries";
 
 export {

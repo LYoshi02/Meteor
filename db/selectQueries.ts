@@ -157,6 +157,21 @@ export const getCustomerInvoices = async (
   return result.rows;
 };
 
+export const getCustomerInvoicesCount = async (
+  userDni: string,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<{ count: string }>(
+    `
+    SELECT COUNT(*) FROM "Facturas"
+    WHERE "DniCliente" = $1
+  `,
+    [userDni]
+  );
+
+  return result.rows;
+};
+
 export const getCustomerInvoiceById = async (
   invoiceNumber: number,
   dni: string,

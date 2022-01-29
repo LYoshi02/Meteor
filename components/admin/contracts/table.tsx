@@ -1,11 +1,11 @@
-import { Box, Table, Tbody, Td, Th, Thead, Tr, Switch } from "@chakra-ui/react";
 import { useState } from "react";
 
 import usePagination from "../../../hooks/usePagination";
 import { ContractSchema } from "../../../types/index";
-import { formateDateToFullDate } from "../../../utils/dateHelpers";
 import AlertDialog from "../../ui/alert-dialog";
 import PaginationFooter from "../../ui/pagination-foooter";
+import Table from "../../ui/table";
+import ContractsTableRows from "./rows";
 
 type Props = {
   contracts: ContractSchema[];
@@ -69,36 +69,16 @@ const ContractsTable = (props: Props) => {
           },
         }}
       />
-      <Box height="full" maxWidth="full" overflow="auto">
-        <Table variant="simple" w="full">
-          <Thead>
-            <Tr>
-              <Th textAlign="center">Contrato</Th>
-              <Th textAlign="center">Fecha de Inicio</Th>
-              <Th textAlign="center">Dni</Th>
-              <Th textAlign="center">Finalizado</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {shownContracts.map((contract) => (
-              <Tr key={contract.NroContrato}>
-                <Td textAlign="center">{contract.NroContrato}</Td>
-                <Td textAlign="center" textTransform="capitalize">
-                  {formateDateToFullDate(contract.FechaInicio)}
-                </Td>
-                <Td textAlign="center">{contract.DniCliente}</Td>
-                <Td textAlign="center">
-                  <Switch
-                    isDisabled={contract.FechaFin !== null}
-                    isChecked={contract.FechaFin !== null}
-                    onChange={() => inputChangedHandler(contract.NroContrato)}
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+
+      <Table
+        headingElements={["Contrato", "Fecha de Inicio", "Dni", "Finalizado"]}
+        body={
+          <ContractsTableRows
+            contracts={shownContracts}
+            onChange={inputChangedHandler}
+          />
+        }
+      />
 
       <PaginationFooter
         pagination={{

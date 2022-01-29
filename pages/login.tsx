@@ -1,7 +1,7 @@
 import { Box, Heading } from "@chakra-ui/react";
 
 import FullScreenContainer from "../components/ui/full-screen-container";
-import LoginForm from "../components/user/login-form";
+import LoginForm from "../components/login/login-form";
 import MainLayout from "../components/layout/main-layout";
 import useUser from "../hooks/useUser";
 

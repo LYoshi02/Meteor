@@ -3,14 +3,14 @@ import useSWR from "swr";
 import { Button, Divider, SimpleGrid, Stack, useToast } from "@chakra-ui/react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import Input from "../ui/input";
-import { emailRegex } from "../../utils/constants";
-import PasswordInput from "../ui/password-input";
-import { UserConfigFormValues, UserConfigData } from "../../types";
-import LoadingSpinner from "../ui/loading-spinner";
-import Alert from "../ui/alert";
-import useHttp from "../../hooks/useHttp";
-import useToastOnReq from "../../hooks/useToastOnReq";
+import Input from "../../ui/input";
+import { emailRegex } from "../../../utils/constants";
+import PasswordInput from "../../ui/password-input";
+import { UserConfigFormValues, UserConfigData } from "../../../types";
+import LoadingSpinner from "../../ui/loading-spinner";
+import Alert from "../../ui/alert";
+import useHttp from "../../../hooks/useHttp";
+import useToastOnReq from "../../../hooks/useToastOnReq";
 
 const UserForm = () => {
   const {

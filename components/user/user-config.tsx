@@ -1,5 +1,5 @@
 import { Box, Heading } from "@chakra-ui/react";
-import UserForm from "./user-form";
+import UserForm from "./user-config/user-form";
 
 const UserConfig = () => {
   return (
