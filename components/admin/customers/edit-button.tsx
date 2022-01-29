@@ -1,6 +1,5 @@
 import { IconButton } from "@chakra-ui/react";
-
-import { PencilIcon } from "../../../assets/icons";
+import { PencilIcon } from "@heroicons/react/solid";
 
 type Props = {
   onClick: () => void;

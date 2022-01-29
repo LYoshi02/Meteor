@@ -32,7 +32,7 @@ const Footer = () => {
             <List
               title="Empresa"
               items={[
-                "Sobre Nostros",
+                "Sobre Nosotros",
                 "Blog",
                 "Contactanos",
                 "Precios",

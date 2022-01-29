@@ -1,6 +1,5 @@
 import { IconButton } from "@chakra-ui/react";
-
-import { TrashIcon } from "../../../assets/icons";
+import { TrashIcon } from "@heroicons/react/solid";
 
 type Props = {
   onClick: () => void;

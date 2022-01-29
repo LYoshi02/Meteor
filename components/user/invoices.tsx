@@ -10,12 +10,13 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import useSWR from "swr";
+import { DocumentDownloadIcon } from "@heroicons/react/solid";
 
-import DocumentDownload from "../../assets/icons/document-download";
 import { InvoiceSchema } from "../../types";
 import { formatDateToMonthAndYear } from "../../utils/dateHelpers";
 import Alert from "../ui/alert";
 import LoadingSpinner from "../ui/loading-spinner";
+import Link from "../ui/link";
 
 const Invoices = () => {
   const { data, error } =
@@ -53,14 +54,19 @@ const Invoices = () => {
                   <Badge colorScheme="red">Adeuda</Badge>
                 )}
               </Td>
-              <Td textAlign="center" h="16" cursor="pointer">
-                <a
+              <Td textAlign="center" cursor="pointer">
+                <Link
                   href={`/api/user/invoices/${invoice.NroFactura}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  styles={{
+                    target: "_blank",
+                    rel: "noreferrer",
+                    h: "8",
+                    w: "8",
+                    d: "inline-block",
+                  }}
                 >
-                  <DocumentDownload />
-                </a>
+                  <DocumentDownloadIcon />
+                </Link>
               </Td>
             </Tr>
           ))}

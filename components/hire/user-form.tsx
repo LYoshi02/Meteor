@@ -1,11 +1,11 @@
 import { Box, Flex, SimpleGrid, Stack, Tooltip } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { InformationCircleIcon } from "@heroicons/react/solid";
 
 import ActionButtons from "../ui/action-buttons";
 import Input from "../ui/input";
 import { UserFormValues } from "../../types";
 import { emailRegex } from "../../utils/constants";
-import { InformationIcon } from "../../assets/icons";
 
 type Props = {
   onSetNextStep: () => void;
@@ -105,7 +105,7 @@ const UserForm = (props: Props) => {
               Correo Electrónico
               <Tooltip label="Enviaremos tu contraseña al correo ingresado">
                 <Box w="6" h="6">
-                  <InformationIcon />
+                  <InformationCircleIcon />
                 </Box>
               </Tooltip>
             </Flex>

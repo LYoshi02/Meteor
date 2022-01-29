@@ -29,7 +29,8 @@ const SocialMedia = () => {
             p="3"
             borderRadius="full"
             colorScheme="gray"
-            size="lg"
+            w="12"
+            h="12"
           />
         </a>
       ))}

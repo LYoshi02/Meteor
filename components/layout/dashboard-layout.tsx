@@ -13,12 +13,12 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
+import { MenuIcon } from "@heroicons/react/solid";
 
 import UserInfo from "./dashboard/user-info";
 
 import LogoutBtn from "./dashboard/logout-btn";
 import DashboardItems from "./dashboard/items";
-import { MenuIcon } from "../../assets/icons";
 
 type Props = {
   children: ReactNode;

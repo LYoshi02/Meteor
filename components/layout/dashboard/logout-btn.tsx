@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { LogoutIcon } from "@heroicons/react/solid";
 
-import { LogoutIcon } from "../../../assets/icons/index";
 import Link from "../../ui/link";
 
 const LogoutBtn = () => {

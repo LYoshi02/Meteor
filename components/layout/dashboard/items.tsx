@@ -1,13 +1,14 @@
 import { Stack } from "@chakra-ui/react";
-
 import {
-  CashIcon,
-  DocumentTextIcon,
-  GlobeIcon,
   HomeIcon,
-  TagIcon,
+  DocumentTextIcon,
   UserIcon,
-} from "../../../assets/icons/index";
+  CashIcon,
+  GlobeAltIcon,
+  UsersIcon,
+  TagIcon,
+} from "@heroicons/react/solid";
+
 import useUser from "../../../hooks/useUser";
 import ListItem from "./list-item";
 
@@ -31,8 +32,8 @@ const adminDashboardItems: Item[] = [
     path: "/admin/promotions",
     icon: <TagIcon />,
   },
-  { name: "Servicios", path: "/admin/services", icon: <GlobeIcon /> },
-  { name: "Clientes", path: "/admin/customers", icon: <UserIcon /> },
+  { name: "Servicios", path: "/admin/services", icon: <GlobeAltIcon /> },
+  { name: "Clientes", path: "/admin/customers", icon: <UsersIcon /> },
 ];
 
 type Props = {
