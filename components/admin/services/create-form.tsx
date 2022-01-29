@@ -11,12 +11,13 @@ import {
 import { useForm } from "react-hook-form";
 import useHttp from "../../../hooks/useHttp";
 
-import { ServiceFormValues } from "../../../types";
+import { ServiceFormValues, ServiceSchema } from "../../../types";
 import Input from "../../ui/input";
 
 type Props = {
   onCloseModal: () => void;
   serviceNumberToEdit?: number;
+  onAddService: (service: ServiceSchema & { Tipo: "TV" | "Internet" }) => void;
 };
 
 const CreateServiceForm = (props: Props) => {
@@ -31,14 +32,21 @@ const CreateServiceForm = (props: Props) => {
   const selectedServiceType = watch("type");
 
   const submitHandler = async (values: ServiceFormValues) => {
-    await sendRequest({
-      input: "/api/admin/services",
-      init: {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ service: values }),
+    await sendRequest<{
+      message: string;
+      service: ServiceSchema & { Tipo: "TV" | "Internet" };
+    }>(
+      {
+        input: "/api/admin/services",
+        init: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ service: values }),
+        },
       },
-    });
+      (data) => props.onAddService(data.service)
+    );
+
     props.onCloseModal();
   };
 

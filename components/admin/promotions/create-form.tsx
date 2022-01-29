@@ -16,10 +16,13 @@ import useSWR from "swr";
 import { PromotionFormValues } from "../../../types";
 import Input from "../../ui/input";
 import useHttp from "../../../hooks/useHttp";
-import { ServiceSchema } from "../../../types";
+import { ServiceSchema, PromotionSchema } from "../../../types";
 
 type Props = {
   onCloseModal: () => void;
+  onAddPromotion: (
+    promotion: PromotionSchema & { Servicios: string[] }
+  ) => void;
 };
 
 const CreatePromotionForm = (props: Props) => {
@@ -53,15 +56,28 @@ const CreatePromotionForm = (props: Props) => {
       return;
     }
 
-    await sendRequest({
-      input: "/api/admin/promotions",
-      init: {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promotion: values }),
+    await sendRequest<{ message: string; promotion: PromotionSchema }>(
+      {
+        input: "/api/admin/promotions",
+        init: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ promotion: values }),
+        },
       },
-    });
+      (data) => addPromotion(data.promotion)
+    );
+
     props.onCloseModal();
+  };
+
+  const addPromotion = (newPromotion: PromotionSchema) => {
+    const servicesNames = selectedServices.map((ser) => {
+      const serviceDetails = data?.services.find((s) => s.NroServicio === ser);
+      return serviceDetails?.Nombre || "";
+    });
+
+    props.onAddPromotion({ ...newPromotion, Servicios: servicesNames });
   };
 
   const setSelectedService = (serviceNumber: string) => {

@@ -63,13 +63,14 @@ const updateCustomerData = async (
       },
       client
     );
-    await updateCustomer(userData, customerDni, client);
+    const result = await updateCustomer(userData, customerDni, client);
 
     await Transaction.saveChanges(client);
     Transaction.releaseClient(client);
 
     return res.status(200).json({
       message: "Cliente actualizado correctamente",
+      customer: result.rows[0],
     });
   } catch (error) {
     await Transaction.removeChanges(client);

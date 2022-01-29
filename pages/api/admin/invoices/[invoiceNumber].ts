@@ -22,6 +22,7 @@ const changeInvoiceStatus = async (
 
   return res.status(200).json({
     invoice: result.rows[0],
+    message: "Factura actualizada correctamente",
   });
 };
 

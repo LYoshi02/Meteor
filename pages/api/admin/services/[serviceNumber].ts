@@ -29,6 +29,7 @@ const deleteServiceData = async (req: NextApiRequest, res: NextApiResponse) => {
 
   return res.status(200).json({
     message: "Servicio eliminado correctamente",
+    serviceNumber,
   });
 };
 
@@ -45,11 +46,14 @@ const updateServiceData = async (
   const serviceNumber = req.query.serviceNumber as string;
   const serviceData = req.body.service;
 
-  await updateService(serviceNumber, serviceData);
+  const result = await updateService(serviceNumber, serviceData);
 
   return res
     .status(200)
-    .json({ message: "Servicio actualizado correctamente" });
+    .json({
+      service: result.rows[0],
+      message: "Servicio actualizado correctamente",
+    });
 };
 
 const handler = {

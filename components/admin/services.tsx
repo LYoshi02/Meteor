@@ -15,6 +15,47 @@ const Services = () => {
   }>("/api/admin/services");
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const addServiceHandler = (newService: ServiceSchema & { Tipo: string }) => {
+    mutate((currentData) => {
+      return {
+        services: [...currentData!.services, newService],
+        servicesCount: currentData!.servicesCount,
+      };
+    });
+  };
+
+  const updateServiceHandler = (updatedService: ServiceSchema) => {
+    mutate((currentData) => {
+      const updatedServices = [...currentData!.services];
+      const updatedServiceIndex = updatedServices.findIndex(
+        (s) => s.NroServicio === updatedService.NroServicio
+      );
+
+      updatedServices[updatedServiceIndex] = {
+        ...updatedService,
+        Tipo: updatedServices[updatedServiceIndex].Tipo,
+      };
+
+      return {
+        services: updatedServices,
+        servicesCount: currentData!.servicesCount,
+      };
+    });
+  };
+
+  const deleteServiceHandler = (serviceNumber: number) => {
+    mutate((currentData) => {
+      const updatedServices = currentData!.services.filter(
+        (s) => s.NroServicio !== serviceNumber
+      );
+
+      return {
+        services: updatedServices,
+        servicesCount: currentData!.servicesCount,
+      };
+    });
+  };
+
   let mainContent: JSX.Element;
   if (data) {
     mainContent = (
@@ -25,6 +66,8 @@ const Services = () => {
         <ServicesTable
           services={data.services}
           servicesCount={data.servicesCount}
+          onDeleteService={deleteServiceHandler}
+          onEditService={updateServiceHandler}
         />
       </>
     );
@@ -46,7 +89,12 @@ const Services = () => {
         isOpen={isOpen}
         onClose={onClose}
         isEditing={false}
-        body={<CreateServiceForm onCloseModal={onClose} />}
+        body={
+          <CreateServiceForm
+            onCloseModal={onClose}
+            onAddService={addServiceHandler}
+          />
+        }
       />
       <Heading as="h2">Servicios</Heading>
       <Box mt="4">{mainContent}</Box>

@@ -6,6 +6,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   customerDni: string;
+  body: JSX.Element;
 };
 
 const EditCustomerModal = (props: Props) => {
@@ -14,12 +15,7 @@ const EditCustomerModal = (props: Props) => {
       isOpen={props.isOpen}
       onClose={props.onClose}
       title="Editar Cliente"
-      body={
-        <EditCustomerForm
-          onCloseModal={props.onClose}
-          customerDni={props.customerDni}
-        />
-      }
+      body={props.body}
       modalConfig={{ size: "xl" }}
     />
   );

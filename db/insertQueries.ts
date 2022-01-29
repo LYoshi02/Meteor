@@ -4,6 +4,8 @@ import {
   ContractSchema,
   InvoiceSchema,
   PromotionFormValues,
+  PromotionSchema,
+  ServiceSchema,
   UserFormValues,
 } from "../types";
 
@@ -227,11 +229,11 @@ export const insertNewService = async (
   service: { name: string; price: string },
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<{ NroServicio: number }>(
+  const result = await client.query<ServiceSchema>(
     `
     INSERT INTO "Servicios" ("Nombre", "Precio")
     VALUES ($1, $2)
-    RETURNING "NroServicio"
+    RETURNING *
   `,
     [service.name, service.price]
   );
@@ -275,11 +277,11 @@ export const insertPromotion = async (
   data: PromotionFormValues,
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<{ NroPromocion: number }>(
+  const result = await client.query<PromotionSchema>(
     `
     INSERT INTO "Promociones" ("Duracion", "PorcentajeDto")
     VALUES ($1, $2)
-    RETURNING "NroPromocion"
+    RETURNING *
   `,
     [data.duration, data.discount]
   );
@@ -292,7 +294,7 @@ export const insertServicesInPromotion = async (
   promotionNumber: number,
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<{ NroPromocion: number }>(
+  const result = await client.query(
     `
     INSERT INTO "ServiciosEnPromocion" ("NroServicio", "NroPromocion")
     SELECT unnest($1::int[]) as "NroServicio", $2 as "NroPromocion"

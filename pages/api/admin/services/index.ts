@@ -40,7 +40,8 @@ const saveNewService = async (
       { name: newServiceData.name, price: newServiceData.price },
       client
     );
-    const newServiceNumber = result.rows[0].NroServicio;
+    const insertedService = { ...result.rows[0], Tipo: newServiceData.type };
+    const newServiceNumber = insertedService.NroServicio;
 
     if (newServiceData.type === "TV") {
       await insertCableService(
@@ -59,7 +60,12 @@ const saveNewService = async (
     await Transaction.saveChanges(client);
     Transaction.releaseClient(client);
 
-    return res.status(201).json({ message: "Servicio creado correctamente" });
+    return res
+      .status(201)
+      .json({
+        service: insertedService,
+        message: "Servicio creado correctamente",
+      });
   } catch (error) {
     await Transaction.removeChanges(client);
     Transaction.releaseClient(client);

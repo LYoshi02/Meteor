@@ -127,7 +127,7 @@ const saveHireData = async (
     Transaction.releaseClient(client);
 
     return res.status(201).json({
-      message: "Servicio contratado!",
+      message: "Servicio contratado correctamente",
       existingUser: userExists ? currentUser[0] : null,
     });
   } catch (error) {

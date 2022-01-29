@@ -44,16 +44,16 @@ const Header = () => {
           mt={{ base: "10", md: "14" }}
           textAlign="center"
         >
-          <Button
-            fontSize="lg"
-            h="12"
-            bgGradient="linear(to-r, #EC008C, #FC6767)"
-            _hover={{}}
-          >
-            <Link href="/hire" styles={{ _hover: {} }}>
+          <Link href="/hire" styles={{ _hover: {} }}>
+            <Button
+              fontSize="lg"
+              h="12"
+              bgGradient="linear(to-r, #EC008C, #FC6767)"
+              _hover={{}}
+            >
               Contratar Ahora
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </Box>
       </Container>
     </Flex>

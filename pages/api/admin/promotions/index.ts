@@ -40,8 +40,8 @@ const savePromotionData = async (
       promotionData.services,
       client
     );
+
     if (existentPromotion.length > 0 && !existentPromotion[0].Finalizado) {
-      // TODO: handle the transaction
       throw new ValidationError(
         "Ya existe una promoción activa con los servicios seleccionados"
       );
@@ -61,6 +61,7 @@ const savePromotionData = async (
 
     return res.status(201).json({
       message: "Promocion creada correctamente",
+      promotion: result.rows[0],
     });
   } catch (error) {
     await Transaction.removeChanges(client);

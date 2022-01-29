@@ -12,6 +12,7 @@ import LoadingSpinner from "../../ui/loading-spinner";
 type Props = {
   onCloseModal: () => void;
   customerDni: string;
+  onUpdateCustomer: (customer: ClientSchema) => void;
 };
 
 const EditCustomerForm = (props: Props) => {
@@ -22,13 +23,12 @@ const EditCustomerForm = (props: Props) => {
     setValue,
   } = useForm<UserFormValues>();
   const { isLoading, sendRequest } = useHttp();
-  const { data: customerData, error: customerReqError } = useSWR<{
+  const { data: customerData } = useSWR<{
     customer: ClientSchema;
   }>(props.customerDni ? `/api/admin/customers/${props.customerDni}` : null);
 
   useEffect(() => {
     if (customerData) {
-      console.log(customerData);
       const {
         Apellido,
         CorreoElectronico,
@@ -49,14 +49,18 @@ const EditCustomerForm = (props: Props) => {
   }, [customerData, setValue]);
 
   const submitHandler = async (values: UserFormValues) => {
-    await sendRequest({
-      input: `/api/admin/customers/${props.customerDni}`,
-      init: {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer: values }),
+    await sendRequest<{ message: string; customer: ClientSchema }>(
+      {
+        input: `/api/admin/customers/${props.customerDni}`,
+        init: {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customer: values }),
+        },
       },
-    });
+      (data) => props.onUpdateCustomer(data.customer)
+    );
+
     props.onCloseModal();
   };
 

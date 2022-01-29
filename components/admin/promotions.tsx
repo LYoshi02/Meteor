@@ -7,6 +7,7 @@ import PromotionsTable from "./promotions/table";
 import { PromotionSchema } from "../../types";
 import useHttp from "../../hooks/useHttp";
 import CreatePromotionModal from "./promotions/create-modal";
+import CreatePromotionForm from "./promotions/create-form";
 
 const Promotions = () => {
   const { data, error, mutate } = useSWR<{
@@ -54,6 +55,17 @@ const Promotions = () => {
     });
   };
 
+  const onAddPromotionHandler = (
+    newPromotion: PromotionSchema & { Servicios: string[] }
+  ) => {
+    mutate((currentData) => {
+      return {
+        promotions: [...currentData!.promotions, newPromotion],
+        promotionsCount: currentData!.promotionsCount,
+      };
+    });
+  };
+
   let mainContent: JSX.Element;
   if (data) {
     mainContent = (
@@ -82,7 +94,16 @@ const Promotions = () => {
 
   return (
     <Box>
-      <CreatePromotionModal isOpen={isModalOpen} onClose={onCloseModal} />
+      <CreatePromotionModal
+        isOpen={isModalOpen}
+        onClose={onCloseModal}
+        body={
+          <CreatePromotionForm
+            onCloseModal={onCloseModal}
+            onAddPromotion={onAddPromotionHandler}
+          />
+        }
+      />
       <Heading as="h2">Promociones</Heading>
       <Box mt="4">{mainContent}</Box>
     </Box>

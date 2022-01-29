@@ -10,6 +10,7 @@ import Input from "../../ui/input";
 type Props = {
   onCloseModal: () => void;
   serviceNumber: number | undefined;
+  onEdit: (service: ServiceSchema) => void;
 };
 
 const EditServiceForm = (props: Props) => {
@@ -33,14 +34,18 @@ const EditServiceForm = (props: Props) => {
   }, [serviceData, setValue]);
 
   const submitHandler = async (values: ServiceFormValues) => {
-    await sendRequest({
-      input: `/api/admin/services/${props.serviceNumber}`,
-      init: {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ service: values }),
+    await sendRequest<{ message: string; service: ServiceSchema }>(
+      {
+        input: `/api/admin/services/${props.serviceNumber}`,
+        init: {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ service: values }),
+        },
       },
-    });
+      (data) => props.onEdit(data.service)
+    );
+
     props.onCloseModal();
   };
 

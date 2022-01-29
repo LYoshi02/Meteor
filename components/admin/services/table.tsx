@@ -24,6 +24,8 @@ import EditServiceForm from "./edit-form";
 type Props = {
   services: (ServiceSchema & { Tipo: string })[];
   servicesCount: number;
+  onDeleteService: (serviceNumber: number) => void;
+  onEditService: (service: ServiceSchema) => void;
 };
 
 const ServicesTable = (props: Props) => {
@@ -70,12 +72,16 @@ const ServicesTable = (props: Props) => {
   };
 
   const deleteService = async () => {
-    await sendRequest({
-      input: `/api/admin/services/${savedServiceNumber}`,
-      init: {
-        method: "DELETE",
+    await sendRequest<{ message: string; serviceNumber: string }>(
+      {
+        input: `/api/admin/services/${savedServiceNumber}`,
+        init: {
+          method: "DELETE",
+        },
       },
-    });
+      (data) => props.onDeleteService(+data.serviceNumber)
+    );
+
     closeAlertDialog();
   };
 
@@ -89,6 +95,7 @@ const ServicesTable = (props: Props) => {
           <EditServiceForm
             onCloseModal={closeModal}
             serviceNumber={savedServiceNumber}
+            onEdit={props.onEditService}
           />
         }
       />

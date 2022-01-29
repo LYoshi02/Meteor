@@ -109,7 +109,6 @@ const HireForm = (props: Props) => {
         },
       },
       (data) => {
-        console.log(data);
         setExistingUser(data.existingUser);
       }
     );

@@ -25,6 +25,7 @@ const changeContractStatus = async (
 
   return res.status(200).json({
     contract: result.rows[0],
+    message: "Contrato actualizado correctamente",
   });
 };
 

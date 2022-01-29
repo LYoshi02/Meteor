@@ -25,6 +25,7 @@ const changePromotionStatus = async (
 
   return res.status(200).json({
     promotion: result.rows[0],
+    message: "Promoción actualizada correctamente",
   });
 };
 

@@ -298,11 +298,12 @@ export const getPromotionBySelectedServices = async (
   selectedServices: number[],
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<PromotionSchema>(
+  const result = await client.query<PromotionSchema & { Servicios: number[] }>(
     `
       SELECT * FROM (
-          SELECT pro."NroPromocion", array_agg(ser."NroServicio") AS "Servicios"
-              FROM "Promociones" pro
+          SELECT pro."NroPromocion", pro."PorcentajeDto", pro."Duracion", 
+            pro."Finalizado", array_agg(ser."NroServicio") AS "Servicios"
+          FROM "Promociones" pro
           JOIN "ServiciosEnPromocion" ser 
               ON ser."NroPromocion" = pro."NroPromocion"
           GROUP BY pro."NroPromocion"
