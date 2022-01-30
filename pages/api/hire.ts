@@ -16,7 +16,7 @@ import {
   insertNewCustomer,
   getCustomerByDni,
 } from "../../db/index";
-import sgMail from "../../utils/sendEmail";
+import sgMail, { generateWelcomeEmail } from "../../utils/email";
 
 import { UserFormValues, ValidationError } from "../../types";
 import { USER_ROLE } from "../../utils/constants";
@@ -111,13 +111,14 @@ const saveHireData = async (
     );
 
     // 7) Enviar contraseña al correo
-    // TODO: mejorar este mensaje
+    // TODO: modify the href of the link in the html generated (after deploying)
     if (!userExists) {
+      const userFullName = `${user.firstName} ${user.lastName}`;
       const msg = {
         to: user.email,
         from: process.env.SENDGRID_SENDER_EMAIL!,
         subject: "Servicios Contratados!",
-        html: `<b>Tu contraseña es: </b>${userPassword}`,
+        html: generateWelcomeEmail(userFullName, userPassword),
       };
       await sgMail.send(msg);
     }
