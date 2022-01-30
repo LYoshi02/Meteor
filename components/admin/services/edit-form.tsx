@@ -27,6 +27,7 @@ const EditServiceForm = (props: Props) => {
     formState: { errors },
     handleSubmit,
     setValue,
+    watch,
   } = useForm<{ name: string; price: string; hidden: boolean }>();
   const {
     isLoading,
@@ -37,6 +38,8 @@ const EditServiceForm = (props: Props) => {
   const { data: serviceData, error: fetchError } = useSWR<{
     service: ServiceSchema;
   }>(props.serviceNumber ? `/api/admin/services/${props.serviceNumber}` : null);
+
+  const isServiceHidden = watch("hidden");
 
   useToastOnReq({
     success: {
@@ -54,6 +57,7 @@ const EditServiceForm = (props: Props) => {
       const { service } = serviceData;
       setValue("name", service.Nombre);
       setValue("price", service.Precio);
+      setValue("hidden", service.Oculto);
     }
   }, [serviceData, setValue]);
 
@@ -76,6 +80,8 @@ const EditServiceForm = (props: Props) => {
   if (!serviceData && !fetchError) {
     return <LoadingSpinner />;
   }
+
+  console.log(serviceData);
 
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
@@ -104,7 +110,7 @@ const EditServiceForm = (props: Props) => {
         />
         <FormControl>
           <FormLabel>Oculto</FormLabel>
-          <Switch {...register("hidden")} />
+          <Switch isChecked={isServiceHidden} {...register("hidden")} />
         </FormControl>
 
         <Button type="submit" colorScheme="purple" isLoading={isLoading}>

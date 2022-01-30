@@ -12,8 +12,10 @@ type FetchedData = {
 };
 
 export default function HirePage() {
-  const { data, error } = useSWR<FetchedData>("/api/hire");
+  const { data } = useSWR<FetchedData>("/api/hire");
   const {} = useUser({ redirectTo: "/", redirectIfFound: true });
+
+  console.log(data);
 
   return (
     <MainLayout>

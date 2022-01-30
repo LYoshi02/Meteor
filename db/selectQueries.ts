@@ -13,37 +13,38 @@ import {
 
 import { PoolClient, Pool } from "pg";
 
-export const getAllInternetServices = async (
+export const getVisibleInternetServices = async (
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<InternetServiceSchema & ServiceSchema>(`
     SELECT * FROM "Internet" AS Int
     JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio"
+    WHERE Ser."Oculto" = False
   `);
   return result.rows;
 };
 
-export const getOptionalCableServices = async (
+export const getVisibleOptionalCableServices = async (
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<CableServiceSchema & ServiceSchema>(
     `
     SELECT * FROM "Cable" AS Cab
     JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
-    WHERE Cab."Opcional" = TRUE
+    WHERE Cab."Opcional" = TRUE AND Ser."Oculto" = False
     `
   );
   return result.rows;
 };
 
-export const getRequiredCableServices = async (
+export const getVisibleRequiredCableServices = async (
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<CableServiceSchema & ServiceSchema>(
     `
     SELECT * FROM "Cable" AS Cab
     JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio"
-    WHERE Cab."Opcional" = FALSE
+    WHERE Cab."Opcional" = FALSE AND Ser."Oculto" = False
     `
   );
   return result.rows;
@@ -241,13 +242,14 @@ export const getCurrentCustomerContract = async (
   return result.rows;
 };
 
-export const getAllPromotions = async (client: PoolClient | Pool = pool) => {
+export const getActivePromotions = async (client: PoolClient | Pool = pool) => {
   const result = await client.query<PromotionSchema & { Servicios: number[] }>(`
     SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", 
         array_agg(Ser."NroServicio") AS "Servicios"
     FROM "Promociones" AS Pro
     JOIN "ServiciosEnPromocion" AS Ser 
         ON Pro."NroPromocion" = Ser."NroPromocion"
+    WHERE Pro."Finalizado" = False
     GROUP BY Pro."NroPromocion"
   `);
   return result.rows;

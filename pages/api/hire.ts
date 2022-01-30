@@ -2,10 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import generator from "generate-password";
 
 import {
-  getAllInternetServices,
-  getAllPromotions,
-  getOptionalCableServices,
-  getRequiredCableServices,
+  getVisibleInternetServices,
+  getActivePromotions,
+  getVisibleOptionalCableServices,
+  getVisibleRequiredCableServices,
   getPromotionBySelectedServices,
   getCurrentCustomerContract,
   insertHiredServices,
@@ -24,10 +24,10 @@ import { apiHandler } from "../../utils/api";
 import { Transaction } from "../../utils/transaction";
 
 const getHireData = async (req: NextApiRequest, res: NextApiResponse) => {
-  const internetServices = await getAllInternetServices();
-  const requiredCableServices = await getRequiredCableServices();
-  const optionalCableServices = await getOptionalCableServices();
-  const promotions = await getAllPromotions();
+  const internetServices = await getVisibleInternetServices();
+  const requiredCableServices = await getVisibleRequiredCableServices();
+  const optionalCableServices = await getVisibleOptionalCableServices();
+  const promotions = await getActivePromotions();
 
   return res.status(200).json({
     services: {

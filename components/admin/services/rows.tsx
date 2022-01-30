@@ -10,7 +10,6 @@ type Props = {
 };
 
 const ServicesTableRows = (props: Props) => {
-  console.log(props.services);
   return (
     <>
       {props.services.map((service) => (

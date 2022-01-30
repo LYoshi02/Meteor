@@ -1,14 +1,14 @@
 export { pool } from "./db";
 export {
-  getAllInternetServices,
-  getAllPromotions,
+  getVisibleInternetServices,
+  getActivePromotions,
   getContractNumberByInvoiceNumber,
   getLastContractByDni,
   getDetailsByInvoiceNumber,
   getHiredServices,
   getCustomerInvoiceById,
-  getOptionalCableServices,
-  getRequiredCableServices,
+  getVisibleOptionalCableServices,
+  getVisibleRequiredCableServices,
   getPromotionById,
   getPromotionBySelectedServices,
   getCustomerByDni,
