@@ -2,6 +2,7 @@ export type ServiceSchema = {
   NroServicio: number;
   Nombre: string;
   Precio: string;
+  Oculto: boolean;
 };
 
 export type InternetServiceSchema = {

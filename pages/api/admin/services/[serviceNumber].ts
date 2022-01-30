@@ -35,7 +35,7 @@ const deleteServiceData = async (req: NextApiRequest, res: NextApiResponse) => {
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
-    service: { name: string; price: string };
+    service: { name: string; price: string; hidden: boolean };
   };
 }
 
@@ -48,12 +48,10 @@ const updateServiceData = async (
 
   const result = await updateService(serviceNumber, serviceData);
 
-  return res
-    .status(200)
-    .json({
-      service: result.rows[0],
-      message: "Servicio actualizado correctamente",
-    });
+  return res.status(200).json({
+    service: result.rows[0],
+    message: "Servicio actualizado correctamente",
+  });
 };
 
 const handler = {

@@ -1,5 +1,11 @@
 import { useEffect } from "react";
-import { Button, Stack } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Stack,
+  Switch,
+} from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import useHttp from "../../../hooks/useHttp";
 import useSWR from "swr";
@@ -21,7 +27,7 @@ const EditServiceForm = (props: Props) => {
     formState: { errors },
     handleSubmit,
     setValue,
-  } = useForm<{ name: string; price: string }>();
+  } = useForm<{ name: string; price: string; hidden: boolean }>();
   const {
     isLoading,
     sendRequest,
@@ -96,6 +102,10 @@ const EditServiceForm = (props: Props) => {
             },
           })}
         />
+        <FormControl>
+          <FormLabel>Oculto</FormLabel>
+          <Switch {...register("hidden")} />
+        </FormControl>
 
         <Button type="submit" colorScheme="purple" isLoading={isLoading}>
           Editar

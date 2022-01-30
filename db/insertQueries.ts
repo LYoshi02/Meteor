@@ -226,16 +226,16 @@ export const insertInvoiceDetails = async (
 };
 
 export const insertNewService = async (
-  service: { name: string; price: string },
+  service: { name: string; price: string; hidden: boolean },
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<ServiceSchema>(
     `
-    INSERT INTO "Servicios" ("Nombre", "Precio")
-    VALUES ($1, $2)
+    INSERT INTO "Servicios" ("Nombre", "Precio", "Oculto")
+    VALUES ($1, $2, $3)
     RETURNING *
   `,
-    [service.name, service.price]
+    [service.name, service.price, service.hidden]
   );
 
   return result;

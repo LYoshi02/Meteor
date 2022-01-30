@@ -7,6 +7,7 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Switch,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
@@ -92,6 +93,10 @@ const CreateServiceForm = (props: Props) => {
             },
           })}
         />
+        <FormControl>
+          <FormLabel>Oculto</FormLabel>
+          <Switch {...register("hidden")} />
+        </FormControl>
         <FormControl>
           <FormLabel>Tipo de Servicio</FormLabel>
           <RadioGroup>

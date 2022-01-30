@@ -125,6 +125,7 @@ const ServicesTable = (props: Props) => {
           "Nombre",
           "Tipo",
           "Precio",
+          "Oculto",
           "Acciones",
         ]}
         body={

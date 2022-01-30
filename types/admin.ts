@@ -1,6 +1,7 @@
 export type ServiceFormValues = {
   name: string;
   price: string;
+  hidden: boolean;
   type: "TV" | "Internet";
   speed: number;
   optional: boolean;

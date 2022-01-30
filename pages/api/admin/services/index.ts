@@ -37,7 +37,11 @@ const saveNewService = async (
 
     const newServiceData = req.body.service;
     const result = await insertNewService(
-      { name: newServiceData.name, price: newServiceData.price },
+      {
+        name: newServiceData.name,
+        price: newServiceData.price,
+        hidden: newServiceData.hidden,
+      },
       client
     );
     const insertedService = { ...result.rows[0], Tipo: newServiceData.type };
@@ -60,12 +64,10 @@ const saveNewService = async (
     await Transaction.saveChanges(client);
     Transaction.releaseClient(client);
 
-    return res
-      .status(201)
-      .json({
-        service: insertedService,
-        message: "Servicio creado correctamente",
-      });
+    return res.status(201).json({
+      service: insertedService,
+      message: "Servicio creado correctamente",
+    });
   } catch (error) {
     await Transaction.removeChanges(client);
     Transaction.releaseClient(client);

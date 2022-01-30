@@ -10,6 +10,7 @@ type Props = {
 };
 
 const ServicesTableRows = (props: Props) => {
+  console.log(props.services);
   return (
     <>
       {props.services.map((service) => (
@@ -18,6 +19,7 @@ const ServicesTableRows = (props: Props) => {
           <Td textAlign="center">{service.Nombre}</Td>
           <Td textAlign="center">{service.Tipo}</Td>
           <Td textAlign="center">{service.Precio}</Td>
+          <Td textAlign="center">{service.Oculto ? "Si" : "No"}</Td>
           <Td textAlign="center">
             <HStack spacing={2} justifyContent="center">
               <IconButton

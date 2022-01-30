@@ -70,10 +70,12 @@ export const getHiredServices = async (
 export const getServices = async (client: PoolClient | Pool = pool) => {
   const result = await client.query<ServiceSchema & { Tipo: string }>(
     `
-    (SELECT Ser."NroServicio", Ser."Nombre", Ser."Precio", 'Internet' AS "Tipo" FROM "Internet" AS Int
+    (SELECT Ser."NroServicio", Ser."Nombre", Ser."Precio", 'Internet' AS "Tipo", Ser."Oculto" 
+    FROM "Internet" AS Int
     JOIN "Servicios" AS Ser ON Int."NroServicio" = Ser."NroServicio"
     UNION
-    SELECT Ser."NroServicio", Ser."Nombre", Ser."Precio", 'TV' AS "Tipo" FROM "Cable" AS Cab
+    SELECT Ser."NroServicio", Ser."Nombre", Ser."Precio", 'TV' AS "Tipo", Ser."Oculto"
+    FROM "Cable" AS Cab
     JOIN "Servicios" AS Ser ON Cab."NroServicio" = Ser."NroServicio")
     ORDER BY "NroServicio"
   `

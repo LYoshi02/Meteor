@@ -146,17 +146,17 @@ export const updatePromotionStatus = async (
 
 export const updateService = async (
   serviceNumber: string,
-  service: { name: string; price: string },
+  service: { name: string; price: string; hidden: boolean },
   client: PoolClient | Pool = pool
 ) => {
   const result = await client.query<ServiceSchema>(
     `
         UPDATE "Servicios"
-        SET "Nombre" = $2, "Precio" = $3
+        SET "Nombre" = $2, "Precio" = $3, "Oculto" = $4
         WHERE "NroServicio" = $1::Integer
         RETURNING *
     `,
-    [serviceNumber, service.name, service.price]
+    [serviceNumber, service.name, service.price, service.hidden]
   );
 
   return result;
