@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import { NextSeo } from "next-seo";
 
 import HireForm from "../components/hire/hire-form";
 import MainLayout from "../components/layout/main-layout";
@@ -15,13 +16,17 @@ export default function HirePage() {
   const { data } = useSWR<FetchedData>("/api/hire");
   const {} = useUser({ redirectTo: "/", redirectIfFound: true });
 
-  console.log(data);
-
   return (
-    <MainLayout>
-      <FullScreenContainer>
-        <HireForm services={data?.services} promotions={data?.promotions} />
-      </FullScreenContainer>
-    </MainLayout>
+    <>
+      <NextSeo
+        title="Contratar Servicios"
+        description="Contratá tus servicios de internet y cable en Meteor"
+      />
+      <MainLayout>
+        <FullScreenContainer>
+          <HireForm services={data?.services} promotions={data?.promotions} />
+        </FullScreenContainer>
+      </MainLayout>
+    </>
   );
 }

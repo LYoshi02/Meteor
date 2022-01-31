@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 
 import DashboardLayout from "../../components/layout/dashboard-layout";
 import Home from "../../components/user/home";
@@ -24,5 +25,10 @@ export default function UserDashboardPage() {
     router.replace("/user/home");
   }
 
-  return <DashboardLayout>{dashboardElement!}</DashboardLayout>;
+  return (
+    <>
+      <NextSeo title="Panel de Usuario" noindex />
+      <DashboardLayout>{dashboardElement!}</DashboardLayout>;
+    </>
+  );
 }

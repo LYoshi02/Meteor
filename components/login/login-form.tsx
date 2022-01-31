@@ -24,7 +24,7 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-  const { isLoading, error, sendRequest, dispatch } = useHttp();
+  const { isLoading, error, sendRequest, dispatch, success } = useHttp();
   const { mutateUser } = useUser({});
   const router = useRouter();
   const toast = useToast();
@@ -114,7 +114,12 @@ const LoginForm = () => {
             status="error"
           />
         )}
-        <Button type="submit" colorScheme="purple" isLoading={isLoading}>
+        <Button
+          type="submit"
+          colorScheme="purple"
+          isLoading={isLoading}
+          isDisabled={success}
+        >
           Iniciar Sesión
         </Button>
       </Stack>

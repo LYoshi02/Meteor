@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { NextSeo } from "next-seo";
 
 import Hero from "../components/home/hero";
 import Steps from "../components/home/steps";
@@ -20,6 +21,7 @@ type Props = {
 function HomePage(props: Props) {
   return (
     <>
+      <NextSeo title="Inicio" />
       <Box bgGradient="linear(to-br, #000000, #152331 85%)" overflow="hidden">
         <Hero />
         <Steps />

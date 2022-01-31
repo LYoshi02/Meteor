@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { NextSeo } from "next-seo";
 
 import useUser from "../hooks/useUser";
 import fetchJson from "../utils/fetchJson";
@@ -15,7 +16,11 @@ function LogoutPage() {
     );
   }, [mutateUser]);
 
-  return <></>;
+  return (
+    <>
+      <NextSeo title="Cerrando Sesión..." noindex />
+    </>
+  );
 }
 
 export default LogoutPage;

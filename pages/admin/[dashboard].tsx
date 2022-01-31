@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 
 import DashboardLayout from "../../components/layout/dashboard-layout";
 import Invoices from "../../components/admin/invoices";
@@ -30,5 +31,10 @@ export default function UserDashboardPage() {
     router.push("/admin/invoices");
   }
 
-  return <DashboardLayout>{dashboardElement!}</DashboardLayout>;
+  return (
+    <>
+      <NextSeo title="Panel de Administrador" noindex />
+      <DashboardLayout>{dashboardElement!}</DashboardLayout>;
+    </>
+  );
 }

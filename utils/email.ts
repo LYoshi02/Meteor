@@ -374,7 +374,7 @@ export const generateWelcomeEmail = (fullName: string, password: string) => {
 																		</p>
 																		<p
 																			style="margin: 0; font-size: 14px; text-align: left;">
-																			Deberás ingresar tu correo y la contraseña
+																			Tenés que ingresar tu correo y la contraseña
 																			que te dejamos más abajo (luego podés
 																			cambiar tu contraseña actual).</p>
 																		<p
