@@ -9,9 +9,14 @@ type Props = {
 };
 
 const Link = (props: Props) => {
+  const linkStyles: LinkProps = {
+    _hover: {},
+    ...props.styles,
+  };
+
   return (
     <NextLink href={props.href} passHref>
-      <ChakraLink {...props.styles}>{props.children}</ChakraLink>
+      <ChakraLink {...linkStyles}>{props.children}</ChakraLink>
     </NextLink>
   );
 };

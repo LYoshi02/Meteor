@@ -13,11 +13,14 @@ const PromotionsTableRows = (props: Props) => {
       {props.promotions.map((promo) => (
         <Tr key={promo.NroPromocion}>
           <Td textAlign="center">{promo.NroPromocion}</Td>
+          <Td textAlign="center">{promo.Nombre}</Td>
           <Td textAlign="center">{promo.PorcentajeDto} %</Td>
           <Td textAlign="center">{promo.Duracion} Meses</Td>
           <Td textAlign="center">
-            {promo.Servicios.map((service) => (
-              <Text key={service}>{service}</Text>
+            {promo.Servicios.map((service, index) => (
+              <Text key={service}>
+                {index + 1}. {service}
+              </Text>
             ))}
           </Td>
           <Td textAlign="center">

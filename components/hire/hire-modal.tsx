@@ -30,7 +30,7 @@ const HireModal = (props: Props) => {
         <Text>
           Ya tienes una cuenta creada bajo el correo{" "}
           <Text as="span" fontWeight="bold">
-            {props.userExists.CorreoElectronico}
+            {props.email}
           </Text>{" "}
           y puedes usarla para ingresar.
         </Text>

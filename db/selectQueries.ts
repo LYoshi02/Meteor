@@ -245,7 +245,7 @@ export const getCurrentCustomerContract = async (
 export const getActivePromotions = async (client: PoolClient | Pool = pool) => {
   const result = await client.query<PromotionSchema & { Servicios: number[] }>(`
     SELECT Pro."NroPromocion", Pro."PorcentajeDto", Pro."Duracion", 
-        array_agg(Ser."NroServicio") AS "Servicios"
+      Pro."Finalizado", Pro."Nombre", array_agg(Ser."NroServicio") AS "Servicios"
     FROM "Promociones" AS Pro
     JOIN "ServiciosEnPromocion" AS Ser 
         ON Pro."NroPromocion" = Ser."NroPromocion"
@@ -260,7 +260,7 @@ export const getPromotionsWithServices = async (
 ) => {
   const result = await client.query<PromotionSchema & { Servicios: string[] }>(`
     SELECT prom."NroPromocion", prom."PorcentajeDto", prom."Duracion", 
-      prom."Finalizado", array_agg(serv."Nombre") AS "Servicios"
+      prom."Finalizado", prom."Nombre", array_agg(serv."Nombre") AS "Servicios"
     FROM "Promociones" prom
     JOIN "ServiciosEnPromocion" serpro
       ON serpro."NroPromocion" = prom."NroPromocion"
@@ -331,6 +331,49 @@ export const getPromotionBySelectedServices = async (
         res."Servicios" @> $1::Integer[]
   `,
     [selectedServices]
+  );
+
+  return result.rows;
+};
+
+export const getTopActivePromotions = async (
+  limit: number = 100,
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<
+    PromotionSchema & {
+      Servicios: string[];
+      PrecioAnterior: string;
+      PrecioFinal: string;
+    }
+  >(
+    `
+    WITH "PromocionesContratadas" AS (
+      SELECT prom."NroPromocion", COUNT(cont."NroContrato") AS "CantContratados"
+      FROM "Promociones" prom
+      LEFT JOIN "Contratos" cont
+      ON cont."NroPromocion" = prom."NroPromocion"
+      GROUP BY prom."NroPromocion"
+    )
+    SELECT prom."NroPromocion", prom."PorcentajeDto", prom."Duracion", 
+      prom."Finalizado", prom."Nombre", array_agg(serv."Nombre") AS "Servicios", 
+      SUM(serv."Precio") AS "PrecioAnterior", 
+      round(
+        (SUM(serv."Precio") * (1 - prom."PorcentajeDto"::FLOAT/100)
+      )::NUMERIC, 2) AS "PrecioFinal"
+    FROM "Promociones" prom
+    JOIN "PromocionesContratadas" prom_cont
+      ON prom."NroPromocion" = prom_cont."NroPromocion"
+    JOIN "ServiciosEnPromocion" serpro
+        ON serpro."NroPromocion" = prom."NroPromocion"
+    JOIN "Servicios" serv
+        ON serv."NroServicio" = serpro."NroServicio"
+    WHERE prom."Finalizado" = False
+    GROUP BY prom."NroPromocion", prom_cont."CantContratados"
+    ORDER BY prom_cont."CantContratados" DESC
+    LIMIT $1;
+  `,
+    [limit]
   );
 
   return result.rows;

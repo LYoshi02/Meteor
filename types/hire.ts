@@ -12,7 +12,7 @@ export type InternetService = ServiceSchema;
 
 export type CableService = ServiceSchema & CableServiceSchema;
 
-export type Promotion = PromotionSchema & { Servicios: number[] };
+export type Promotions = PromotionSchema & { Servicios: number[] };
 
 export type UserFormValues = {
   firstName: string;

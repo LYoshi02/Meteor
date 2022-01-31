@@ -1,11 +1,14 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Box, Divider, Stack } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
-import ActionButtons from "../ui/action-buttons";
-import Alert from "../ui/alert";
+import ActionButtons from "../../ui/action-buttons";
+import Alert from "../../ui/alert";
 import CableServices from "./services/cable-services";
 import InternetServices from "./services/internet-services";
-import { ServicesFormValues, Services } from "../../types";
+import { ServicesFormValues, Services, Promotions } from "../../../types";
+import { generateServicesArray, getServiceType } from "./services/form-helpers";
 
 type Props = {
   onSetPrevStep: () => void;
@@ -13,6 +16,7 @@ type Props = {
   onSetFormValues: (values: ServicesFormValues) => void;
   services: Services | undefined;
   savedValues: ServicesFormValues | undefined;
+  promotions: Promotions[] | undefined;
 };
 
 const defaultFormValues: ServicesFormValues = {
@@ -31,9 +35,41 @@ const ServicesForm = (props: Props) => {
     watch,
     setError,
     clearErrors,
+    setValue,
   } = useForm<ServicesFormValues>({
     defaultValues: props.savedValues || defaultFormValues,
   });
+  const router = useRouter();
+
+  useEffect(() => {
+    const selectedPromotionNumber = router.query.promotion;
+    if (selectedPromotionNumber && !props.savedValues) {
+      const selectedPromotion = props.promotions?.find(
+        (promo) => promo.NroPromocion === +selectedPromotionNumber
+      );
+
+      const allServices = generateServicesArray(props.services);
+      const optionalCableServices: string[] = [];
+
+      selectedPromotion!.Servicios.forEach((service) => {
+        const type = getServiceType(service, allServices);
+
+        if (type === "cable.optional") {
+          optionalCableServices.push(service.toString());
+        } else if (type === "internet" || type === "cable.required") {
+          setValue(type, service.toString());
+        }
+      });
+
+      setValue("cable.optional", optionalCableServices);
+    }
+  }, [
+    props.promotions,
+    props.services,
+    props.savedValues,
+    setValue,
+    router.query,
+  ]);
 
   const internetServiceSelected = watch("internet");
   const cableServicesSelected = watch("cable");

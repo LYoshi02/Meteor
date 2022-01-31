@@ -156,7 +156,7 @@ export const insertInvoiceDetails = async (
         ser."Nombre" AS "Descripcion",
         1 AS "Cantidad",
         CASE 
-          WHEN extract(day from CURRENT_DATE) > 1 OR extract(day from CURRENT_DATE) < 28 THEN
+          WHEN extract(day from CURRENT_DATE) > 1 AND extract(day from CURRENT_DATE) < 28 THEN
             round((
               ser."Precio" *
               (
@@ -279,11 +279,11 @@ export const insertPromotion = async (
 ) => {
   const result = await client.query<PromotionSchema>(
     `
-    INSERT INTO "Promociones" ("Duracion", "PorcentajeDto")
-    VALUES ($1, $2)
+    INSERT INTO "Promociones" ("Duracion", "PorcentajeDto", "Nombre")
+    VALUES ($1, $2, $3)
     RETURNING *
   `,
-    [data.duration, data.discount]
+    [data.duration, data.discount, data.name]
   );
 
   return result;

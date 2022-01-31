@@ -8,6 +8,7 @@ export type ServiceFormValues = {
 };
 
 export type PromotionFormValues = {
+  name: string;
   duration: number;
   discount: number;
   services: number[];

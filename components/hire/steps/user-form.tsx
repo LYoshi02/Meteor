@@ -2,10 +2,10 @@ import { Box, Flex, SimpleGrid, Stack, Tooltip } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { InformationCircleIcon } from "@heroicons/react/solid";
 
-import ActionButtons from "../ui/action-buttons";
-import Input from "../ui/input";
-import { UserFormValues } from "../../types";
-import { emailRegex } from "../../utils/constants";
+import ActionButtons from "../../ui/action-buttons";
+import Input from "../../ui/input";
+import { UserFormValues } from "../../../types";
+import { emailRegex } from "../../../utils/constants";
 
 type Props = {
   onSetNextStep: () => void;

@@ -2,7 +2,7 @@ export type {
   Services,
   InternetService,
   CableService,
-  Promotion,
+  Promotions,
   UserFormValues,
   HireFormValues,
   ServicesFormValues,

@@ -2,39 +2,33 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Box } from "@chakra-ui/react";
 
-import UserForm from "./user-form";
 import {
   ClientSchema,
-  Promotion,
+  Promotions,
   Services,
-  ServicesFormValues,
   UserFormValues,
 } from "../../types";
-import ServicesForm from "./services-form";
-import HireSummary from "./hire-summary";
-import StepsHeader from "./steps-header";
 import useHttp from "../../hooks/useHttp";
 import HireModal from "./hire-modal";
 import useToastOnReq from "../../hooks/useToastOnReq";
+import Steps from "./steps/steps";
 
 type Props = {
   services: Services | undefined;
-  promotions: Promotion[] | undefined;
+  promotions: Promotions[] | undefined;
 };
 
 const HireForm = (props: Props) => {
-  const [userFormValues, setUserFormValues] = useState<UserFormValues>();
-  const [servicesFormValues, setServicesFormValues] =
-    useState<ServicesFormValues>();
-  const [currentStep, setCurrentStep] = useState(1);
   const {
     error: reqError,
-    isLoading,
+    isLoading: reqLoading,
     success: reqSuccess,
     sendRequest,
   } = useHttp();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [existingUser, setExistingUser] = useState<ClientSchema | null>(null);
+  const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -42,12 +36,6 @@ const HireForm = (props: Props) => {
       setIsModalOpen(true);
     }
   }, [reqSuccess]);
-
-  useEffect(() => {
-    if (reqError && reqError.status === 422) {
-      setCurrentStep(1);
-    }
-  }, [reqError]);
 
   useToastOnReq({
     error: {
@@ -61,100 +49,41 @@ const HireForm = (props: Props) => {
     router.push("/login");
   };
 
-  const setUserFormValuesHandler = (values: UserFormValues) => {
-    setUserFormValues(values);
-  };
-
-  const setServicesFormValuesHandler = (values: ServicesFormValues) => {
-    setServicesFormValues(values);
-  };
-
-  const prevStepHandler = () => {
-    setCurrentStep((prevValue) => prevValue - 1);
-  };
-
-  const nextStepHandler = async () => {
-    setCurrentStep((prevValue) => prevValue + 1);
-  };
-
-  const hireServiceHandler = async () => {
-    let selectedServices: number[] = [];
-
-    if (servicesFormValues?.cable.required) {
-      const selectedOptionalServices = servicesFormValues.cable.optional.filter(
-        (s) => s && s
-      );
-      const optionalServicesNums = selectedOptionalServices.map((s) => +s);
-      selectedServices.push(+servicesFormValues.cable.required);
-      selectedServices.push(...optionalServicesNums);
-    }
-
-    if (servicesFormValues?.internet) {
-      selectedServices.push(+servicesFormValues?.internet);
-    }
-
-    const hiringData = {
-      user: userFormValues,
-      services: selectedServices,
-    };
-
+  const hireServiceHandler = async (
+    user: UserFormValues,
+    selectedServices: number[]
+  ) => {
     await sendRequest<{ message: string; existingUser: ClientSchema | null }>(
       {
         input: "/api/hire",
         init: {
           method: "POST",
-          body: JSON.stringify(hiringData),
+          body: JSON.stringify({ user, services: selectedServices }),
           headers: {
             "Content-Type": "application/json",
           },
         },
       },
       (data) => {
+        const email = data.existingUser?.CorreoElectronico || user.email;
+        setUserEmail(email);
         setExistingUser(data.existingUser);
       }
     );
   };
 
-  let currentForm;
-  if (currentStep === 1) {
-    currentForm = (
-      <UserForm
-        onSetNextStep={nextStepHandler}
-        onSetFormValues={setUserFormValuesHandler}
-        savedValues={userFormValues}
-      />
-    );
-  } else if (currentStep === 2) {
-    currentForm = (
-      <ServicesForm
-        onSetPrevStep={prevStepHandler}
-        onSetNextStep={nextStepHandler}
-        services={props.services}
-        onSetFormValues={setServicesFormValuesHandler}
-        savedValues={servicesFormValues}
-      />
-    );
-  } else if (currentStep === 3) {
-    currentForm = (
-      <HireSummary
-        services={props.services}
-        promotions={props.promotions}
-        selectedServices={servicesFormValues}
-        isReqLoading={isLoading}
-        onSetPrevStep={prevStepHandler}
-        onHireService={hireServiceHandler}
-      />
-    );
-  }
-
   return (
     <Box>
-      <StepsHeader currentStep={currentStep} />
-      {currentForm}
+      <Steps
+        services={props.services}
+        promotions={props.promotions}
+        isReqLoading={reqLoading}
+        onHireService={hireServiceHandler}
+      />
       <HireModal
         isOpen={isModalOpen}
         onClose={closeModalHandler}
-        email={userFormValues?.email}
+        email={userEmail}
         userExists={existingUser}
       />
     </Box>

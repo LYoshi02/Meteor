@@ -162,18 +162,23 @@ export const generateInvoice = (
       });
     invoiceDoc
       .font("Helvetica")
-      .text(unitPrice.toString(), tableColumnsPosX.unitPrice, posY, {
+      .text(unitPrice.toFixed(2).toString(), tableColumnsPosX.unitPrice, posY, {
         width: tableColumnsWidth.price,
         align: "center",
         lineBreak: false,
       });
     invoiceDoc
       .font("Helvetica")
-      .text(totalPrice.toString(), tableColumnsPosX.totalPrice, posY, {
-        width: tableColumnsWidth.price,
-        align: "center",
-        lineBreak: false,
-      });
+      .text(
+        totalPrice.toFixed(2).toString(),
+        tableColumnsPosX.totalPrice,
+        posY,
+        {
+          width: tableColumnsWidth.price,
+          align: "center",
+          lineBreak: false,
+        }
+      );
   });
 
   invoiceDoc.moveDown(1);

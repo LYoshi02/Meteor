@@ -78,7 +78,6 @@ const Contracts = () => {
   } else {
     mainContent = <LoadingSpinner />;
   }
-  console.log(data);
 
   return (
     <Box>

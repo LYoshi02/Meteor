@@ -81,8 +81,6 @@ const EditServiceForm = (props: Props) => {
     return <LoadingSpinner />;
   }
 
-  console.log(serviceData);
-
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
       <Stack spacing={4} mb="2">

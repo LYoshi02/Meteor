@@ -1,5 +1,5 @@
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
-import { CableService, InternetService } from "../../../types";
+import { CableService, InternetService } from "../../../../types";
 
 type Props = {
   selectedServices: (CableService | InternetService)[];

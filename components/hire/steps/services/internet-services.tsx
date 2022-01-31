@@ -3,7 +3,7 @@ import { Box, Heading } from "@chakra-ui/layout";
 import { Radio, RadioGroup } from "@chakra-ui/radio";
 import { Stack } from "@chakra-ui/react";
 
-import { ServicesFormValues, InternetService } from "../../../types";
+import { ServicesFormValues, InternetService } from "../../../../types";
 
 type Props = {
   services: InternetService[] | undefined;

@@ -50,7 +50,7 @@ const Navigation = () => {
       >
         <Box>
           <Link href="/" styles={{ d: "inline-block" }}>
-            <Image src={logoSvg} alt="Meteor Logo" />
+            <Image src={logoSvg} alt="Meteor Logo" priority />
           </Link>
         </Box>
         <Box as="nav">

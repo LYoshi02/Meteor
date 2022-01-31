@@ -9,7 +9,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
-import { ServicesFormValues, CableService } from "../../../types";
+import { ServicesFormValues, CableService } from "../../../../types";
 
 type Props = {
   services: { required: CableService[]; optional: CableService[] } | undefined;
@@ -32,7 +32,7 @@ const CableServices = (props: Props) => {
     <Checkbox
       key={service.NroServicio}
       value={service.NroServicio.toString()}
-      {...props.register(`cable.optional.${index}`)}
+      {...props.register("cable.optional")}
     >
       {service.Nombre} {`($${service.Precio})`}
     </Checkbox>

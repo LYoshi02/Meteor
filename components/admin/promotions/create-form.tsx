@@ -38,7 +38,12 @@ const CreatePromotionForm = (props: Props) => {
   } = useForm<PromotionFormValues>({
     defaultValues: { services: [], discount: 0 },
   });
-  const { sendRequest, error: reqError, success: reqSuccess } = useHttp();
+  const {
+    sendRequest,
+    error: reqError,
+    success: reqSuccess,
+    isLoading: isReqLoading,
+  } = useHttp();
   const { data } = useSWR<{
     services: (ServiceSchema & { Tipo: string })[];
     servicesCount: number;
@@ -123,6 +128,16 @@ const CreatePromotionForm = (props: Props) => {
   return (
     <form onSubmit={handleSubmit(submitHandler)}>
       <Stack spacing={4} mb="2">
+        <Input
+          id="name"
+          type="string"
+          label="Nombre"
+          errorMsg={errors.name?.message}
+          hookForm={register("name", {
+            required: "Este campo es obligatorio",
+          })}
+        />
+
         <Input
           id="duration"
           type="number"
@@ -215,7 +230,7 @@ const CreatePromotionForm = (props: Props) => {
           ${totalServicesValueWithDiscount}
         </Text>
 
-        <Button type="submit" colorScheme="purple">
+        <Button type="submit" colorScheme="purple" isLoading={isReqLoading}>
           Crear
         </Button>
       </Stack>

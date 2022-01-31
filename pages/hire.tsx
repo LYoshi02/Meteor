@@ -4,11 +4,11 @@ import HireForm from "../components/hire/hire-form";
 import MainLayout from "../components/layout/main-layout";
 import FullScreenContainer from "../components/ui/full-screen-container";
 import useUser from "../hooks/useUser";
-import { Services, Promotion } from "../types";
+import { Services, Promotions } from "../types";
 
 type FetchedData = {
   services: Services;
-  promotions: Promotion[];
+  promotions: Promotions[];
 };
 
 export default function HirePage() {

@@ -70,6 +70,7 @@ const PromotionsTable = (props: Props) => {
       <Table
         headingElements={[
           "Nro. de Promoción",
+          "Nombre",
           "% de Descuento",
           "Duración",
           "Servicios",
