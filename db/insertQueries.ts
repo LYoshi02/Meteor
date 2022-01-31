@@ -145,7 +145,8 @@ export const insertInvoiceDetails = async (
   const { invoice, servicesIds, promotionNumber } = data;
   const invoiceNumber = invoice.NroFactura;
 
-  await client.query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
+  // await client.query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
+  await client.query(`SELECT setval('"Detalles_NroRenglon_seq"', 1, false)`);
   const resultServices = await client.query<{
     Cantidad: number;
     TotalParcial: number;

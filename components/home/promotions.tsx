@@ -16,7 +16,9 @@ const Promotions = (props: Props) => {
   let promotionsArr = [...props.promotions];
   const mostPopularPromotion = promotionsArr.shift();
 
-  promotionsArr.splice(1, 0, mostPopularPromotion!);
+  if (mostPopularPromotion) {
+    promotionsArr.splice(1, 0, mostPopularPromotion);
+  }
 
   return (
     <Box as="section" bgColor="#0B0D17" py="48">

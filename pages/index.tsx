@@ -7,8 +7,8 @@ import Feature from "../components/home/feature";
 import Promotions from "../components/home/promotions";
 import Testimonials from "../components/home/testimonials";
 import Footer from "../components/home/footer";
-import fetchJson from "../utils/fetchJson";
 import { PromotionSchema } from "../types";
+import { getTopPromotions } from "../lib/promotions";
 
 type Props = {
   promotions: (PromotionSchema & {
@@ -37,19 +37,11 @@ function HomePage(props: Props) {
 export default HomePage;
 
 export async function getStaticProps() {
-  const res: any = await fetchJson<{
-    promotions: PromotionSchema & {
-      Servicios: string[];
-      PrecioAnterior: string;
-      PrecioFinal: string;
-    };
-  }>("http://localhost:3000/api/promotions?limit=3", {
-    method: "GET",
-  });
+  const promotions = await getTopPromotions(3);
 
   return {
     props: {
-      promotions: res.promotions,
+      promotions,
     },
     revalidate: 600,
   };
