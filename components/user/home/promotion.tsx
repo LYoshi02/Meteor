@@ -1,7 +1,7 @@
 import { Box, Flex, Stack, Text } from "@chakra-ui/react";
-import { format, addMonths } from "date-fns";
 
 import { PromotionSchema } from "../../../types";
+import { addMonths, formateDateToFullDate } from "../../../utils/dateHelpers";
 
 type Props = {
   promotion: PromotionSchema;
@@ -39,12 +39,8 @@ const Promotion = (props: Props) => {
             Fecha de Fin
           </Box>
           <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">
-            {format(
-              addMonths(
-                new Date(props.contractStartDate),
-                props.promotion.Duracion
-              ),
-              "dd/MM/yyyy"
+            {formateDateToFullDate(
+              addMonths(props.contractStartDate, props.promotion.Duracion)
             )}
           </Box>
         </Flex>

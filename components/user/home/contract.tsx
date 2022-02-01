@@ -1,6 +1,6 @@
 import { Box, Flex, Stack, Text } from "@chakra-ui/react";
 
-import { format } from "date-fns";
+import { formateDateToFullDate } from "../../../utils/dateHelpers";
 
 type Props = {
   contract: {
@@ -31,7 +31,7 @@ const Contract = (props: Props) => {
             Fecha de Inicio
           </Box>
           <Box as="dd" flex="1" fontWeight="semibold" textAlign="right">
-            {format(new Date(props.contract.FechaInicio), "dd/MM/yyyy")}
+            {formateDateToFullDate(props.contract.FechaInicio)}
           </Box>
         </Flex>
       </Stack>
