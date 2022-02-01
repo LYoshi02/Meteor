@@ -394,7 +394,7 @@ export const generateWelcomeEmail = (fullName: string, password: string) => {
 															<td style="padding-left:40px;padding-right:10px;">
 																<div style="font-family: sans-serif">
 																	<div style="font-size: 12px; mso-line-height-alt: 24px;  line-height: 2; font-family: Montserrat, Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;">
-																		<a href="http://www.google.com.ar/" target="_blank" rel="noreferrer"
+																		<a href="https://meteorservices.vercel.app/login" target="_blank" rel="noreferrer"
 																			style="margin: 0; font-size: 14px; text-align: left; mso-line-height-alt: 28px; color: #ec008c; text-decoration: none">
 																			<span style="font-size:14px;"><strong><span
 																						style=""><span style=""><span

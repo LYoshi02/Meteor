@@ -48,10 +48,12 @@ const ServicesForm = (props: Props) => {
         (promo) => promo.NroPromocion === +selectedPromotionNumber
       );
 
+      if (!selectedPromotion) return;
+
       const allServices = generateServicesArray(props.services);
       const optionalCableServices: string[] = [];
 
-      selectedPromotion!.Servicios.forEach((service) => {
+      selectedPromotion.Servicios.forEach((service) => {
         const type = getServiceType(service, allServices);
 
         if (type === "cable.optional") {

@@ -31,6 +31,7 @@ export {
   getServiceById,
   getCustomerInvoicesCount,
   getTopActivePromotions,
+  getInvoicesGenerationData,
 } from "./selectQueries";
 
 export {

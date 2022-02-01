@@ -98,26 +98,21 @@ const saveHireData = async (
     await insertHiredServices(contractNumber, services, client);
 
     // 6) Generar 1er Factura con sus detalles
-    const insertedInvoice = await insertInvoice(
-      user.dni,
-      contractNumber,
-      client
-    );
-    const invoiceDetails = insertedInvoice.rows[0];
+    const invoiceResult = await insertInvoice(user.dni, contractNumber, client);
+    const invoiceNumber = invoiceResult.rows[0].NroFactura;
 
     await insertInvoiceDetails(
-      { invoice: invoiceDetails, servicesIds: services, promotionNumber },
+      { invoiceNumber, contractNumber, servicesIds: services },
       client
     );
 
     // 7) Enviar contraseña al correo
-    // TODO: modify the href of the link in the html generated (after deploying)
     if (!userExists) {
       const userFullName = `${user.firstName} ${user.lastName}`;
       const msg = {
         to: user.email,
         from: process.env.SENDGRID_SENDER_EMAIL!,
-        subject: "Servicios Contratados!",
+        subject: "Bienvenido A Meteor!",
         html: generateWelcomeEmail(userFullName, userPassword),
       };
       await sgMail.send(msg);

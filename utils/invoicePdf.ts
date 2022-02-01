@@ -1,5 +1,4 @@
 import PDFDocument from "pdfkit";
-import fs from "fs";
 import { format } from "date-fns";
 
 import { ClientSchema, InvoiceDetailSchema, InvoiceSchema } from "../types";

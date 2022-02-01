@@ -88,7 +88,7 @@ export const insertInvoice = async (
   contractNumber: number,
   client: PoolClient | Pool = pool
 ) => {
-  const result = await client.query<InvoiceSchema>(
+  const result = await client.query<{ NroFactura: number }>(
     `
     INSERT INTO "Facturas" ("Vencimiento", "PeriodoInicio", "PeriodoFin", "DniCliente", "NroContrato")
     SELECT 
@@ -126,7 +126,7 @@ export const insertInvoice = async (
       END AS "PeriodoFin",
       $1 AS "DniCliente",
       $2 AS "NroContrato"
-      RETURNING *
+      RETURNING "NroFactura"
       `,
     [dni, contractNumber]
   );
@@ -136,16 +136,14 @@ export const insertInvoice = async (
 
 export const insertInvoiceDetails = async (
   data: {
-    invoice: InvoiceSchema;
+    invoiceNumber: number;
+    contractNumber: number;
     servicesIds: number[];
-    promotionNumber?: number;
   },
   client: PoolClient | Pool = pool
 ) => {
-  const { invoice, servicesIds, promotionNumber } = data;
-  const invoiceNumber = invoice.NroFactura;
+  const { invoiceNumber, contractNumber, servicesIds } = data;
 
-  // await client.query(`ALTER SEQUENCE "Detalles_NroRenglon_seq" RESTART`);
   await client.query(`SELECT setval('"Detalles_NroRenglon_seq"', 1, false)`);
   const resultServices = await client.query<{
     Cantidad: number;
@@ -190,40 +188,36 @@ export const insertInvoiceDetails = async (
     [invoiceNumber, servicesIds]
   );
 
-  if (promotionNumber) {
-    const contractNumber = invoice.NroContrato;
+  const promotionDetails = await getValidPromotionFromContract(
+    contractNumber,
+    client
+  );
 
-    const promotionDetails = await getValidPromotionFromContract(
-      contractNumber,
-      client
-    );
+  if (!promotionDetails || promotionDetails.length === 0) return;
 
-    if (!promotionDetails || promotionDetails.length === 0) return;
+  const totalPrice = resultServices.rows.reduce(
+    (prevValue, currValue) =>
+      prevValue + currValue.TotalParcial * currValue.Cantidad,
+    0
+  );
 
-    const totalPrice = resultServices.rows.reduce(
-      (prevValue, currValue) =>
-        prevValue + currValue.TotalParcial * currValue.Cantidad,
-      0
-    );
-
-    await client.query(
-      `
-        INSERT INTO "Detalles" ("NroRenglon", "Descripcion", "Cantidad", "TotalParcial", "NroFactura", "NroServicio", "EsDescuento")
-        SELECT nextval('"Detalles_NroRenglon_seq"') AS "NroRenglon",
-          'Descuento por Promoción' AS "Descripcion",
-          1 AS "Cantidad",
-          round((($3 * prom."PorcentajeDto"::FLOAT) / 100)::NUMERIC, 2) AS "TotalParcial",
-          $1 AS "NroFactura",
-          null AS "NroServicio",
-          true AS "EsDescuento"
-        FROM (
-          SELECT * FROM "Promociones"
-          WHERE "NroPromocion" = $2
-        ) AS prom
-      `,
-      [invoiceNumber, promotionNumber, totalPrice]
-    );
-  }
+  await client.query(
+    `
+      INSERT INTO "Detalles" ("NroRenglon", "Descripcion", "Cantidad", "TotalParcial", "NroFactura", "NroServicio", "EsDescuento")
+      SELECT nextval('"Detalles_NroRenglon_seq"') AS "NroRenglon",
+        'Descuento por Promoción' AS "Descripcion",
+        1 AS "Cantidad",
+        round((($3 * prom."PorcentajeDto"::FLOAT) / 100)::NUMERIC, 2) AS "TotalParcial",
+        $1 AS "NroFactura",
+        null AS "NroServicio",
+        true AS "EsDescuento"
+      FROM (
+        SELECT * FROM "Promociones"
+        WHERE "NroPromocion" = $2
+      ) AS prom
+    `,
+    [invoiceNumber, promotionDetails[0].NroPromocion, totalPrice]
+  );
 };
 
 export const insertNewService = async (

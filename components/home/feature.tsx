@@ -5,6 +5,8 @@ import Container from "../ui/container";
 import phoneImg from "../../assets/images/phone.png";
 import Link from "../ui/link";
 
+import classes from "./feature/feature.module.css";
+
 const Feature = () => {
   return (
     <Box as="section" bgColor="gray.900" py="48">
@@ -59,9 +61,9 @@ const Feature = () => {
           <Image
             src={phoneImg}
             alt="User screen"
-            quality={100}
             layout="fill"
             objectFit="contain"
+            className={classes["Image"]}
           />
         </Box>
       </Container>

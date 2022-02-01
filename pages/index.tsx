@@ -21,7 +21,10 @@ type Props = {
 function HomePage(props: Props) {
   return (
     <>
-      <NextSeo title="Inicio" />
+      <NextSeo
+        title="Inicio"
+        description="En Meteor ofrecemos servicios de internet y cable para que te mantengas conectado en todo momento."
+      />
       <Box bgGradient="linear(to-br, #000000, #152331 85%)" overflow="hidden">
         <Hero />
         <Steps />

@@ -1,4 +1,5 @@
-import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import Image from "next/image";
 
 type Props = {
   text: string;
@@ -8,7 +9,6 @@ type Props = {
     imgUrl: string;
   };
 };
-
 const Testimonial = (props: Props) => {
   return (
     <Box mx="4">
@@ -23,11 +23,14 @@ const Testimonial = (props: Props) => {
         shadow="lg"
       >
         <Flex gridGap="3" align="center" mb="6">
-          <Avatar
-            name={props.author.name}
-            src={props.author.imgUrl}
-            size="lg"
-          />
+          <Box position="relative" w="16" h="16">
+            <Image
+              src={props.author.imgUrl}
+              alt={props.author.name}
+              layout="fill"
+              objectFit="contain"
+            />
+          </Box>
           <Box>
             <Text fontWeight="bold" fontSize="lg">
               {props.author.name}

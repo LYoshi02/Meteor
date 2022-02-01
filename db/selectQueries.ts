@@ -290,7 +290,7 @@ export const getValidPromotionFromContract = async (
     JOIN "Promociones" prom
       ON prom."NroPromocion" = cont."NroPromocion"
     WHERE "NroContrato" = $1 AND 
-      extract(month from age(CURRENT_DATE, cont."FechaInicio")) <= prom."Duracion"
+      CURRENT_DATE < (cont."FechaInicio" + interval '1 month' * prom."Duracion")::DATE
   `,
     [contractNumber]
   );
@@ -471,6 +471,29 @@ export const getInvoicesCount = async (client: PoolClient | Pool = pool) => {
   const result = await client.query<{ count: string }>(
     `SELECT COUNT(*) FROM "Facturas"`
   );
+
+  return result.rows;
+};
+
+export const getInvoicesGenerationData = async (
+  client: PoolClient | Pool = pool
+) => {
+  const result = await client.query<{
+    NroContrato: number;
+    DniCliente: string;
+    Servicios: number[];
+  }>(`
+    SELECT con."NroContrato", con."DniCliente",
+      array_agg(sercon."NroServicio") AS "Servicios"
+    FROM "Contratos" con
+    JOIN "Facturas" fac
+      ON fac."NroContrato" = con."NroContrato"
+    JOIN "ServiciosContratados" sercon
+      ON sercon."NroContrato" = con."NroContrato"
+    WHERE con."FechaFin" IS NULL
+    GROUP BY (con."NroContrato")
+    HAVING MAX(fac."PeriodoFin") < CURRENT_DATE
+  `);
 
   return result.rows;
 };
