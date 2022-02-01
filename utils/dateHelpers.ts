@@ -4,7 +4,7 @@ import esLocale from "date-fns/locale/es";
 type ReceivedDate = string | number | Date;
 
 const getValidDate = (date: ReceivedDate) => {
-  return typeof date === "string" ? new Date(date). : date;
+  return typeof date === "string" ? new Date(date) : date;
 };
 
 export const formatDateToMonthAndYear = (date: ReceivedDate) => {
