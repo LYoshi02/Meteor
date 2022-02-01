@@ -8,7 +8,6 @@ import "slick-carousel/slick/slick-theme.css";
 import theme from "../styles/theme";
 import fetchJson from "../utils/fetchJson";
 import UiProvider from "../context/ui-context";
-import siteImg from "../assets/images/site.png";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const defaultSEOConfig: DefaultSeoProps = {
@@ -24,9 +23,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       url: "https://meteorservices.vercel.app/",
       images: [
         {
-          url: siteImg.src,
-          width: siteImg.width,
-          height: siteImg.height,
+          url: "https://meteorservices.vercel.app/images/site.png",
+          width: 4320,
+          height: 2700,
           alt: "Meteor Site Thumbnail",
         },
       ],
