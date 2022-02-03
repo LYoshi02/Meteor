@@ -1,4 +1,5 @@
 import {
+  Box,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -26,7 +27,7 @@ const MobileMenu = (props: Props) => {
       isFullHeight
     >
       <DrawerOverlay />
-      <DrawerContent bgColor="gray.900">
+      <DrawerContent bgColor="gray.900" h="100%">
         <DrawerCloseButton top="4" right="4" size="lg" />
         <DrawerHeader>
           <UserInfo />

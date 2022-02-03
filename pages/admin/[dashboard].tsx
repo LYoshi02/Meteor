@@ -34,7 +34,7 @@ export default function UserDashboardPage() {
   return (
     <>
       <NextSeo title="Panel de Administrador" noindex />
-      <DashboardLayout>{dashboardElement!}</DashboardLayout>;
+      <DashboardLayout>{dashboardElement!}</DashboardLayout>
     </>
   );
 }
